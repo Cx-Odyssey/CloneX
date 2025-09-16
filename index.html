@@ -4,357 +4,336 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Chimera X — Echoes of the Signal</title>
-  <meta name="description" content="Chimera X — premium Telegram Mini App frontend prototype" />
+  <title>Empire of Fortune — Telegram Mini App Prototype</title>
+  <meta name="description" content="Premium black & gold strategy game — Empire of Fortune. Points convertible to $CX. Telegram Mini App friendly single-file UI prototype."/>
   <style>
-    /* ===== Premium Black Theme (compact and performant) ===== */
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Exo+2:wght@300;500;700&display=swap');
+    /* ====== Classic Premium Black + Gold Theme ====== */
     :root{
-      --bg-0:#000, --bg-1:#060607, --panel:#0c0d10;
-      --neon-cyan:#00ffe7; --neon-mag:#9400ff; --muted:#9aa6b2; --glass:rgba(255,255,255,0.03);
-      --accent: linear-gradient(90deg,var(--neon-cyan),var(--neon-mag));
+      --bg:#0b0b0b;
+      --panel:#0f0f10;
+      --muted:#bdb5aa;
+      --gold:#c9a24a;
+      --accent:#f5e9c8;
+      --glass: rgba(255,255,255,0.03);
+      --card-shadow: 0 6px 20px rgba(0,0,0,0.6);
+      --radius:14px;
+      --glass-border: rgba(255,255,255,0.04);
     }
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:radial-gradient(circle at 20% 10%, #071018 0%, #000 40%), #000;color:#e6eef6;font-family:'Exo 2',system-ui,Segoe UI,Roboto,Arial;}/* Layout */
-.wrap{max-width:1100px;margin:18px auto;padding:20px;display:grid;grid-template-columns:1fr 360px;gap:18px}
-header{grid-column:1/-1;display:flex;align-items:center;gap:16px}
-.logo{width:80px;height:80px;border-radius:12px;background:linear-gradient(135deg,var(--neon-cyan),var(--neon-mag));display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-weight:800;color:#041018;box-shadow:0 8px 40px rgba(0,0,0,0.6)}
-h1{margin:0;font-family:'Orbitron';letter-spacing:1px}
-.sub{color:var(--muted);font-size:13px}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: 'Times New Roman', Georgia, serif; background:linear-gradient(180deg,var(--bg),#070707 60%); color:var(--muted); -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      display:flex; align-items:center; justify-content:center; padding:24px;
+    }.app {
+  width:100%; max-width:1100px; background:linear-gradient(180deg,var(--panel),#0b0b0b); border-radius:20px; padding:20px; box-shadow: var(--card-shadow);
+  display:grid; grid-template-columns: 360px 1fr; gap:20px; align-items:start;
+}
 
-/* Cards */
-.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.04);padding:16px;border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.7)}
+/* Sidebar */
+.sidebar{background:var(--glass); border-radius:16px; padding:18px; border:1px solid var(--glass-border);}
+.logo{display:flex; gap:12px; align-items:center}
+.mark{width:56px; height:56px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--gold),#e6c96f); color:#0b0b0b; font-weight:700; font-size:20px}
+h1{margin:0; font-size:18px; color:var(--accent)}
+p.small{margin:4px 0 12px 0; font-size:12px; color:var(--muted)}
 
-/* Radio / Main */
-.main{padding:18px}
-.radio{display:grid;grid-template-columns:1fr 260px;gap:16px;align-items:start}
+.stat-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px}
+.stat{background:rgba(255,255,255,0.02); padding:12px; border-radius:12px; border:1px solid var(--glass-border)}
+.stat .value{font-size:18px; color:var(--gold); font-weight:700}
+.stat .label{font-size:11px; color:var(--muted)}
 
-.meter{height:220px;border-radius:12px;background:linear-gradient(180deg,#071018,#041018);display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.02);position:relative;overflow:hidden}
-.meter .strength{font-size:56px;font-weight:900;letter-spacing:-2px;color:transparent;background:linear-gradient(90deg,var(--neon-cyan),var(--neon-mag));-webkit-background-clip:text}
-.meter .label{font-size:12px;color:var(--muted);margin-top:6px}
-.meter .bar{width:78%;height:14px;background:rgba(255,255,255,0.03);border-radius:999px;overflow:hidden;margin-top:12px}
-.meter .bar > i{height:100%;display:block;background:linear-gradient(90deg,var(--neon-cyan),var(--neon-mag));width:30%;transition:width 900ms cubic-bezier(.2,.9,.12,1);box-shadow:0 6px 28px rgba(148,0,255,0.12)}
+.actions{margin-top:18px; display:flex; gap:10px; flex-direction:column}
+.btn{background:transparent; border:1px solid var(--glass-border); padding:12px; border-radius:12px; cursor:pointer; color:var(--accent); font-weight:600}
+.btn.primary{background:linear-gradient(90deg,var(--gold),#e6c96f); color:#0b0b0b; border:none}
+.footer-note{font-size:12px; color:var(--muted); margin-top:14px}
 
-/* Scanner */
-.scanner-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
-.scanner{width:160px;height:160px;border-radius:50%;border:6px solid rgba(255,255,255,0.03);background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.03),transparent);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden}
-.scanner .core{width:110px;height:110px;border-radius:50%;background:linear-gradient(180deg,#06131b,#081021);display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-weight:800;color:#00ffe7;text-shadow:0 0 12px rgba(0,255,231,0.06)}
-.scanner .glow{position:absolute;inset:0;box-shadow:0 0 40px rgba(0,255,231,0.06);pointer-events:none}
-.pulse-wave{position:absolute;border-radius:50%;border:2px solid rgba(148,0,255,0.08);width:50%;height:50%;top:25%;left:25%;animation:wave 2.6s linear infinite}
-@keyframes wave{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.4);opacity:0}}
+/* Main area */
+.main{display:flex; flex-direction:column; gap:14px}
+.panel{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(0,0,0,0.02)); padding:16px; border-radius:12px; border:1px solid var(--glass-border)}
 
-/* Controls */
-.controls{display:flex;gap:8px;align-items:center}
-button.primary{background:linear-gradient(90deg,var(--neon-cyan),var(--neon-mag));border:0;padding:12px 14px;border-radius:10px;font-weight:800;color:#041018;cursor:pointer}
-button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:8px;color:var(--muted);cursor:pointer}
+/* Empire board */
+.board{display:grid; grid-template-columns: repeat(4,1fr); gap:12px}
+.tile{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.03)); padding:14px; border-radius:10px; min-height:110px; display:flex; flex-direction:column; justify-content:space-between; border:1px solid rgba(255,255,255,0.02)}
+.tile h3{margin:0; font-size:14px; color:var(--accent)}
+.tile .desc{font-size:12px; color:var(--muted)}
+.tile .tile-foot{display:flex; justify-content:space-between; align-items:center; margin-top:8px}
 
-/* Archive */
-.frag{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);display:flex;flex-direction:column;gap:6px}
-.frag.rare{border:1px solid rgba(148,0,255,0.6);box-shadow:0 10px 30px rgba(148,0,255,0.06)}
+/* Trade chamber */
+.trade-row{display:flex; gap:8px; align-items:center}
+.resource{background:rgba(255,255,255,0.02); padding:8px 10px; border-radius:8px; border:1px solid var(--glass-border)}
 
-/* Right column */
-aside.right{display:flex;flex-direction:column;gap:12px}
-.profile{display:flex;gap:12px;align-items:center}
-.avatar{width:64px;height:64px;border-radius:12px;background:linear-gradient(180deg,#062235,#0b1420);display:flex;align-items:center;justify-content:center;font-weight:800}
-.pill{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.03);font-size:13px}
+/* Modal / Toast */
+.toast{position:fixed; right:24px; top:24px; background:#0b0b0b; color:var(--muted); padding:12px 16px; border-radius:10px; border:1px solid var(--glass-border); box-shadow:0 8px 30px rgba(0,0,0,0.5)}
 
-/* Event */
-.event{background:linear-gradient(90deg,rgba(148,0,255,0.06),rgba(0,255,231,0.03));padding:12px;border-radius:10px}
-.progress{height:10px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden}
-.progress > i{height:100%;display:block;background:linear-gradient(90deg,var(--neon-cyan),var(--neon-mag));width:12%}
-
-/* Modal / Decrypt */
-.modal{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(0,0,0,0.5),rgba(0,0,0,0.6));z-index:60}
-.modal .frame{width:460px;background:linear-gradient(180deg,#071018,#041018);padding:20px;border-radius:12px;border:1px solid rgba(148,0,255,0.08);box-shadow:0 30px 60px rgba(0,0,0,0.8)}
-.modal h3{margin:0 0 8px 0}
-
-/* Toasts */
-.toast-wrap{position:fixed;right:18px;bottom:18px;display:flex;flex-direction:column;gap:8px;z-index:80}
-.toast{background:#071018;border:1px solid rgba(255,255,255,0.04);padding:10px 12px;border-radius:8px;min-width:220px}
-
-/* Footer */
-footer{grid-column:1/-1;margin-top:12px;color:var(--muted);font-size:13px}
+/* Leaderboard */
+.leaderboard ol{margin:0; padding:0 0 0 18px}
+.leaderboard li{margin:6px 0}
 
 /* Responsive */
-@media(max-width:980px){.wrap{grid-template-columns:1fr}.radio{grid-template-columns:1fr}.meter{height:160px}.avatar{width:48px;height:48px}}
+@media (max-width:920px){
+  .app{grid-template-columns:1fr;}
+  .board{grid-template-columns: repeat(2,1fr)}
+}
 
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="logo">CX</div>
+  <div class="app" role="application">
+    <aside class="sidebar panel" aria-label="Sidebar">
+      <div class="logo">
+        <div class="mark">EF</div>
+        <div>
+          <h1>Empire of Fortune</h1>
+          <p class="small">Classic · Premium · Points → $CX</p>
+        </div>
+      </div><div class="stat-grid">
+    <div class="stat">
+      <div class="label">Fortune Points</div>
+      <div class="value" id="points">0</div>
+    </div>
+    <div class="stat">
+      <div class="label">Gold</div>
+      <div class="value" id="gold">0</div>
+    </div>
+    <div class="stat">
+      <div class="label">Moves Left</div>
+      <div class="value" id="moves">0</div>
+    </div>
+    <div class="stat">
+      <div class="label">Influence</div>
+      <div class="value" id="influence">0</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn primary" id="scanBtn">Make a Move</button>
+    <button class="btn" id="adBtn">Watch Ad (simulate)</button>
+    <button class="btn" id="tradeBtn">Open Trade Chamber</button>
+    <button class="btn" id="battleBtn">Challenge Rival</button>
+  </div>
+
+  <p class="footer-note">Pro-tip: Ads are styled as Royal Patronage — they feel premium and reward your empire.</p>
+</aside>
+
+<main class="main">
+  <section class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center">
       <div>
-        <h1>CHIMERA X</h1>
-        <div class="sub">Echoes of the Signal — premium mini-app prototype</div>
+        <h2 style="margin:0; color:var(--accent)">Empire Board</h2>
+        <p class="small">Use daily moves to expand, trade, or challenge rivals. Build a legacy.</p>
       </div>
-      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-        <div class="pill" id="echoPoints">Echo Points: 0</div>
-        <div class="pill" id="username">Guest</div>
-      </div>
-    </header><main class="card main">
-  <div class="radio">
-    <div>
-      <div class="meter">
-        <div class="strength" id="signalPercent">30%</div>
-        <div class="label">Global Signal Strength</div>
-        <div class="bar" title="Signal meter"><i id="signalBar"></i></div>
-        <div style="position:absolute;left:12px;bottom:12px;font-size:12px;color:var(--muted)">Community Signal</div>
-      </div>
-
-      <div style="margin-top:14px;display:flex;justify-content:space-between;align-items:center">
-        <div class="small">Frequency Scanner</div>
-        <div class="small" id="scanCooldown">Ready</div>
-      </div>
-
-      <div style="margin-top:10px;display:flex;gap:12px;align-items:center">
-        <div class="scanner-wrap">
-          <div class="scanner" id="scanner">
-            <div class="glow"></div>
-            <div class="pulse-wave"></div>
-            <div class="core" id="scanCore">SCAN</div>
-          </div>
-          <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="primary" id="scanBtn">Scan</button>
-            <button class="ghost" id="decryptBtn">Decrypt Now (Ad)</button>
-          </div>
-        </div>
-
-        <div style="flex:1">
-          <div class="card" style="padding:12px">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div class="small">Current Frequency</div>
-                <div id="currentFreq" style="font-weight:800;margin-top:6px">13.7 Hz · 214 k</div>
-              </div>
-              <div style="text-align:right">
-                <div class="small">Rank</div>
-                <div id="rank" style="font-weight:800">Rookie</div>
-              </div>
-            </div>
-            <div style="margin-top:10px" class="small">Latest Fragment</div>
-            <div class="frag" id="latestFrag" style="margin-top:8px">— none —</div>
-          </div>
-        </div>
-      </div>
-
-      <div style="margin-top:14px;display:flex;gap:8px;align-items:center">
-        <button class="ghost" id="boostBtn">Boost Signal (Ad)</button>
-        <button class="ghost" id="collectBtn">Collect Sets</button>
-        <button class="ghost" id="archiveBtn">Open Archive</button>
-      </div>
-
-      <div style="margin-top:12px" class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div><strong>Decoder Rig</strong><div class="small">(upgrades)</div></div>
-          <div class="small">Level: <span id="rigLevel">1</span></div>
-        </div>
-        <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
-          <div style="display:flex;justify-content:space-between;align-items:center"><div><strong>Better Antenna</strong><div class="small">Reduces scan cooldown</div></div><button class="ghost" data-upg="antenna">Buy 1,000 EP</button></div>
-          <div style="display:flex;justify-content:space-between;align-items:center"><div><strong>Signal Filter</strong><div class="small">Increase rare chance</div></div><button class="ghost" data-upg="filter">Buy 1,500 EP</button></div>
-          <div style="display:flex;justify-content:space-between;align-items:center"><div><strong>Firewall</strong><div class="small">Prevents corruption 24h</div></div><button class="ghost" data-upg="firewall">Buy 2,000 EP</button></div>
-        </div>
+      <div style="text-align:right">
+        <div style="font-size:12px; color:var(--muted)">Conversion Rate</div>
+        <div style="font-weight:700; color:var(--gold)">$CX per 1,000 FP</div>
       </div>
     </div>
 
-    <aside class="right">
-      <div class="card profile">
-        <div class="avatar" id="avatar">R</div>
-        <div style="flex:1">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div><strong id="displayName">Recruit</strong><div class="small">Decoder Handle</div></div>
-            <div style="text-align:right"><div class="small">Rank</div><div style="font-weight:800" id="rank2">Rookie</div></div>
-          </div>
-          <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
-            <div class="pill small" id="fragCount">Fragments: 0</div>
-            <div class="pill small" id="allianceName">Alliance: —</div>
-          </div>
-        </div>
-      </div>
+    <div class="board" id="board">
+      <!-- tiles injected by JS -->
+    </div>
+  </section>
 
-      <div class="card event">
-        <div style="display:flex;justify-content:space-between;align-items:center"><strong>Global Event</strong><div class="small">Community Goal</div></div>
-        <div style="margin-top:8px" class="small">Static Storm approaching — collectively boost 50,000 times to deflect!</div>
-        <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
-          <div style="flex:1"><div class="small">Progress</div><div class="progress" style="margin-top:6px"><i id="eventBar"></i></div></div>
-          <button class="primary" id="eventBoost">Boost x5 (Ad)</button>
-        </div>
-      </div>
+  <section class="panel" id="tradePanel" style="display:none">
+    <h3 style="margin-top:0; color:var(--accent)">Trade Chamber</h3>
+    <div style="display:flex; gap:12px; align-items:center; margin-bottom:12px">
+      <div class="resource">Gold: <span id="tradeGold">0</span></div>
+      <div class="resource">Grain: <span id="grain">0</span></div>
+      <div class="resource">Fortune Points: <span id="tradePoints">0</span></div>
+    </div>
+    <div style="display:flex; gap:8px; align-items:center">
+      <select id="tradeAction">
+        <option value="gold->fp">Convert Gold → Fortune Points (100g → 10FP)</option>
+        <option value="fp->influence">Convert FP → Influence (50FP → 1 Influence)</option>
+        <option value="grain->gold">Sell Grain → Gold (10g → 50 Gold)</option>
+      </select>
+      <input type="number" id="tradeAmount" placeholder="Amount" style="padding:8px; border-radius:8px; border:1px solid var(--glass-border); background:transparent; color:var(--muted)"/>
+      <button class="btn primary" id="executeTrade">Execute</button>
+      <button class="btn" id="closeTrade">Close</button>
+    </div>
+  </section>
 
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center"><strong>Archive</strong><div class="small">Collected Fragments</div></div>
-        <div id="fragList" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;max-height:300px;overflow:auto"></div>
-      </div>
-
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center"><strong>Alliances</strong><div class="small">Social</div></div>
-        <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px" id="alliancesList">
-          <div style="display:flex;justify-content:space-between"><div>Lonely Wolves</div><div class="small">3</div></div>
-          <div style="display:flex;justify-content:space-between"><div>Echo Collective</div><div class="small">12</div></div>
-        </div>
-      </div>
-
-    </aside>
-  </div>
-
-  <div style="margin-top:12px" class="small">Tip: Ads are optional and always framed as strategic choices for faster progress.</div>
-
+  <section class="panel leaderboard">
+    <h3 style="margin-top:0; color:var(--accent)">Leaderboards</h3>
+    <ol id="leaders">
+      <!-- leaderboard entries -->
+    </ol>
+  </section>
 </main>
 
-<footer>Prototype • Designed for Telegram Mini App use • Demo mode enabled</footer>
+  </div>  <div id="toast" class="toast" style="display:none"></div>  <script>
+    // ====== Empire of Fortune - single-file prototype logic ======
+    // Persistence & initial state
+    const DEFAULT = {
+      points: 120, // starting Fortune Points to show feel
+      gold: 250,
+      moves: 3,
+      influence: 1,
+      grain: 30,
+      board: [],
+      leaders: [
+        {name:'Lady Armand', pts:1200}, {name:'Duc Valen', pts:980}, {name:'You', pts:120}
+      ]
+    };
 
-  </div>  <!-- Modal: Decrypt / Fragment Reveal -->  <div id="modal" style="display:none" class="modal"><div class="frame"><h3>Decrypt Fragment</h3><div id="modalBody"></div><div style="margin-top:12px;display:flex;gap:8px;justify-content:flex-end"><button class="ghost" id="modalClose">Close</button><button class="primary" id="modalDecrypt">Decrypt Now (Ad)</button></div></div></div>  <!-- Toasts -->  <div class="toast-wrap" id="toasts"></div>  <script>
-    // ====== State & Local Storage ======
-    const LS_KEY = 'chimera_state_v2';
-    const API_BASE = ''; // set this to your backend API when ready
-    const demoCooldown = 10; // demo seconds for cooldown (change to 2*3600 for production)
-
-    const state = {
-      echoPoints: 0,
-      fragments: [],
-      fragId: 0,
-      signal: 30,
-      eventProgress: 12,
-      scanCooldownUntil: 0,
-      rig: {antenna:0,filter:0,firewallUntil:0},
-      username: 'Guest',
+    function load(){
+      const raw = localStorage.getItem('empire_state');
+      if(raw) return JSON.parse(raw);
+      // generate default tiles
+      DEFAULT.board = generateBoardTiles();
+      return DEFAULT;
     }
 
-    function save(){ localStorage.setItem(LS_KEY, JSON.stringify(state)); }
-    function load(){ const s = localStorage.getItem(LS_KEY); if(s) try{ Object.assign(state, JSON.parse(s)) }catch(e){} }
-    load();
+    function save(){ localStorage.setItem('empire_state', JSON.stringify(state)); }
 
-    // ====== Helpers ======
-    const $ = id => document.getElementById(id);
-    function toast(msg, ttl=3800){ const el = document.createElement('div'); el.className='toast'; el.innerText = msg; $('toasts').appendChild(el); setTimeout(()=>el.remove(),ttl) }
-    function log(msg){ console.log('[chimera]',msg); toast(msg,2000) }
+    function toast(msg, time=2500){
+      const t = document.getElementById('toast'); t.innerText = msg; t.style.display='block';
+      setTimeout(()=> t.style.display='none', time);
+    }
 
-    function setSignal(v){ state.signal = Math.max(0,Math.min(100,Math.round(v))); $('signalPercent').innerText = state.signal + '%'; $('signalBar').style.width = state.signal + '%'; }
-    function setEcho(n){ state.echoPoints = n; $('echoPoints').innerText = 'Echo Points: ' + state.echoPoints }
+    function generateBoardTiles(){
+      const names = ['Castle Ross','Merchant Quay','Verdant Fields','Old Keep','Silk District','Granary','Artisan Row','High Bastion'];
+      return names.map((n,i)=>({id:i, name:n, level:1, type: (i%3===0?'fort':'econ'), desc: i%3===0? 'Fortify to earn banners':'Trade hub — steady gold'}));
+    }
 
-    function renderFragments(){ const list = $('fragList'); list.innerHTML=''; state.fragments.slice().reverse().forEach(f=>{ const el = document.createElement('div'); el.className = 'frag' + (f.rarity!=='common'?' rare':''); el.innerHTML = `<div style="display:flex;justify-content:space-between"><div><strong>${escape(f.title)}</strong><div class='small'>${f.type} • ${f.rarity}</div></div><div style='text-align:right'><div class='small'>${f.unlocked? 'Decrypted':''}</div><div style='margin-top:6px'><button class='ghost' data-id='${f.id}' ${f.unlocked? 'disabled':''}>Decrypt</button></div></div></div>`; list.appendChild(el) }); $('fragCount').innerText = 'Fragments: ' + state.fragments.length }
-    function escape(s){ return (''+s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[c]) }
+    let state = load();
 
-    // ====== Fragment generator (simulated) ======
-    function genFragment(){ const rarities = ['common','common','common','rare','epic']; const r = rarities[Math.floor(Math.random()*rarities.length)]; const id = ++state.fragId; const t = (r==='rare'?'Glitch':'Fragment') + ' #' + id; const frag = {id,title:t,rarity:r,type:randomChoice(['text','image','audio']),unlocked:false,arrivedAt:Date.now(),decryptAvailableAt:Date.now() + (6*3600*1000)}; state.fragments.push(frag); save(); renderFragments(); $('latestFrag').innerText = frag.title + ' (' + frag.type + ')'; log('Scan found: ' + frag.title); return frag }
-    function randomChoice(a){ return a[Math.floor(Math.random()*a.length) } }
+    // ====== Render UI ======
+    const el = id=>document.getElementById(id);
+    function renderStats(){ el('points').innerText = state.points; el('gold').innerText = state.gold; el('moves').innerText = state.moves; el('influence').innerText = state.influence; el('tradeGold').innerText = state.gold; el('grain').innerText = state.grain; el('tradePoints').innerText = state.points; }
 
-    // ====== UI Init ======
-    setEcho(state.echoPoints); setSignal(state.signal); $('eventBar').style.width = state.eventProgress + '%'; $('username').innerText = state.username; $('displayName').innerText = state.username==='Guest'?'Recruit':state.username; renderFragments();
+    function renderBoard(){
+      const board = el('board'); board.innerHTML = '';
+      state.board.forEach(tile=>{
+        const card = document.createElement('div'); card.className='tile';
+        card.innerHTML = `<div>
+            <h3>${tile.name} <small style="font-size:11px;color:var(--muted);">(Lv ${tile.level})</small></h3>
+            <p class="desc">${tile.desc}</p>
+          </div>
+          <div class="tile-foot">
+            <div style="font-size:13px;color:var(--gold);">Reward: ${tile.type==='fort'? 'Banners':'Gold'}</div>
+            <div>
+              <button class="btn" data-action="inspect" data-id="${tile.id}">Inspect</button>
+              <button class="btn primary" data-action="act" data-id="${tile.id}">Use Move</button>
+            </div>
+          </div>`;
+        board.appendChild(card);
+      });
+    }
 
-    // ====== Cooldown UI ======
-    function isScanReady(){ return Date.now() >= (state.scanCooldownUntil || 0) }
-    function setScanCooldown(seconds){ state.scanCooldownUntil = Date.now() + seconds*1000; save(); updateCooldownUI(); }
-    function updateCooldownUI(){ if(isScanReady()){ $('scanBtn').disabled = false; $('scanCooldown').innerText = 'Ready'; $('scanCore').innerText = 'SCAN'; } else { const s = Math.ceil((state.scanCooldownUntil - Date.now())/1000); const mins = Math.floor(s/60); const secs = s%60; $('scanCore').innerText = mins+':' + String(secs).padStart(2,'0'); $('scanCooldown').innerText = 'Cooldown: ' + mins + 'm ' + secs + 's'; $('scanBtn').disabled = true } }
-    setInterval(updateCooldownUI,1000);
+    function renderLeaders(){
+      const list = el('leaders'); list.innerHTML='';
+      state.leaders.sort((a,b)=>b.pts-a.pts).slice(0,10).forEach(l=>{
+        const li = document.createElement('li'); li.innerHTML = `<strong style="color:var(--gold)">${l.name}</strong> — <span style="color:var(--muted)">${l.pts} FP</span>`;
+        list.appendChild(li);
+      });
+    }
 
-    // ====== Scan (main action) ======
-    document.getElementById('scanBtn').addEventListener('click', async ()=>{
-      if(!isScanReady()) return;
-      // UI micro animation
-      ripple(document.getElementById('scanner'));
-
-      if(API_BASE){
-        // production: call backend
-        try{ const res = await fetch(API_BASE + '/api/scan',{method:'POST',credentials:'include'}); const j = await res.json(); handleScanResult(j); }
-        catch(e){ log('Server scan failed — falling back to local mode'); const frag = genFragment(); state.echoPoints += 10; setEcho(state.echoPoints); setScanCooldown(demoCooldown); }
+    // ====== Core Actions ======
+    function makeMove(tileId){
+      if(state.moves<=0){ toast('No moves left — watch a patron ad to gain more.'); return; }
+      state.moves -= 1;
+      const tile = state.board.find(t=>t.id==tileId);
+      // random outcome influenced by tile type & influence
+      const roll = Math.random() + state.influence*0.02;
+      if(roll > 0.6){
+        // success
+        const goldGain = tile.type==='fort' ? 40 + tile.level*10 : 20 + tile.level*8;
+        const fpGain = Math.round((10 + tile.level*3) * (1 + state.influence*0.05));
+        state.gold += goldGain; state.points += fpGain;
+        // small chance to gain grain
+        if(Math.random() > 0.8) state.grain += 5;
+        toast(`Move success: +${goldGain} Gold, +${fpGain} FP`);
       } else {
-        // local demo
-        const frag = genFragment(); state.echoPoints += 10; setEcho(state.echoPoints);
-        const antennaBonus = (state.rig.antenna||0)*60;
-        setScanCooldown(Math.max(10, demoCooldown - antennaBonus));
+        // failure
+        const loss = Math.round(5 + tile.level*2);
+        state.gold = Math.max(0, state.gold - loss);
+        toast(`Move failed — you lost ${loss} Gold`);
       }
-    });
-
-    function handleScanResult(payload){ if(payload.fragment) state.fragments.push(payload.fragment); if(payload.points) state.echoPoints += payload.points; setEcho(state.echoPoints); if(payload.cooldown) setScanCooldown(payload.cooldown); renderFragments(); save(); log('Scan processed'); }
-
-    // ====== Decrypt flow (modal) ======
-    document.body.addEventListener('click', (e)=>{
-      const btn = e.target.closest('button[data-id]'); if(btn){ const id = Number(btn.getAttribute('data-id')); openDecryptModal(id); }
-    });
-
-    function openDecryptModal(id){ const f = state.fragments.find(x=>x.id===id); if(!f) return; $('modalBody').innerHTML = `<div class='small'>${escape(f.title)} • ${f.type} • ${f.rarity}</div><div style='margin-top:12px' id='decryptArea'></div>`; $('modal').style.display='flex'; updateDecryptArea(f); }
-    $('modalClose').addEventListener('click', ()=>{$('modal').style.display='none'});
-    $('modalDecrypt').addEventListener('click', async ()=>{
-      const content = $('modalBody').firstElementChild.innerText; if(confirm('Watch a 30s ad to decrypt instantly?')){ await simulateAd('Decrypt Instant'); // mark unlocked
-        const id = getModalFragmentId(); const f = state.fragments.find(x=>x.id===id); if(f){ f.unlocked = true; save(); renderFragments(); $('modal').style.display='none'; revealFragment(f); log('Fragment decrypted: ' + f.title) }
-      }
-    });
-
-    function getModalFragmentId(){ // naive: parse title
-      const t = $('modalBody').innerText; const m = t.match(/#(\d+)/); return m?Number(m[1]):null }
-
-    function updateDecryptArea(f){ const area = $('decryptArea'); area.innerHTML=''; if(f.unlocked){ area.innerHTML = '<div class="small">Already decrypted. Play fragment.</div><div style="margin-top:8px"><button class="primary" onclick="playFragment('+f.id+')">Play / View</button></div>'; return; }
-      const now = Date.now(); if(now >= f.decryptAvailableAt){ area.innerHTML = '<div class="small">Ready to decrypt for free (wait time passed)</div><div style="margin-top:8px"><button class="primary" onclick="instantDecrypt('+f.id+')">Decrypt</button></div>'; } else { const s = Math.ceil((f.decryptAvailableAt - now)/1000); const hrs = Math.floor(s/3600); const mins = Math.floor((s%3600)/60); area.innerHTML = `<div class='small'>Free decrypt in ${hrs}h ${mins}m</div><div style='margin-top:8px'><button class='primary' onclick='instantDecryptWithAd(${f.id})'>Decrypt Now (Watch Ad)</button></div>` } }
-
-    function instantDecrypt(id){ const f = state.fragments.find(x=>x.id===id); if(!f) return; f.unlocked = true; save(); renderFragments(); $('modal').style.display='none'; revealFragment(f); }
-    async function instantDecryptWithAd(id){ if(await simulateAd('Decrypt Instant')){ instantDecrypt(id); } }
-
-    // ====== Reveal (glitch animation + content) ======
-    function revealFragment(f){ // show a full-screen reveal with glitch
-      const reveal = document.createElement('div'); reveal.className='modal'; reveal.style.background='linear-gradient(90deg, rgba(148,0,255,0.08), rgba(0,255,231,0.05))'; const inner = document.createElement('div'); inner.className='frame'; inner.style.textAlign='center'; inner.innerHTML = `<h3>Fragment Decrypted</h3><div class='small' style='margin-top:8px'>${escape(f.title)} • ${f.rarity}</div><div id='revealContent' style='margin-top:18px;min-height:120px;display:flex;align-items:center;justify-content:center;'></div><div style='margin-top:16px'><button class='primary' id='closeReveal'>Close</button></div>`; reveal.appendChild(inner); document.body.appendChild(reveal);
-      const content = inner.querySelector('#revealContent'); // simulate different types
-      if(f.type === 'text'){ glitchTypewriter(content, 'The signal whispers: "...we are echoes..."'); }
-      else if(f.type === 'audio'){ const b = document.createElement('div'); b.innerHTML = '<div class="small">[Audio Log]</div><button class="primary" id="playFrag">Play</button>'; content.appendChild(b); b.querySelector('#playFrag').addEventListener('click', ()=>{ playBeepSequence() }); }
-      else if(f.type === 'image'){ const img = document.createElement('div'); img.style.width='220px'; img.style.height='120px'; img.style.background='linear-gradient(135deg,#0f1724,#08121a)'; img.style.border='1px solid rgba(255,255,255,0.03)'; img.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:12px">Glitch image fragment</div>'; content.appendChild(img); }
-      inner.querySelector('#closeReveal').addEventListener('click', ()=>{ reveal.remove() });
+      // slight chance to level tile
+      if(Math.random()>0.85){ tile.level += 1; tile.desc = tile.desc + ' (prospered)'; }
+      save(); renderAll();
     }
 
-    function glitchTypewriter(node, text){ node.innerHTML=''; let i=0; const iv = setInterval(()=>{ node.innerHTML += text[i++]; if(i>=text.length){ clearInterval(iv); } }, 40); }
+    function simulateAd(){
+      // emulate ad watch flow — reward feel: royal patronage
+      toast('Royal Patronage activated — receiving gifts...');
+      // reward bundle
+      const gold = 80 + Math.floor(Math.random()*60);
+      const fp = 15 + Math.floor(Math.random()*10);
+      state.gold += gold; state.points += fp; state.moves += 1;
+      save(); renderAll();
+    }
 
-    // ====== Play simple audio (synth) ======
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playBeepSequence(){ const now = audioCtx.currentTime; for(let i=0;i<6;i++){ const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type='sine'; o.frequency.value = 220 + i*40; g.gain.setValueAtTime(0.0001, now + i*0.15); g.gain.exponentialRampToValueAtTime(0.2, now + i*0.15 + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, now + i*0.15 + 0.12); o.connect(g); g.connect(audioCtx.destination); o.start(now + i*0.15); o.stop(now + i*0.15 + 0.13); } }
+    function openTrade(){ el('tradePanel').style.display='block'; }
+    function closeTrade(){ el('tradePanel').style.display='none'; }
 
-    function playFragment(id){ const f = state.fragments.find(x=>x.id===id); if(!f) return; revealFragment(f); }
+    function executeTrade(){
+      const action = el('tradeAction').value; const amt = Number(el('tradeAmount').value);
+      if(!amt || amt<=0){ toast('Enter a valid amount'); return; }
+      if(action==='gold->fp'){
+        const needed = amt * 100; if(state.gold < needed){ toast('Not enough gold'); return; }
+        state.gold -= needed; const gain = amt * 10; state.points += gain; toast(`${gain} FP acquired`);
+      } else if(action==='fp->influence'){
+        const needed = amt * 50; if(state.points < needed){ toast('Not enough Fortune Points'); return; }
+        state.points -= needed; state.influence += amt; toast(`Influence +${amt}`);
+      } else if(action==='grain->gold'){
+        const needed = amt * 10; if(state.grain < needed){ toast('Not enough grain'); return; }
+        state.grain -= needed; const gain = amt * 50; state.gold += gain; toast(`${gain} Gold acquired`);
+      }
+      save(); renderAll();
+    }
 
-    // ====== Ad simulation (replace with real ad integration) ======
-    function simulateAd(purpose){ return new Promise((resolve)=>{
-      const ok = confirm(purpose + '\n\nSimulate watching a 30s rewarded ad now? (OK = watched)'); if(ok){ // reward
-          state.echoPoints += (purpose.includes('Decrypt')?50:25); setEcho(state.echoPoints); save(); toast('Ad watched — reward granted'); resolve(true);
-      } else { toast('Ad skipped'); resolve(false); }
-    }) }
+    function challengeRival(){
+      // lightweight turn-based chess-like duel
+      const rivalPower = 50 + Math.floor(Math.random()*120);
+      const yourPower = 40 + Math.floor(state.influence*15 + Math.random()*80);
+      const fpStake = 30; if(state.points < 20){ toast('Not enough FP to stake for a duel (20 FP minimum)'); return; }
+      state.points = Math.max(0, state.points - fpStake);
+      if(yourPower > rivalPower){
+        const rewardFP = 60 + Math.floor(Math.random()*40);
+        const rewardGold = 120 + Math.floor(Math.random()*80);
+        state.points += rewardFP; state.gold += rewardGold;
+        toast(`Victory! +${rewardFP} FP, +${rewardGold} Gold`);
+        // update leaderboard — you gain standing
+        const you = state.leaders.find(l=>l.name==='You'); if(you) you.pts += rewardFP; else state.leaders.push({name:'You', pts:rewardFP});
+      } else {
+        toast('You were outmaneuvered — retreat and rebuild.');
+      }
+      save(); renderAll();
+    }
 
-    // ====== Boost, Collect, Event ======
-    $('boostBtn').addEventListener('click', async ()=>{ const ok = await simulateAd('Boost Signal (Ad)'); if(ok){ setSignal(state.signal + 6); state.eventProgress = Math.min(100, state.eventProgress + 0.5); $('eventBar').style.width = state.eventProgress + '%'; save(); log('You boosted the signal') } });
-    $('eventBoost').addEventListener('click', async ()=>{ const ok = await simulateAd('Event Boost x5'); if(ok){ state.eventProgress = Math.min(100, state.eventProgress + 5); $('eventBar').style.width = state.eventProgress + '%'; save(); log('Event contribution +5%') } });
+    // ====== Event listeners & wiring ======
+    document.addEventListener('click', (e)=>{
+      const act = e.target.getAttribute('data-action'); const id = e.target.getAttribute('data-id');
+      if(act==='act') makeMove(Number(id));
+      if(act==='inspect') {
+        const tile = state.board.find(t=>t.id==id); toast(`${tile.name}: Lv ${tile.level} — ${tile.desc}`);
+      }
+    });
 
-    $('collectBtn').addEventListener('click', ()=>{ const unlocked = state.fragments.filter(f=>f.unlocked); if(unlocked.length<5) return alert('Collect 5 decrypted fragments to form a set'); const sets = Math.floor(unlocked.length/5); const reward = sets * 500; // consume
-      let toRemove = sets*5; state.fragments = state.fragments.filter(f=>{ if(f.unlocked && toRemove>0){ toRemove--; return false } return true }); state.echoPoints += reward; setEcho(state.echoPoints); renderFragments(); save(); log('Collected sets for ' + reward + ' EP') });
+    el('scanBtn').addEventListener('click', ()=>{
+      // pick a random tile to act on for simplicity
+      const tid = state.board[Math.floor(Math.random()*state.board.length)].id; makeMove(tid);
+    });
+    el('adBtn').addEventListener('click', ()=> simulateAd());
+    el('tradeBtn').addEventListener('click', ()=> openTrade());
+    el('closeTrade').addEventListener('click', ()=> closeTrade());
+    el('executeTrade').addEventListener('click', ()=> executeTrade());
+    el('battleBtn').addEventListener('click', ()=> challengeRival());
 
-    // ====== Upgrades ======
-    document.querySelectorAll('[data-upg]').forEach(btn=>btn.addEventListener('click',()=>{ const t = btn.getAttribute('data-upg'); const cost = t==='antenna'?1000:t==='filter'?1500:2000; if(state.echoPoints < cost) return alert('Not enough Echo Points'); state.echoPoints -= cost; setEcho(state.echoPoints); if(t==='antenna') state.rig.antenna++; if(t==='filter') state.rig.filter++; if(t==='firewall') state.rig.firewallUntil = Date.now()+24*3600*1000; $('rigLevel').innerText = 1 + ((state.rig.antenna||0)+(state.rig.filter||0)); save(); log('Purchased ' + t); }));
+    // Quick restore / reset for testing (double-click logo to reset)
+    document.querySelector('.mark').addEventListener('dblclick', ()=>{ if(confirm('Reset progress?')){ localStorage.removeItem('empire_state'); state = load(); save(); renderAll(); }});
 
-    // ====== Modal decrypt buttons (top) ======
-    $('decryptBtn').addEventListener('click', ()=>{ // decrypt earliest locked fragment
-      const locked = state.fragments.find(f=>!f.unlocked); if(!locked) return alert('No locked fragments'); openDecryptModal(locked.id); });
+    // initial render
+    function renderAll(){ renderStats(); renderBoard(); renderLeaders(); }
+    renderAll(); save();
 
-    // ====== Archive open ======
-    $('archiveBtn').addEventListener('click', ()=>{ document.querySelector('aside.right .card:nth-child(3)').scrollIntoView({behavior:'smooth'}) });
-
-    // ====== Utility: ripple and microinteractions ======
-    function ripple(el){ el.animate([{transform:'scale(1)'},{transform:'scale(0.98)'},{transform:'scale(1)'}],{duration:420}); }
-
-    // ====== Scan button also triggers scanner element ======
-    document.getElementById('scanner').addEventListener('click', ()=>{ document.getElementById('scanBtn').click() });
-
-    // ====== Simple fragment generation on load for demo ======
-    if(state.fragments.length===0){ for(let i=0;i<2;i++){ const f = genFragment(); // set faster decrypt availability for demo
-        f.decryptAvailableAt = Date.now() + (i+1)*15*1000; } save(); renderFragments(); }
-
-    // ====== Periodic decay and autosave ======
-    setInterval(()=>{ setSignal(Math.max(0,state.signal - 0.02)); save(); },60*1000);
-    setInterval(save,10000);
-
-    // ====== Small helpers ======
-    function setEcho(n){ state.echoPoints = n; $('echoPoints').innerText = 'Echo Points: ' + state.echoPoints }
-
-    // ====== Accessibility & Telegram WebApp hooks (light) ======
-    if(window.Telegram && window.Telegram.WebApp){ try{ const tg = window.Telegram.WebApp; tg.ready(); if(tg.initDataUnsafe && tg.initDataUnsafe.user){ const u = tg.initDataUnsafe.user; state.username = (u.first_name || 'User') + (u.username?(' — @'+u.username):''); $('username').innerText = state.username; $('displayName').innerText = u.first_name || 'Recruit'; $('avatar').innerText = (u.first_name||'R')[0]; save(); } $('scanBtn').innerText = 'Scan'; $('scanBtn').disabled=false; }catch(e){ console.warn(e) } }
-
-    // ====== Small synth UI sound (on click) ======
-    function clickTone(){ const o = audioCtx.createOscillator(); const g = audioCtx.createGain(); o.type='triangle'; o.frequency.value=420; g.gain.value=0.0001; g.gain.exponentialRampToValueAtTime(0.12,audioCtx.currentTime+0.01); g.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+0.25); o.connect(g); g.connect(audioCtx.destination); o.start(); o.stop(audioCtx.currentTime+0.26); }
-    ['scanBtn','boostBtn','eventBoost','collectBtn'].forEach(id=>{ const el = $(id); if(el) el.addEventListener('click', ()=>{ try{ clickTone() }catch(e){} }) });
-
+    // ====== Notes for developers ======
+    /*
+      - This is a single-file prototype suitable for Telegram Mini App wrapped in WebView.
+      - Replace simulateAd() with a real rewardedAd flow from your ad provider.
+      - Hook Telegram WebApp initialization (e.g., Telegram.WebApp.init()) and use user data for auth.
+      - Persist server-side for multiplayer/leaderboards and token economics (FP -> $CX) conversion.
+      - Consider adding animations, sound, and premium purchases (cosmetic banners) later.
+    */
   </script></body>
 </html>
