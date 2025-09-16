@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chimera X: Echoes of the Signal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0e17 0%, #1a1f2e 100%);
+            color: #00ff9d;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            border: 1px solid #00ff9d;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 157, 0.2);
+            background: rgba(10, 14, 23, 0.95);
+            position: relative;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00ff9d, transparent);
+            animation: scanline 3s linear infinite;
+        }
+        
+        @keyframes scanline {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 255, 157, 0.3);
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px #00ff9d;
+            background: linear-gradient(90deg, #00ff9d, #009dff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            color: #7e8c9a;
+            font-size: 14px;
+        }
+        
+        .signal-meter {
+            height: 25px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid #00ff9d;
+        }
+        
+        .signal-fill {
+            height: 100%;
+            width: 65%;
+            background: linear-gradient(90deg, #00ff9d, #009dff);
+            border-radius: 12px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .signal-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+            animation: shine 2s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .signal-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            font-size: 12px;
+            color: #7e8c9a;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-box {
+            background: rgba(0, 40, 30, 0.3);
+            border: 1px solid #00ff9d;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #00ff9d;
+            text-shadow: 0 0 8px rgba(0, 255, 157, 0.5);
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #7e8c9a;
+        }
+        
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            background: transparent;
+            color: #00ff9d;
+            border: 1px solid #00ff9d;
+            border-radius: 6px;
+            padding: 12px;
+            cursor: pointer;
+            font-family: inherit;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn:hover {
+            background: rgba(0, 255, 157, 0.1);
+            box-shadow: 0 0 15px rgba(0, 255, 157, 0.5);
+        }
+        
+        .btn-primary {
+            background: rgba(0, 255, 157, 0.2);
+            font-weight: bold;
+        }
+        
+        .btn-ad {
+            background: rgba(255, 204, 0, 0.15);
+            border-color: #ffcc00;
+            color: #ffcc00;
+        }
+        
+        .btn-ad:hover {
+            background: rgba(255, 204, 0, 0.25);
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.5);
+        }
+        
+        .fragments {
+            margin: 20px 0;
+        }
+        
+        .fragment {
+            background: rgba(0, 61, 41, 0.3);
+            border: 1px solid #00ff9d;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            position: relative;
+        }
+        
+        .fragment.rare {
+            border-color: #009dff;
+            background: rgba(0, 61, 125, 0.3);
+        }
+        
+        .fragment.legendary {
+            border-color: #bd00ff;
+            background: rgba(107, 0, 125, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 5px #bd00ff; }
+            50% { box-shadow: 0 0 20px #bd00ff; }
+            100% { box-shadow: 0 0 5px #bd00ff; }
+        }
+        
+        .fragment-text {
+            font-style: italic;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        
+        .fragment-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #7e8c9a;
+        }
+        
+        .cooldown {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #7e8c9a;
+        }
+        
+        .cooldown.active {
+            color: #ff3366;
+        }
+        
+        .tab-container {
+            margin: 20px 0;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(0, 255, 157, 0.3);
+            margin-bottom: 15px;
+        }
+        
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.3s ease;
+        }
+        
+        .tab.active {
+            opacity: 1;
+            border-bottom: 2px solid #00ff9d;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .event-banner {
+            background: linear-gradient(90deg, #009dff, #bd00ff);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            animation: eventPulse 3s infinite;
+        }
+        
+        @keyframes eventPulse {
+            0% { box-shadow: 0 0 10px #009dff; }
+            50% { box-shadow: 0 0 20px #bd00ff; }
+            100% { box-shadow: 0 0 10px #009dff; }
+        }
+        
+        .event-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+        
+        .event-desc {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            width: 30%;
+            background: linear-gradient(90deg, #009dff, #bd00ff);
+            border-radius: 5px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #7e8c9a;
+            border-top: 1px solid rgba(0, 255, 157, 0.3);
+            padding-top: 15px;
+        }
+        
+        .logo {
+            color: #00ff9d;
+            font-size: 20px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+        }
+        
+        .glow {
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CHIMERA X</h1>
+            <div class="subtitle">Echoes of the Signal</div>
+        </div>
+        
+        <div class="signal-meter">
+            <div class="signal-fill" id="signalStrength"></div>
+        </div>
+        <div class="signal-labels">
+            <span>WEAK</span>
+            <span>STRONG</span>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('game')">Decoder</div>
+            <div class="tab" onclick="switchTab('profile')">Profile</div>
+            <div class="tab" onclick="switchTab('alliance')">Alliance</div>
+        </div>
+        
+        <div class="tab-content active" id="gameTab">
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">Echo Points</div>
+                    <div class="stat-value" id="echoPoints">1,427</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Fragments</div>
+                    <div class="stat-value" id="fragmentCount">18/100</div>
+                </div>
+            </div>
+            
+            <div class="cooldown" id="cooldownTimer">
+                Scanner ready!
+            </div>
+            
+            <div class="actions">
+                <button class="btn btn-primary" onclick="scan()">
+                    <i class="fas fa-satellite-dish"></i> Scan Frequency
+                </button>
+                <button class="btn btn-ad" onclick="watchAd()">
+                    <i class="fas fa-tv"></i> Boost Signal (Watch Ad)
+                </button>
+            </div>
+            
+            <div class="event-banner">
+                <div class="event-title">STATIC STORM INBOUND</div>
+                <div class="event-desc">Boost the signal 50,000 times to deflect</div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="event-desc">Community Progress: 30%</div>
+            </div>
+            
+            <div class="fragments">
+                <div class="fragment">
+                    <div class="fragment-text">
+                        "The signal is weak... but I can hear... voices... calling from beyond the void."
+                    </div>
+                    <div class="fragment-meta">
+                        <span>Common Fragment</span>
+                        <span>2h ago</span>
+                    </div>
+                </div>
+                
+                <div class="fragment rare">
+                    <div class="fragment-text">
+                        "WARNING: The 'Static' is not noise, it's a conscious entity! It knows we're listening..."
+                    </div>
+                    <div class="fragment-meta">
+                        <span>Rare Fragment</span>
+                        <span>12h ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="profileTab">
+            <div class="stat-box">
+                <div class="stat-label">Decoder Tier</div>
+                <div class="stat-value">Mark II</div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">Scans</div>
+                    <div class="stat-value">147</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Ads Watched</div>
+                    <div class="stat-value">23</div>
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button class="btn">
+                    <i class="fas fa-bolt"></i> Upgrade Decoder
+                </button>
+                <button class="btn">
+                    <i class="fas fa-users"></i> Join Alliance
+                </button>
+            </div>
+            
+            <div class="fragment">
+                <div class="fragment-text">
+                    Next tier upgrade at 200 scans. Unlocks reduced cooldown and increased rare fragment chance.
+                </div>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="allianceTab">
+            <div class="stat-box">
+                <div class="stat-label">Alliance</div>
+                <div class="stat-value">Signal Seekers</div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-label">Members</div>
+                    <div class="stat-value">8/10</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Rank</div>
+                    <div class="stat-value">#42</div>
+                </div>
+            </div>
+            
+            <div class="fragment">
+                <div class="fragment-text">
+                    <i class="fas fa-exclamation-triangle"></i> One member is corrupted! Identify the saboteur in your ranks.
+                </div>
+            </div>
+            
+            <div class="actions">
+                <button class="btn">
+                    <i class="fas fa-user-friends"></i> View Members
+                </button>
+                <button class="btn">
+                    <i class="fas fa-comment"></i> Alliance Chat
+                </button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="logo">CHIMERA X</div>
+            <div>Echo Points convert to $CX tokens at TGE</div>
+            <div>v1.0 | © 2023</div>
+        </div>
+    </div>
+
+    <script>
+        // Game state
+        const gameState = {
+            echoPoints: 1427,
+            fragments: 18,
+            signalStrength: 65,
+            lastScan: Date.now() - 120000, // 2 minutes ago
+            scanCooldown: 120000, // 2 minutes in milliseconds
+            corrupted: false
+        };
+        
+        // Fragment database
+        const fragments = {
+            common: [
+                "The signal is weak... but I can hear... voices... calling from beyond the void.",
+                "Log entry 17: The dimensional barrier is thinner here. We can almost reach through.",
+                "[STATIC] ...is anyone out there? [STATIC]",
+                "We thought we were pioneers. We were wrong.",
+                "The air hums with energy when the signal peaks."
+            ],
+            rare: [
+                "WARNING: The 'Static' is not noise, it's a conscious entity! It knows we're listening.",
+                "The key is in the prime frequency, 4.2MHz... they hate that.",
+                "I've seen our world from the other side. It's... empty. A hollow echo.",
+                "The artifacts we've recovered don't obey our laws of physics."
+            ],
+            legendary: [
+                "They're not trying to communicate. They're trying to escape. And we're letting them.",
+                "The Chimera Project was never about communication. It was about domination.",
+                "I've decoded the true message: 'The gate opens when the twin stars align.'"
+            ]
+        };
+        
+        // Initialize the game
+        function initGame() {
+            updateUI();
+            startCooldownTimer();
+        }
+        
+        // Update all UI elements
+        function updateUI() {
+            document.getElementById('echoPoints').textContent = gameState.echoPoints.toLocaleString();
+            document.getElementById('fragmentCount').textContent = `${gameState.fragments}/100`;
+            document.getElementById('signalStrength').style.width = `${gameState.signalStrength}%`;
+        }
+        
+        // Start the cooldown timer
+        function startCooldownTimer() {
+            const cooldownElement = document.getElementById('cooldownTimer');
+            const timeSinceLastScan = Date.now() - gameState.lastScan;
+            const timeLeft = gameState.scanCooldown - timeSinceLastScan;
+            
+            if (timeLeft > 0) {
+                cooldownElement.classList.add('active');
+                const secondsLeft = Math.ceil(timeLeft / 1000);
+                cooldownElement.textContent = `Scanner cooling down: ${secondsLeft}s`;
+                
+                // Update every second
+                const countdown = setInterval(() => {
+                    const newTimeLeft = gameState.scanCooldown - (Date.now() - gameState.lastScan);
+                    if (newTimeLeft <= 0) {
+                        clearInterval(countdown);
+                        cooldownElement.classList.remove('active');
+                        cooldownElement.textContent = 'Scanner ready!';
+                    } else {
+                        const secondsLeft = Math.ceil(newTimeLeft / 1000);
+                        cooldownElement.textContent = `Scanner cooling down: ${secondsLeft}s`;
+                    }
+                }, 1000);
+            } else {
+                cooldownElement.classList.remove('active');
+                cooldownElement.textContent = 'Scanner ready!';
+            }
+        }
+        
+        // Perform a scan
+        function scan() {
+            const timeSinceLastScan = Date.now() - gameState.lastScan;
+            
+            if (timeSinceLastScan >= gameState.scanCooldown) {
+                // Calculate rewards
+                const pointsEarned = 10 + Math.floor(Math.random() * 10);
+                const foundFragment = Math.random() < 0.3;
+                
+                // Update game state
+                gameState.lastScan = Date.now();
+                gameState.echoPoints += pointsEarned;
+                
+                if (foundFragment) {
+                    gameState.fragments++;
+                    
+                    // Add to fragment list (in a real game, this would be more sophisticated)
+                    const fragmentsContainer = document.querySelector('.fragments');
+                    const newFragment = document.createElement('div');
+                    
+                    // Determine fragment rarity
+                    let fragmentText, fragmentClass;
+                    const rarityRoll = Math.random();
+                    
+                    if (rarityRoll < 0.7) {
+                        fragmentText = fragments.common[Math.floor(Math.random() * fragments.common.length)];
+                        fragmentClass = '';
+                    } else if (rarityRoll < 0.9) {
+                        fragmentText = fragments.rare[Math.floor(Math.random() * fragments.rare.length)];
+                        fragmentClass = 'rare';
+                    } else {
+                        fragmentText = fragments.legendary[Math.floor(Math.random() * fragments.legendary.length)];
+                        fragmentClass = 'legendary';
+                    }
+                    
+                    newFragment.className = `fragment ${fragmentClass}`;
+                    newFragment.innerHTML = `
+                        <div class="fragment-text">${fragmentText}</div>
+                        <div class="fragment-meta">
+                            <span>${fragmentClass === 'rare' ? 'Rare' : fragmentClass === 'legendary' ? 'Legendary' : 'Common'} Fragment</span>
+                            <span>Just now</span>
+                        </div>
+                    `;
+                    
+                    fragmentsContainer.prepend(newFragment);
+                }
+                
+                // Update UI
+                updateUI();
+                startCooldownTimer();
+                
+                // Show notification
+                showNotification(`Scan complete! +${pointsEarned} Echo Points${foundFragment ? ' and a Fragment found!' : ''}`);
+            } else {
+                showNotification('Scanner is still cooling down!');
+            }
+        }
+        
+        // Watch an ad for rewards
+        function watchAd() {
+            // In a real game, this would integrate with an ad SDK
+            // For this demo, we'll simulate an ad experience
+            
+            showNotification('Playing ad...', 2000);
+            
+            // After a delay, give rewards
+            setTimeout(() => {
+                const pointsEarned = 25;
+                gameState.echoPoints += pointsEarned;
+                gameState.signalStrength = Math.min(100, gameState.signalStrength + 5);
+                
+                updateUI();
+                showNotification(`Ad complete! +${pointsEarned} Echo Points and +5% Signal Strength`);
+            }, 3000);
+        }
+        
+        // Switch between tabs
+        function switchTab(tabName) {
+            // Deactivate all tabs and contents
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Activate selected tab and content
+            document.querySelector(`.tab:nth-child(${tabName === 'game' ? 1 : tabName === 'profile' ? 2 : 3})`).classList.add('active');
+            document.getElementById(`${tabName}Tab`).classList.add('active');
+        }
+        
+        // Show a notification
+        function showNotification(message, duration = 3000) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.bottom = '20px';
+            notification.style.left = '50%';
+            notification.style.transform = 'translateX(-50%)';
+            notification.style.backgroundColor = 'rgba(0, 40, 30, 0.9)';
+            notification.style.color = '#00ff9d';
+            notification.style.padding = '10px 20px';
+            notification.style.borderRadius = '6px';
+            notification.style.border = '1px solid #00ff9d';
+            notification.style.zIndex = '1000';
+            notification.style.boxShadow = '0 0 15px rgba(0, 255, 157, 0.5)';
+            
+            document.body.appendChild(notification);
+            
+            // Remove after duration
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s';
+                setTimeout(() => document.body.removeChild(notification), 500);
+            }, duration);
+        }
+        
+        // Initialize the game when page loads
+        window.onload = initGame;
+    </script>
+</body>
+</html>
