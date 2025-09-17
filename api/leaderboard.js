@@ -1,9 +1,16 @@
-export default function handler(req, res) {
-  globalThis.db = globalThis.db || {};
-  const leaderboard = Object.entries(globalThis.db)
-    .map(([id, state]) => ({ id, gp: state.gp || 0 }))
-    .sort((a, b) => b.gp - a.gp)
-    .slice(0, 10);
+import supabase from './supabaseClient';
 
-  res.status(200).json({ leaderboard });
+export default async function handler(req, res) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const { data, error } = await supabase
+    .from('players')
+    .select('telegram_id, username, gp')
+    .order('gp', { ascending: false })
+    .limit(100);
+
+  if (error) return res.status(400).json({ error: error.message });
+  res.status(200).json({ leaderboard: data });
 }
