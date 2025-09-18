@@ -7,14 +7,23 @@ export default async function handler(req, res) {
 
   const { telegram_id, username, energy, shards, gp } = req.body;
 
-  const { data, error } = await supabase
-    .from('players')
-    .upsert(
-      { telegram_id, username, energy, shards, gp, updated_at: new Date() },
-      { onConflict: 'telegram_id' }
-    )
-    .select();
+  try {
+    const { data, error } = await supabase
+      .from('players')
+      .upsert(
+        { telegram_id, username, energy, shards, gp, updated_at: new Date() },
+        { onConflict: 'telegram_id' }
+      )
+      .select();
 
-  if (error) return res.status(400).json({ error: error.message });
-  res.status(200).json({ success: true, player: data[0] });
+    if (error) {
+      console.error("Supabase error:", error.message);
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.status(200).json({ success: true, player: data[0] });
+  } catch (err) {
+    console.error("Server error:", err);
+    res.status(500).json({ error: 'Unexpected server error' });
+  }
 }
