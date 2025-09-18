@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient.js';
+import supabase from './supabaseClient.js';
 
 export default async function handler(req, res) {
   // CORS headers
@@ -119,3 +119,4 @@ export default async function handler(req, res) {
     return res.status(200).json(fallbackData);
   }
 }
+
