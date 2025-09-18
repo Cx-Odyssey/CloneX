@@ -7,12 +7,21 @@ export default async function handler(req, res) {
 
   const { telegram_id } = req.query;
 
-  const { data, error } = await supabase
-    .from('players')
-    .select('*')
-    .eq('telegram_id', telegram_id)
-    .single();
+  try {
+    const { data, error } = await supabase
+      .from('players')
+      .select('*')
+      .eq('telegram_id', telegram_id)
+      .single();
 
-  if (error) return res.status(400).json({ error: error.message });
-  res.status(200).json({ player: data });
+    if (error) {
+      console.error("Supabase error:", error.message);
+      return res.status(400).json({ error: error.message });
+    }
+
+    res.status(200).json({ player: data });
+  } catch (err) {
+    console.error("Server error:", err);
+    res.status(500).json({ error: 'Unexpected server error' });
+  }
 }
