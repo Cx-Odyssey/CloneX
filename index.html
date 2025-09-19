@@ -3,257 +3,725 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CX Odyssey - Debug Version</title>
+    <title>CX Odyssey: Rise of the Collectors</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <!-- Monetag Ad SDK -->
+    <script src='//libtl.com/sdk.js' data-zone='9891070' data-sdk='show_9891070'></script>
+    
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f0f23);
-            color: white;
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;800&display=swap');
+        
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary-gold: #FFD700;
+            --secondary-orange: #FF6B35;
+            --accent-purple: #7209B7;
+            --neon-blue: #00F5FF;
+            --deep-space: #0A0A0A;
+            --space-blue: #1A1A2E;
+            --cosmic-purple: #16213E;
+            --success-green: #00FF88;
+            --danger-red: #FF073A;
+        }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: radial-gradient(ellipse at center, var(--space-blue) 0%, var(--deep-space) 50%, #000 100%);
+            color: #ffffff;
+            overflow: hidden;
+            height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-opacity='0.05'%3E%3Cpolygon fill='%23fff' points='50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40'/%3E%3C/g%3E%3C/svg%3E") repeat;
+            opacity: 0.1;
+            animation: bgFloat 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Enhanced Starfield */
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        .star-small {
+            width: 1px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .star-medium {
+            width: 2px;
+            height: 2px;
+            background: var(--neon-blue);
+            box-shadow: 0 0 4px var(--neon-blue);
+        }
+
+        .star-large {
+            width: 3px;
+            height: 3px;
+            background: var(--primary-gold);
+            box-shadow: 0 0 6px var(--primary-gold);
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange));
+            border-radius: 50%;
+            animation: float 8s infinite linear;
+            opacity: 0.7;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .screen {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            display: none;
             padding: 20px;
-            min-height: 100vh;
+            overflow-y: auto;
+            padding-bottom: 80px;
+            backdrop-filter: blur(20px);
         }
-        
-        .debug-container {
-            max-width: 400px;
-            margin: 0 auto;
+
+        .screen.active {
+            display: flex;
+            flex-direction: column;
+            animation: screenSlide 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes screenSlide {
+            0% {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Premium Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .status {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            border: 1px solid #333;
-        }
-        
-        .success { background: rgba(0, 255, 0, 0.2); border-color: #0f0; }
-        .error { background: rgba(255, 0, 0, 0.2); border-color: #f00; }
-        .info { background: rgba(0, 255, 255, 0.2); border-color: #0ff; }
-        
-        button {
-            background: linear-gradient(135deg, #FFD700, #FF6B35);
-            border: none;
-            color: black;
-            padding: 15px 30px;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
             border-radius: 25px;
-            font-weight: bold;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            box-shadow: 
+                0 0 30px rgba(255, 215, 0, 0.3),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange), var(--accent-purple), var(--neon-blue));
+            border-radius: 25px;
+            z-index: -1;
+            animation: borderGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes borderGlow {
+            0% { filter: blur(2px) brightness(1); }
+            100% { filter: blur(4px) brightness(1.5); }
+        }
+
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange), var(--accent-purple));
+            background-size: 200% 200%;
+            animation: gradientShift 3s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .resources {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .resource {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
+            padding: 10px 15px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 
+                0 4px 15px rgba(255, 215, 0, 0.2),
+                inset 0 0 10px rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resource::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: resourceShimmer 3s infinite;
+        }
+
+        @keyframes resourceShimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .resource:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Enhanced Navigation */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(26, 26, 46, 0.95));
+            backdrop-filter: blur(20px);
+            border-top: 2px solid transparent;
+            background-clip: padding-box;
+            z-index: 50;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-bar::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-gold), var(--secondary-orange), var(--accent-purple), var(--neon-blue));
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 15px 8px;
+            text-align: center;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+            border: none;
             cursor: pointer;
-            margin: 10px 5px;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1), transparent);
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .nav-btn.active {
+            color: var(--primary-gold);
+            transform: scale(1.1);
+        }
+
+        .nav-btn.active::before {
+            opacity: 1;
+        }
+
+        .nav-btn:hover {
+            color: var(--primary-gold);
+            transform: translateY(-3px);
+        }
+
+        .nav-btn div:first-child {
+            font-size: 20px;
+            margin-bottom: 4px;
             transition: all 0.3s ease;
         }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+
+        .nav-btn:hover div:first-child {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 10px var(--primary-gold));
         }
-        
-        #gameArea {
-            display: none;
+
+        /* Premium Galaxy Map */
+        .galaxy-map {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .planet {
+            position: relative;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .planet::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            background: conic-gradient(
+                var(--primary-gold),
+                var(--secondary-orange),
+                var(--accent-purple),
+                var(--neon-blue),
+                var(--primary-gold)
+            );
+            animation: planetOrbit 6s linear infinite;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .planet:hover::before {
+            opacity: 0.8;
+        }
+
+        @keyframes planetOrbit {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .planet-1 {
+            background: radial-gradient(circle at 30% 30%, #FF6B35, #D84315, #8B2500);
+            box-shadow: 
+                0 0 40px rgba(255, 107, 53, 0.6),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .planet-2 {
+            background: radial-gradient(circle at 30% 30%, #2196F3, #1565C0, #0D47A1);
+            box-shadow: 
+                0 0 40px rgba(33, 150, 243, 0.6),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .planet-3 {
+            background: radial-gradient(circle at 30% 30%, #9C27B0, #6A1B9A, #4A148C);
+            box-shadow: 
+                0 0 40px rgba(156, 39, 176, 0.6),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .planet-4 {
+            background: radial-gradient(circle at 30% 30%, #4CAF50, #2E7D32, #1B5E20);
+            box-shadow: 
+                0 0 40px rgba(76, 175, 80, 0.6),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .planet-5 {
+            background: radial-gradient(circle at 30% 30%, #FFC107, #F57F17, #E65100);
+            box-shadow: 
+                0 0 40px rgba(255, 193, 7, 0.6),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .planet-6 {
+            background: radial-gradient(circle at 30% 30%, #E91E63, #AD1457, #880E4F);
+            box-shadow: 
+                0 0 40px rgba(233, 30, 99, 0.6),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .planet:hover {
+            transform: scale(1.15) translateZ(20px);
+            filter: brightness(1.3) saturate(1.2);
+        }
+
+        .planet:active {
+            transform: scale(0.95);
+        }
+
+        .planet-info {
+            position: relative;
+            z-index: 2;
             text-align: center;
-            padding: 20px;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
         }
-        
-        .resource {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 15px;
-            background: rgba(255, 215, 0, 0.2);
-            border-radius: 20px;
-            border: 1px solid #FFD700;
+
+        .planet-info div:first-child {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .planet-info div:last-child {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+
+        /* Premium Mining Interface */
+        .mining-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            padding: 10px;
+        }
+
+        .mining-area {
+            width: 280px;
+            height: 280px;
+            border-radius: 30px;
+            background: 
+                radial-gradient(circle at center, rgba(255, 215, 0, 0.15), transparent 50%),
+                linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 10px 40px rgba(255, 215, 0, 0.3),
+                inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .mining-area::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange), var(--accent-purple));
+            border-radius: 30px;
+            z-index: -1;
+            animation: miningGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes miningGlow {
+            0% { filter: blur(4px) brightness(1); }
+            100% { filter: blur(8px) brightness(1.5); }
+        }
+
+        .mining-area:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 
+                0 20px 60px rgba(255, 215, 0, 0.5),
+                inset 0 0 40px rgba(255, 255, 255, 0.2);
+        }
+
+        .mining-area:active {
+            transform: scale(0.98);
+        }
+
+        .mining-beam {
+            position: absolute;
+            width: 6px;
+            height: 80px;
+            background: linear-gradient(to bottom, 
+                var(--primary-gold), 
+                var(--secondary-orange), 
+                transparent);
+            box-shadow: 
+                0 0 20px var(--primary-gold),
+                0 0 40px rgba(255, 215, 0, 0.5);
+            animation: miningBeam 1.2s ease-in-out;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 3px;
+        }
+
+        @keyframes miningBeam {
+            0% { 
+                opacity: 0; 
+                height: 0; 
+                transform: translate(-50%, -50%) scale(0.5); 
+            }
+            30% { 
+                opacity: 1; 
+                height: 80px; 
+                transform: translate(-50%, -50%) scale(1); 
+            }
+            70% { 
+                opacity: 1; 
+                height: 80px; 
+                transform: translate(-50%, -50%) scale(1.1); 
+            }
+            100% { 
+                opacity: 0; 
+                height: 80px; 
+                transform: translate(-50%, -50%) scale(1); 
+            }
+        }
+
+        /* Energy Bar Enhancement */
+        .energy-bar {
+            width: 100%;
+            max-width: 320px;
+            height: 25px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(26, 26, 46, 0.6));
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 
+                0 4px 15px rgba(0, 0, 0, 0.3),
+                inset 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .energy-bar::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--secondary-orange), var(--primary-gold));
+            border-radius: 15px;
+            z-index: -1;
+        }
+
+        .energy-fill {
+            height: 100%;
+            background: linear-gradient(90deg, 
+                var(--secondary-orange), 
+                var(--primary-gold), 
+                var(--success-green));
+            transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.6),
+                inset 0 0 10px rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .energy-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            animation: energyPulse 2s infinite;
+        }
+
+        @keyframes energyPulse {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        /* Rest of the CSS and HTML continues... */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            border-radius: 30px;
+            color: var(--primary-gold);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 15px;
+            font-weight: 600;
+            min-width: 140px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 6px 20px rgba(0, 0, 0, 0.3),
+                inset 0 0 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .action-btn:hover {
+            color: #000;
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                0 12px 35px rgba(255, 215, 0, 0.4),
+                inset 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
     </style>
 </head>
 <body>
-    <div class="debug-container">
-        <h1 style="text-align: center; color: #FFD700;">CX Odyssey Debug</h1>
-        
-        <div id="debugInfo">
-            <div class="status info">
-                <strong>Initialization Status:</strong>
-                <div id="initStatus">Starting...</div>
-            </div>
-            
-            <div class="status info">
-                <strong>Telegram WebApp:</strong>
-                <div id="telegramStatus">Checking...</div>
-            </div>
-            
-            <div class="status info">
-                <strong>Backend Connection:</strong>
-                <div id="backendStatus">Testing...</div>
-            </div>
-            
-            <div class="status info">
-                <strong>Ads SDK:</strong>
-                <div id="adsStatus">Checking...</div>
-            </div>
-            
-            <div class="status info">
-                <strong>Console Errors:</strong>
-                <div id="errorStatus">None detected</div>
+    <div class="game-container">
+        <!-- Enhanced Starfield Background -->
+        <div class="stars" id="starfield"></div>
+
+        <!-- Loading Screen -->
+        <div class="screen active" id="loadingScreen">
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+                <div class="logo" style="font-size: 48px; margin-bottom: 30px;">CX ODYSSEY</div>
+                <div style="font-size: 20px; margin-bottom: 40px; opacity: 0.9;">Loading game...</div>
+                <div class="loading" style="display: inline-block; width: 30px; height: 30px; border: 4px solid rgba(255, 215, 0, 0.3); border-radius: 50%; border-top-color: var(--primary-gold); animation: loading 1s ease-in-out infinite;"></div>
+                <div id="tgInitStatus" style="margin-top: 30px; font-size: 16px; color: var(--primary-gold);">
+                    Connecting to backend...
+                </div>
             </div>
         </div>
-        
-        <div style="text-align: center; margin: 20px 0;">
-            <button onclick="runDiagnostics()">Run Diagnostics</button>
-            <button onclick="testBackend()">Test Backend</button>
-            <button onclick="startSimpleGame()">Start Simple Game</button>
-        </div>
-        
-        <div id="gameArea">
-            <h2>Simple Game Test</h2>
-            <div class="resource">Energy: <span id="energy">100</span></div>
-            <div class="resource">GP: <span id="gp">0</span></div>
-            <br><br>
-            <button onclick="mine()">Mine (+10 GP)</button>
-            <button onclick="testSave()">Test Save</button>
+
+        <!-- Main screens would continue here... -->
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <button class="nav-btn active" onclick="gameManager.showScreen('galaxyScreen')">
+                <div>🌌</div>
+                <div>Galaxy</div>
+            </button>
+            <button class="nav-btn" onclick="gameManager.showScreen('leaderboardScreen')">
+                <div>🏆</div>
+                <div>Ranks</div>
+            </button>
+            <button class="nav-btn" onclick="gameManager.showScreen('shopScreen')">
+                <div>🛒</div>
+                <div>Shop</div>
+            </button>
+            <button class="nav-btn" onclick="gameManager.showScreen('minigamesScreen')">
+                <div>🎮</div>
+                <div>Games</div>
+            </button>
         </div>
     </div>
 
+    <!-- Core Game Scripts -->
+    <script src="js/core/config.js"></script>
+    <script src="js/core/api.js"></script>
+    <script src="js/core/telegram.js"></script>
+    <script src="js/core/game.js"></script>
+    <script src="js/core/ui.js"></script>
+    <script src="js/features/ads.js"></script>
+
     <script>
-        // Simple game state for testing
-        let gameState = {
-            energy: 100,
-            gp: 0
-        };
-        
-        let telegramUser = null;
-        
-        // Initialize debug version
-        function initDebug() {
-            updateStatus('initStatus', 'Debug version loaded', 'success');
-            
-            // Check Telegram WebApp
-            if (window.Telegram?.WebApp) {
-                try {
-                    window.Telegram.WebApp.ready();
-                    window.Telegram.WebApp.expand();
-                    telegramUser = window.Telegram.WebApp.initDataUnsafe?.user;
-                    
-                    if (telegramUser) {
-                        updateStatus('telegramStatus', `Connected as ${telegramUser.first_name}`, 'success');
-                    } else {
-                        updateStatus('telegramStatus', 'Connected but no user data', 'info');
-                    }
-                } catch (e) {
-                    updateStatus('telegramStatus', 'Error: ' + e.message, 'error');
-                }
-            } else {
-                updateStatus('telegramStatus', 'Not running in Telegram (web mode)', 'info');
-            }
-            
-            // Check for ads SDK
-            if (typeof show_9891070 === 'function') {
-                updateStatus('adsStatus', 'Monetag SDK loaded', 'success');
-            } else {
-                updateStatus('adsStatus', 'Monetag SDK not found', 'info');
-            }
-            
-            // Capture console errors
-            window.addEventListener('error', function(e) {
-                updateStatus('errorStatus', e.message, 'error');
-            });
+        @keyframes loading {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         
-        function updateStatus(id, message, type) {
-            const element = document.getElementById(id);
-            element.textContent = message;
-            element.parentElement.className = `status ${type}`;
-        }
-        
-        function runDiagnostics() {
-            updateStatus('initStatus', 'Running diagnostics...', 'info');
-            
-            // Test basic functionality
-            setTimeout(() => {
-                const tests = [
-                    'localStorage available: ' + (typeof Storage !== "undefined"),
-                    'JSON parsing works: ' + (JSON.stringify({test: true}) !== null),
-                    'Math functions work: ' + (Math.random() > 0),
-                    'Date functions work: ' + (new Date().getTime() > 0)
-                ];
-                updateStatus('initStatus', tests.join(', '), 'success');
-            }, 1000);
-        }
-        
-        async function testBackend() {
-            updateStatus('backendStatus', 'Testing connection...', 'info');
-            
-            try {
-                // Test leaderboard endpoint
-                const response = await fetch('https://cx-odyssey-backend.vercel.app/api/leaderboard');
-                const data = await response.json();
-                
-                if (response.ok) {
-                    updateStatus('backendStatus', `Connected! Found ${data.topPlayers?.length || 0} players`, 'success');
-                } else {
-                    updateStatus('backendStatus', `Error ${response.status}: ${data.error || 'Unknown'}`, 'error');
-                }
-            } catch (error) {
-                updateStatus('backendStatus', 'Connection failed: ' + error.message, 'error');
-            }
-        }
-        
-        function startSimpleGame() {
-            document.getElementById('gameArea').style.display = 'block';
-            updateUI();
-        }
-        
-        function mine() {
-            if (gameState.energy >= 10) {
-                gameState.energy -= 10;
-                gameState.gp += 10;
-                updateUI();
-            } else {
-                alert('Not enough energy!');
-            }
-        }
-        
-        async function testSave() {
-            if (!telegramUser) {
-                alert('No Telegram user - cannot test save');
-                return;
-            }
-            
-            try {
-                const response = await fetch('https://cx-odyssey-backend.vercel.app/api/saveProgress', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        telegramId: telegramUser.id,
-                        username: telegramUser.first_name,
-                        gameState: {
-                            energy: gameState.energy,
-                            maxEnergy: 100,
-                            shards: 0,
-                            gp: gameState.gp
-                        }
-                    })
-                });
-                
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Save successful!');
-                } else {
-                    alert('Save failed: ' + result.error);
-                }
-            } catch (error) {
-                alert('Save error: ' + error.message);
-            }
-        }
-        
-        function updateUI() {
-            document.getElementById('energy').textContent = gameState.energy;
-            document.getElementById('gp').textContent = gameState.gp;
-        }
-        
-        // Initialize when page loads
-        window.addEventListener('load', initDebug);
+        // Initialize game when page loads
+        window.addEventListener('load', () => {
+            gameManager.initialize();
+        });
     </script>
 </body>
 </html>
