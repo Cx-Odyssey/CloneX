@@ -3,11 +3,6 @@
   "version": "1.0.0",
   "description": "CX Odyssey Telegram Mini App Backend",
   "type": "module",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "vercel build",
-    "deploy": "vercel deploy"
-  },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0"
   }
