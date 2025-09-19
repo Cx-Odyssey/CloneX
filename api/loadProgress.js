@@ -1,45 +1,42 @@
-import supabase from './supabaseClient.js';
+import { createClient } from '@supabase/supabase-js';
 
-export default async function handler(req, res) {
-  // CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+export const config = {
+  runtime: 'edge'
+};
 
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+export default async function handler(req) {
+  const { searchParams } = new URL(req.url);
+  const telegramId = searchParams.get('telegramId');
+
+  if (!telegramId) {
+    return new Response(JSON.stringify({ error: 'Missing telegramId parameter' }), {
+      status: 400,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
   try {
-    const { telegramId } = req.query;
-
-    if (!telegramId) {
-      return res.status(400).json({ error: 'Missing telegramId parameter' });
-    }
-
-    // Load player data from database
     const { data, error } = await supabase
       .from('players')
       .select('*')
-      .eq('telegram_id', parseInt(telegramId))
-      .single();
+      .eq('telegram_id', parseInt(telegramId, 10))
+      .maybeSingle();
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-      console.error('Supabase select error:', error);
-      return res.status(500).json({ 
-        error: 'Database error', 
-        details: error.message 
+    if (error) {
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
       });
     }
 
     if (!data) {
-      // Return default game state for new player
-      console.log(`New player detected: ${telegramId}`);
-      return res.status(200).json({
+      // Default game state for new player
+      const newPlayer = {
         energy: 100,
         maxEnergy: 100,
         shards: 0,
@@ -64,6 +61,11 @@ export default async function handler(req, res) {
           notifications: true
         },
         isNewPlayer: true
+      };
+
+      return new Response(JSON.stringify(newPlayer), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
       });
     }
 
@@ -77,16 +79,16 @@ export default async function handler(req, res) {
       dailyStreak: data.daily_streak,
       lastLogin: data.last_login,
       bossHealth: data.boss_health,
-      maxBossHealth: 1000, // Static value
+      maxBossHealth: 1000,
       playerDamage: data.player_damage,
-      adDamageBoost: 0, // Always reset on load
+      adDamageBoost: 0,
       upgrades: typeof data.upgrades === 'string' ? JSON.parse(data.upgrades) : data.upgrades,
       skins: typeof data.skins === 'string' ? JSON.parse(data.skins) : data.skins,
       achievements: typeof data.achievements === 'string' ? JSON.parse(data.achievements) : data.achievements,
-      planetsExplored: [], // You can add this field to database if needed
-      totalPlayTime: 0, // You can add this field to database if needed
-      gamesPlayed: 0, // You can add this field to database if needed
-      highScores: {}, // You can add this field to database if needed
+      planetsExplored: [],
+      totalPlayTime: 0,
+      gamesPlayed: 0,
+      highScores: {},
       settings: {
         soundEnabled: true,
         vibrationEnabled: true,
@@ -95,17 +97,14 @@ export default async function handler(req, res) {
       isNewPlayer: false
     };
 
-    console.log(`Progress loaded for user ${telegramId}: ${gameState.gp} GP`);
-
-    return res.status(200).json(gameState);
-
-  } catch (error) {
-    console.error('Load progress error:', error);
-    return res.status(500).json({ 
-      error: 'Internal server error',
-      message: error.message 
+    return new Response(JSON.stringify(gameState), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
     });
   }
 }
-
-
