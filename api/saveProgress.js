@@ -1,63 +1,101 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from './supabaseClient.js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
+export default async function handler(req, res) {
+  // Simple CORS - works for all origins
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'false');
 
-export const config = {
-  runtime: 'edge'
-};
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-export default async function handler(req) {
+  // Only allow POST
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' }
-    });
+    console.log('Invalid method:', req.method);
+    return res.status(405).json({ error: 'Method not allowed - use POST' });
   }
 
   try {
-    const body = await req.json();
-    const { telegram_id, username, energy, shards, gp } = body;
+    console.log('=== SAVE REQUEST START ===');
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
 
-    if (!telegram_id) {
-      return new Response(JSON.stringify({ error: 'telegram_id is required' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
+    const { telegramId, username, gameState } = req.body;
+
+    // Validate required fields
+    if (!telegramId) {
+      console.log('Missing telegramId');
+      return res.status(400).json({ error: 'telegramId is required' });
     }
 
+    if (!gameState) {
+      console.log('Missing gameState');
+      return res.status(400).json({ error: 'gameState is required' });
+    }
+
+    // Prepare data - keep it simple
+    const playerData = {
+      telegram_id: parseInt(telegramId),
+      username: username || 'Anonymous',
+      energy: Math.max(0, parseInt(gameState.energy) || 0),
+      max_energy: Math.max(1, parseInt(gameState.maxEnergy) || 100),
+      shards: Math.max(0, parseInt(gameState.shards) || 0),
+      gp: Math.max(0, parseInt(gameState.gp) || 0),
+      current_planet: (gameState.currentPlanet || '').substring(0, 100),
+      daily_streak: Math.max(1, parseInt(gameState.dailyStreak) || 1),
+      last_login: gameState.lastLogin || new Date().toISOString().split('T')[0],
+      boss_health: Math.max(0, parseInt(gameState.bossHealth) || 1000),
+      player_damage: Math.max(0, parseInt(gameState.playerDamage) || 0),
+      upgrades: JSON.stringify(gameState.upgrades || { speed: 0, damage: 0, energy: 0, multiplier: 0 }),
+      skins: JSON.stringify(gameState.skins || []),
+      achievements: JSON.stringify(gameState.achievements || []),
+      updated_at: new Date().toISOString()
+    };
+
+    console.log('Prepared player data:', {
+      telegram_id: playerData.telegram_id,
+      gp: playerData.gp,
+      username: playerData.username
+    });
+
+    // Save to database
     const { data, error } = await supabase
       .from('players')
-      .upsert(
-        {
-          telegram_id: parseInt(telegram_id, 10),
-          username: username || 'Anonymous',
-          energy: energy ?? 100,
-          shards: shards ?? 0,
-          gp: gp ?? 0,
-          updated_at: new Date()
-        },
-        { onConflict: 'telegram_id' }
-      )
+      .upsert(playerData, {
+        onConflict: 'telegram_id'
+      })
       .select();
 
     if (error) {
-      return new Response(JSON.stringify({ error: error.message }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
+      console.error('Database error:', error);
+      return res.status(500).json({ 
+        error: 'Database save failed', 
+        details: error.message 
       });
     }
 
-    return new Response(JSON.stringify({ success: true, player: data[0] }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
+    console.log('Save successful:', data?.[0]?.telegram_id, data?.[0]?.gp);
+    console.log('=== SAVE REQUEST END ===');
+
+    return res.status(200).json({ 
+      success: true, 
+      message: 'Progress saved successfully',
+      saved: {
+        telegramId: data[0]?.telegram_id,
+        gp: data[0]?.gp,
+        username: data[0]?.username
+      }
     });
-  } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
+
+  } catch (error) {
+    console.error('Handler error:', error);
+    return res.status(500).json({ 
+      error: 'Server error',
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }
