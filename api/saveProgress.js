@@ -1,35 +1,63 @@
-import supabase from './supabaseClient.js';
+import { createClient } from '@supabase/supabase-js';
 
-export default async function handler(req, res) {
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
+
+export const config = {
+  runtime: 'edge'
+};
+
+export default async function handler(req) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 
-  const { telegram_id, username, energy, shards, gp } = req.body;
-
   try {
+    const body = await req.json();
+    const { telegram_id, username, energy, shards, gp } = body;
+
+    if (!telegram_id) {
+      return new Response(JSON.stringify({ error: 'telegram_id is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const { data, error } = await supabase
       .from('players')
       .upsert(
-        { telegram_id, username, energy, shards, gp, updated_at: new Date() },
+        {
+          telegram_id: parseInt(telegram_id, 10),
+          username: username || 'Anonymous',
+          energy: energy ?? 100,
+          shards: shards ?? 0,
+          gp: gp ?? 0,
+          updated_at: new Date()
+        },
         { onConflict: 'telegram_id' }
       )
       .select();
 
     if (error) {
-      console.error("Supabase error:", error.message);
-      return res.status(400).json({ error: error.message });
+      return new Response(JSON.stringify({ error: error.message }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
     }
 
-    res.status(200).json({ success: true, player: data[0] });
+    return new Response(JSON.stringify({ success: true, player: data[0] }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
   } catch (err) {
-    console.error("Server error:", err);
-    res.status(500).json({ error: 'Unexpected server error' });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
-
-
-
-
-
-
