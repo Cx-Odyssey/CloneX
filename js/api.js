@@ -349,4 +349,209 @@ Start your cosmic journey now!`;
 
     // Haptic feedback
     hapticFeedback(type = 'light') {
-        if
+        if (!this.tg?.HapticFeedback) return;
+        
+        switch (type) {
+            case 'light':
+                this.tg.HapticFeedback.impactOccurred('light');
+                break;
+            case 'medium':
+                this.tg.HapticFeedback.impactOccurred('medium');
+                break;
+            case 'heavy':
+                this.tg.HapticFeedback.impactOccurred('heavy');
+                break;
+            case 'success':
+                this.tg.HapticFeedback.notificationOccurred('success');
+                break;
+            case 'error':
+                this.tg.HapticFeedback.notificationOccurred('error');
+                break;
+            case 'warning':
+                this.tg.HapticFeedback.notificationOccurred('warning');
+                break;
+        }
+    }
+
+    // Show alert
+    showAlert(message) {
+        if (!this.tg) {
+            alert(message);
+            return;
+        }
+        
+        this.tg.showAlert(message);
+    }
+
+    // Show confirm
+    showConfirm(message, callback) {
+        if (!this.tg) {
+            const result = confirm(message);
+            callback(result);
+            return;
+        }
+        
+        this.tg.showConfirm(message, callback);
+    }
+
+    // Close WebApp
+    close() {
+        if (!this.tg) return;
+        
+        this.tg.close();
+    }
+}
+
+// Initialize Telegram integration
+const telegramApp = new TelegramIntegration();
+
+// Data sync utilities
+class DataSync {
+    constructor() {
+        this.syncInterval = 30000; // 30 seconds
+        this.lastSync = 0;
+        this.isOnline = navigator.onLine;
+        this.pendingUpdates = [];
+        
+        // Listen for online/offline events
+        window.addEventListener('online', () => {
+            this.isOnline = true;
+            this.syncPendingUpdates();
+        });
+        
+        window.addEventListener('offline', () => {
+            this.isOnline = false;
+        });
+    }
+
+    // Queue update for sync
+    queueUpdate(updateData) {
+        this.pendingUpdates.push({
+            ...updateData,
+            timestamp: Date.now()
+        });
+        
+        if (this.isOnline) {
+            this.syncPendingUpdates();
+        }
+    }
+
+    // Sync all pending updates
+    async syncPendingUpdates() {
+        if (!this.isOnline || this.pendingUpdates.length === 0) return;
+        
+        const updates = [...this.pendingUpdates];
+        this.pendingUpdates = [];
+        
+        for (const update of updates) {
+            try {
+                await gameAPI.saveProgress(update);
+                console.log('Synced update:', update);
+            } catch (error) {
+                console.error('Failed to sync update:', error);
+                // Re-queue failed update
+                this.pendingUpdates.push(update);
+            }
+        }
+    }
+
+    // Auto-sync at intervals
+    startAutoSync() {
+        setInterval(() => {
+            if (this.isOnline && Date.now() - this.lastSync > this.syncInterval) {
+                this.syncPendingUpdates();
+                this.lastSync = Date.now();
+            }
+        }, this.syncInterval);
+    }
+}
+
+// Initialize data sync
+const dataSync = new DataSync();
+
+// Error handling utilities
+class ErrorHandler {
+    static showError(message, error = null) {
+        console.error('Game Error:', message, error);
+        
+        // Show user-friendly error message
+        const userMessage = this.getUserFriendlyMessage(message);
+        
+        if (telegramApp.tg) {
+            telegramApp.showAlert(userMessage);
+        } else {
+            showNotification('⚠️ ' + userMessage);
+        }
+    }
+    
+    static getUserFriendlyMessage(message) {
+        const errorMap = {
+            'Network error': 'Connection problem. Please check your internet.',
+            'Save failed': 'Failed to save progress. Will retry automatically.',
+            'Load failed': 'Failed to load data. Please refresh the game.',
+            'API error': 'Server error. Please try again later.'
+        };
+        
+        return errorMap[message] || 'Something went wrong. Please try again.';
+    }
+    
+    static async handleAsyncError(asyncFn, fallback = null) {
+        try {
+            return await asyncFn();
+        } catch (error) {
+            this.showError('Operation failed', error);
+            return fallback;
+        }
+    }
+}
+
+// Performance monitoring
+class PerformanceMonitor {
+    constructor() {
+        this.metrics = {};
+        this.startTimes = {};
+    }
+    
+    start(operation) {
+        this.startTimes[operation] = performance.now();
+    }
+    
+    end(operation) {
+        if (!this.startTimes[operation]) return;
+        
+        const duration = performance.now() - this.startTimes[operation];
+        
+        if (!this.metrics[operation]) {
+            this.metrics[operation] = [];
+        }
+        
+        this.metrics[operation].push(duration);
+        delete this.startTimes[operation];
+        
+        // Log slow operations
+        if (duration > 1000) {
+            console.warn(`Slow operation: ${operation} took ${duration.toFixed(2)}ms`);
+        }
+    }
+    
+    getAverageTime(operation) {
+        const times = this.metrics[operation];
+        if (!times || times.length === 0) return 0;
+        
+        return times.reduce((a, b) => a + b, 0) / times.length;
+    }
+    
+    logStats() {
+        console.log('Performance Stats:', this.metrics);
+    }
+}
+
+// Initialize performance monitor
+const performanceMonitor = new PerformanceMonitor();
+
+// Export for use in other files
+window.gameAPI = gameAPI;
+window.telegramApp = telegramApp;
+window.dataSync = dataSync;
+window.ErrorHandler = ErrorHandler;
+window.performanceMonitor = performanceMonitor;
