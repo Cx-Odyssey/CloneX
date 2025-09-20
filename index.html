@@ -5,669 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CX Odyssey: Rise of the Collectors</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <!-- Monetag Ad SDK -->
-    <script src='//libtl.com/sdk.js' data-zone='9891070' data-sdk='show_9891070'></script>
+    <!-- Monetag SDK TEMPORARILY DISABLED -->
+    <!-- <script src='//libtl.com/sdk.js' data-zone='9891070' data-sdk='show_9891070'></script> -->
     
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;800&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        :root {
-            --primary-gold: #FFD700;
-            --secondary-orange: #FF6B35;
-            --accent-purple: #7209B7;
-            --neon-blue: #00F5FF;
-            --deep-space: #0A0A0A;
-            --space-blue: #1A1A2E;
-            --cosmic-purple: #16213E;
-            --success-green: #00FF88;
-            --danger-red: #FF073A;
-        }
-
-        body {
-            font-family: 'Exo 2', sans-serif;
-            background: radial-gradient(ellipse at center, var(--space-blue) 0%, var(--deep-space) 50%, #000 100%);
-            color: #ffffff;
-            overflow: hidden;
-            height: 100vh;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-opacity='0.05'%3E%3Cpolygon fill='%23fff' points='50 0 60 40 100 50 60 60 50 100 40 60 0 50 40 40'/%3E%3C/g%3E%3C/svg%3E") repeat;
-            opacity: 0.1;
-            animation: bgFloat 20s ease-in-out infinite;
-            z-index: -1;
-        }
-
-        @keyframes bgFloat {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .game-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Enhanced Starfield */
-        .stars {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            z-index: 1;
-        }
-
-        .star {
-            position: absolute;
-            border-radius: 50%;
-            animation: twinkle 3s infinite ease-in-out;
-        }
-
-        .star-small {
-            width: 1px;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
-        }
-
-        .star-medium {
-            width: 2px;
-            height: 2px;
-            background: var(--neon-blue);
-            box-shadow: 0 0 4px var(--neon-blue);
-        }
-
-        .star-large {
-            width: 3px;
-            height: 3px;
-            background: var(--primary-gold);
-            box-shadow: 0 0 6px var(--primary-gold);
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        /* Floating particles */
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange));
-            border-radius: 50%;
-            animation: float 8s infinite linear;
-            opacity: 0.7;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.7;
-            }
-            90% {
-                opacity: 0.7;
-            }
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-                opacity: 0;
-            }
-        }
-
-        .screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            display: none;
-            padding: 20px;
-            overflow-y: auto;
-            padding-bottom: 80px;
-            backdrop-filter: blur(20px);
-        }
-
-        .screen.active {
-            display: flex;
-            flex-direction: column;
-            animation: screenSlide 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        @keyframes screenSlide {
-            0% {
-                opacity: 0;
-                transform: translateX(50px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        /* Premium Header */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 25px;
-            border: 2px solid transparent;
-            background-clip: padding-box;
-            box-shadow: 
-                0 0 30px rgba(255, 215, 0, 0.3),
-                inset 0 0 20px rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange), var(--accent-purple), var(--neon-blue));
-            border-radius: 25px;
-            z-index: -1;
-            animation: borderGlow 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes borderGlow {
-            0% { filter: blur(2px) brightness(1); }
-            100% { filter: blur(4px) brightness(1.5); }
-        }
-
-        .logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 24px;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange), var(--accent-purple));
-            background-size: 200% 200%;
-            animation: gradientShift 3s ease infinite;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.8);
-            position: relative;
-        }
-
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .resources {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .resource {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
-            padding: 10px 15px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 215, 0, 0.5);
-            font-size: 14px;
-            font-weight: 600;
-            box-shadow: 
-                0 4px 15px rgba(255, 215, 0, 0.2),
-                inset 0 0 10px rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .resource::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            animation: resourceShimmer 3s infinite;
-        }
-
-        @keyframes resourceShimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        .resource:hover {
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
-        }
-
-        /* Enhanced Navigation */
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(26, 26, 46, 0.95));
-            backdrop-filter: blur(20px);
-            border-top: 2px solid transparent;
-            background-clip: padding-box;
-            z-index: 50;
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .nav-bar::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--primary-gold), var(--secondary-orange), var(--accent-purple), var(--neon-blue));
-        }
-
-        .nav-btn {
-            flex: 1;
-            padding: 15px 8px;
-            text-align: center;
-            background: transparent;
-            color: rgba(255, 255, 255, 0.6);
-            border: none;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .nav-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, rgba(255, 215, 0, 0.1), transparent);
-            opacity: 0;
-            transition: all 0.4s ease;
-        }
-
-        .nav-btn.active {
-            color: var(--primary-gold);
-            transform: scale(1.1);
-        }
-
-        .nav-btn.active::before {
-            opacity: 1;
-        }
-
-        .nav-btn:hover {
-            color: var(--primary-gold);
-            transform: translateY(-3px);
-        }
-
-        .nav-btn div:first-child {
-            font-size: 20px;
-            margin-bottom: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-btn:hover div:first-child {
-            transform: scale(1.2);
-            filter: drop-shadow(0 0 10px var(--primary-gold));
-        }
-
-        /* Premium Galaxy Map */
-        .galaxy-map {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            flex: 1;
-            padding: 20px 0;
-        }
-
-        .planet {
-            position: relative;
-            aspect-ratio: 1;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 16px;
-            overflow: hidden;
-            transform-style: preserve-3d;
-        }
-
-        .planet::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: -10px;
-            right: -10px;
-            bottom: -10px;
-            border-radius: 50%;
-            background: conic-gradient(
-                var(--primary-gold),
-                var(--secondary-orange),
-                var(--accent-purple),
-                var(--neon-blue),
-                var(--primary-gold)
-            );
-            animation: planetOrbit 6s linear infinite;
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .planet:hover::before {
-            opacity: 0.8;
-        }
-
-        @keyframes planetOrbit {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .planet-1 {
-            background: radial-gradient(circle at 30% 30%, #FF6B35, #D84315, #8B2500);
-            box-shadow: 
-                0 0 40px rgba(255, 107, 53, 0.6),
-                inset 0 0 30px rgba(255, 255, 255, 0.1);
-        }
-
-        .planet-2 {
-            background: radial-gradient(circle at 30% 30%, #2196F3, #1565C0, #0D47A1);
-            box-shadow: 
-                0 0 40px rgba(33, 150, 243, 0.6),
-                inset 0 0 30px rgba(255, 255, 255, 0.1);
-        }
-
-        .planet-3 {
-            background: radial-gradient(circle at 30% 30%, #9C27B0, #6A1B9A, #4A148C);
-            box-shadow: 
-                0 0 40px rgba(156, 39, 176, 0.6),
-                inset 0 0 30px rgba(255, 255, 255, 0.1);
-        }
-
-        .planet-4 {
-            background: radial-gradient(circle at 30% 30%, #4CAF50, #2E7D32, #1B5E20);
-            box-shadow: 
-                0 0 40px rgba(76, 175, 80, 0.6),
-                inset 0 0 30px rgba(255, 255, 255, 0.1);
-        }
-
-        .planet-5 {
-            background: radial-gradient(circle at 30% 30%, #FFC107, #F57F17, #E65100);
-            box-shadow: 
-                0 0 40px rgba(255, 193, 7, 0.6),
-                inset 0 0 30px rgba(255, 255, 255, 0.1);
-        }
-
-        .planet-6 {
-            background: radial-gradient(circle at 30% 30%, #E91E63, #AD1457, #880E4F);
-            box-shadow: 
-                0 0 40px rgba(233, 30, 99, 0.6),
-                inset 0 0 30px rgba(255, 255, 255, 0.1);
-        }
-
-        .planet:hover {
-            transform: scale(1.15) translateZ(20px);
-            filter: brightness(1.3) saturate(1.2);
-        }
-
-        .planet:active {
-            transform: scale(0.95);
-        }
-
-        .planet-info {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-        }
-
-        .planet-info div:first-child {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
-        .planet-info div:last-child {
-            font-size: 11px;
-            opacity: 0.9;
-        }
-
-        /* Premium Mining Interface */
-        .mining-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 25px;
-            padding: 10px;
-        }
-
-        .mining-area {
-            width: 280px;
-            height: 280px;
-            border-radius: 30px;
-            background: 
-                radial-gradient(circle at center, rgba(255, 215, 0, 0.15), transparent 50%),
-                linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
-            border: 3px solid transparent;
-            background-clip: padding-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                0 10px 40px rgba(255, 215, 0, 0.3),
-                inset 0 0 30px rgba(255, 255, 255, 0.1);
-        }
-
-        .mining-area::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: -3px;
-            right: -3px;
-            bottom: -3px;
-            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange), var(--accent-purple));
-            border-radius: 30px;
-            z-index: -1;
-            animation: miningGlow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes miningGlow {
-            0% { filter: blur(4px) brightness(1); }
-            100% { filter: blur(8px) brightness(1.5); }
-        }
-
-        .mining-area:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 
-                0 20px 60px rgba(255, 215, 0, 0.5),
-                inset 0 0 40px rgba(255, 255, 255, 0.2);
-        }
-
-        .mining-area:active {
-            transform: scale(0.98);
-        }
-
-        .mining-beam {
-            position: absolute;
-            width: 6px;
-            height: 80px;
-            background: linear-gradient(to bottom, 
-                var(--primary-gold), 
-                var(--secondary-orange), 
-                transparent);
-            box-shadow: 
-                0 0 20px var(--primary-gold),
-                0 0 40px rgba(255, 215, 0, 0.5);
-            animation: miningBeam 1.2s ease-in-out;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            border-radius: 3px;
-        }
-
-        @keyframes miningBeam {
-            0% { 
-                opacity: 0; 
-                height: 0; 
-                transform: translate(-50%, -50%) scale(0.5); 
-            }
-            30% { 
-                opacity: 1; 
-                height: 80px; 
-                transform: translate(-50%, -50%) scale(1); 
-            }
-            70% { 
-                opacity: 1; 
-                height: 80px; 
-                transform: translate(-50%, -50%) scale(1.1); 
-            }
-            100% { 
-                opacity: 0; 
-                height: 80px; 
-                transform: translate(-50%, -50%) scale(1); 
-            }
-        }
-
-        /* Energy Bar Enhancement */
-        .energy-bar {
-            width: 100%;
-            max-width: 320px;
-            height: 25px;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(26, 26, 46, 0.6));
-            border: 2px solid transparent;
-            background-clip: padding-box;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 
-                0 4px 15px rgba(0, 0, 0, 0.3),
-                inset 0 0 10px rgba(255, 255, 255, 0.1);
-        }
-
-        .energy-bar::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, var(--secondary-orange), var(--primary-gold));
-            border-radius: 15px;
-            z-index: -1;
-        }
-
-        .energy-fill {
-            height: 100%;
-            background: linear-gradient(90deg, 
-                var(--secondary-orange), 
-                var(--primary-gold), 
-                var(--success-green));
-            transition: width 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: 
-                0 0 20px rgba(255, 215, 0, 0.6),
-                inset 0 0 10px rgba(255, 255, 255, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .energy-fill::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.4), 
-                transparent);
-            animation: energyPulse 2s infinite;
-        }
-
-        @keyframes energyPulse {
-            0% { left: -100%; }
-            100% { left: 100%; }
-        }
-
-        /* Rest of the CSS and HTML continues... */
-        .action-buttons {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .action-btn {
-            padding: 15px 25px;
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border: 2px solid transparent;
-            background-clip: padding-box;
-            border-radius: 30px;
-            color: var(--primary-gold);
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            font-size: 15px;
-            font-weight: 600;
-            min-width: 140px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                0 6px 20px rgba(0, 0, 0, 0.3),
-                inset 0 0 15px rgba(255, 255, 255, 0.1);
-        }
-
-        .action-btn:hover {
-            color: #000;
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 
-                0 12px 35px rgba(255, 215, 0, 0.4),
-                inset 0 0 20px rgba(255, 255, 255, 0.2);
-        }
-
-        .action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="game-container">
-        <!-- Enhanced Starfield Background -->
         <div class="stars" id="starfield"></div>
 
         <!-- Loading Screen -->
@@ -675,53 +19,215 @@
             <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
                 <div class="logo" style="font-size: 48px; margin-bottom: 30px;">CX ODYSSEY</div>
                 <div style="font-size: 20px; margin-bottom: 40px; opacity: 0.9;">Loading game...</div>
-                <div class="loading" style="display: inline-block; width: 30px; height: 30px; border: 4px solid rgba(255, 215, 0, 0.3); border-radius: 50%; border-top-color: var(--primary-gold); animation: loading 1s ease-in-out infinite;"></div>
+                <div class="loading"></div>
                 <div id="tgInitStatus" style="margin-top: 30px; font-size: 16px; color: var(--primary-gold);">
                     Connecting to backend...
                 </div>
             </div>
         </div>
 
-        <!-- Main screens would continue here... -->
+        <!-- Main Galaxy Screen -->
+        <div class="screen" id="galaxyScreen">
+            <div class="header">
+                <div class="logo">CX ODYSSEY</div>
+                <div class="resources">
+                    <div class="resource">⚡ <span id="energy">100</span></div>
+                    <div class="resource">💎 <span id="shards">0</span></div>
+                    <div class="resource">🏆 <span id="gp">0</span></div>
+                </div>
+            </div>
+            
+            <div class="tg-user-info" id="tgUserInfo">
+                <img class="tg-avatar" id="tgAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23FFD700'/%3E%3Ctext x='50' y='65' text-anchor='middle' font-size='40' fill='%23000'%3E👤%3C/text%3E%3C/svg%3E">
+                <div>
+                    <div id="tgUserName" style="font-weight: 700; font-size: 18px;">Player</div>
+                    <div style="font-size: 14px; opacity: 0.8;">Level <span id="tgUserLevel">1</span> Explorer</div>
+                </div>
+            </div>
+            
+            <div class="daily-reward" id="dailyReward" style="display: none;">
+                <div style="font-size: 20px; margin-bottom: 10px;">🎁 Daily Login Bonus!</div>
+                <div class="streak-counter">Day <span id="streakDay">1</span> Streak</div>
+                <div style="font-size: 18px;">+<span id="bonusAmount">100</span> GP Earned!</div>
+            </div>
+
+            <div class="galaxy-map">
+                <div class="planet planet-1" onclick="selectPlanet('Pyrion', 1)">
+                    <div class="planet-info">
+                        <div>🔥 Pyrion</div>
+                        <div>Fire World</div>
+                    </div>
+                </div>
+                <div class="planet planet-2" onclick="selectPlanet('Aqueos', 2)">
+                    <div class="planet-info">
+                        <div>🌊 Aqueos</div>
+                        <div>Ocean World</div>
+                    </div>
+                </div>
+                <div class="planet planet-3" onclick="selectPlanet('Voidex', 3)">
+                    <div class="planet-info">
+                        <div>🌌 Voidex</div>
+                        <div>Dark Matter</div>
+                    </div>
+                </div>
+                <div class="planet planet-4" onclick="selectPlanet('Verdant', 4)">
+                    <div class="planet-info">
+                        <div>🌿 Verdant</div>
+                        <div>Bio World</div>
+                    </div>
+                </div>
+                <div class="planet planet-5" onclick="selectPlanet('Aurelia', 5)">
+                    <div class="planet-info">
+                        <div>✨ Aurelia</div>
+                        <div>Gold Planet</div>
+                    </div>
+                </div>
+                <div class="planet planet-6" onclick="selectPlanet('Crimson', 6)">
+                    <div class="planet-info">
+                        <div>⚔️ Crimson</div>
+                        <div>War Zone</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="checkDailyReward()">🎁 Daily Login</button>
+                <button class="action-btn" onclick="shareGame()">📤 Share Game</button>
+            </div>
+        </div>
+
+        <!-- Mining Screen -->
+        <div class="screen" id="miningScreen">
+            <div class="header">
+                <div class="logo">MINING: <span id="currentPlanet">Aqueos</span></div>
+                <div class="resources">
+                    <div class="resource">⚡ <span id="energyMining">100</span></div>
+                    <div class="resource">💎 <span id="shardsMining">0</span></div>
+                </div>
+            </div>
+
+            <div class="mining-screen">
+                <div class="mining-area" onclick="minePlanet()">
+                    <div style="text-align: center; z-index: 2; position: relative;">
+                        <div style="font-size: 32px; margin-bottom: 15px;">⛏️</div>
+                        <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">TAP TO MINE</div>
+                        <div style="font-size: 14px; opacity: 0.9;">+<span id="mineReward">10</span> Shards</div>
+                    </div>
+                </div>
+
+                <div style="width: 100%; max-width: 320px;">
+                    <div style="margin-bottom: 15px; font-size: 16px; font-weight: 600;">Energy: <span id="energyText">100/100</span></div>
+                    <div class="energy-bar">
+                        <div class="energy-fill" id="energyFill" style="width: 100%"></div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="simulateWatchAd('energy')" id="adBtn">📺 Watch Ad (+50 Energy)</button>
+                    <button class="action-btn" onclick="battleAliens()">⚔️ Battle Aliens</button>
+                    <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Shop Screen -->
+        <div class="screen" id="shopScreen">
+            <div class="header">
+                <div class="logo">SHOP & UPGRADES</div>
+                <div class="resources">
+                    <div class="resource">🏆 <span id="gpShop">0</span></div>
+                    <div class="resource">💎 <span id="shardsShop">0</span></div>
+                </div>
+            </div>
+
+            <div class="shop-grid">
+                <div class="shop-item" onclick="buyUpgrade('speed')">
+                    <div>🚀</div>
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Speed Boost</div>
+                    <div style="color: var(--primary-gold); font-size: 16px; font-weight: 600;" id="speedCost">500 GP</div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">+25% Mining Speed</div>
+                </div>
+                <div class="shop-item" onclick="buyUpgrade('damage')">
+                    <div>⚔️</div>
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Damage Boost</div>
+                    <div style="color: var(--primary-gold); font-size: 16px; font-weight: 600;" id="damageCost">750 GP</div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">+50% Battle Damage</div>
+                </div>
+                <div class="shop-item" onclick="buyUpgrade('energy')">
+                    <div>⚡</div>
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Energy Tank</div>
+                    <div style="color: var(--primary-gold); font-size: 16px; font-weight: 600;" id="energyCost">1000 GP</div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">+50 Max Energy</div>
+                </div>
+                <div class="shop-item" onclick="buyUpgrade('multiplier')">
+                    <div>💰</div>
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">GP Multiplier</div>
+                    <div style="color: var(--primary-gold); font-size: 16px; font-weight: 600;" id="multiplierCost">3000 GP</div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">+100% GP Gain</div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
+            </div>
+        </div>
+
+        <!-- Games Screen -->
+        <div class="screen" id="gamesScreen">
+            <div class="header">
+                <div class="logo">MINI-GAMES</div>
+                <div class="resources">
+                    <div class="resource">🏆 <span id="gpGames">0</span></div>
+                    <div class="resource">🎮 <span id="gameScore">0</span></div>
+                </div>
+            </div>
+
+            <div class="shop-grid">
+                <div class="shop-item" onclick="playGame('clicker')">
+                    <div>💎</div>
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Crypto Clicker</div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Click as fast as you can!</div>
+                    <div style="color: var(--success-green); font-weight: 600;">Reward: 200-800 GP</div>
+                </div>
+                <div class="shop-item" onclick="playGame('dodge')">
+                    <div>☄️</div>
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Asteroid Dodge</div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Survive the field!</div>
+                    <div style="color: var(--success-green); font-weight: 600;">Reward: 300-1000 GP</div>
+                </div>
+            </div>
+
+            <div class="game-area" id="gameArea">
+                <h3 style="color: var(--primary-gold); font-size: 24px; margin-bottom: 15px;">Select a game to play!</h3>
+                <p style="font-size: 16px; opacity: 0.9;">Earn bonus GP and have fun</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
+            </div>
+        </div>
+
         <!-- Navigation Bar -->
         <div class="nav-bar">
-            <button class="nav-btn active" onclick="gameManager.showScreen('galaxyScreen')">
+            <button class="nav-btn active" onclick="showScreen('galaxyScreen')">
                 <div>🌌</div>
                 <div>Galaxy</div>
             </button>
-            <button class="nav-btn" onclick="gameManager.showScreen('leaderboardScreen')">
-                <div>🏆</div>
-                <div>Ranks</div>
+            <button class="nav-btn" onclick="showScreen('miningScreen')">
+                <div>⛏️</div>
+                <div>Mine</div>
             </button>
-            <button class="nav-btn" onclick="gameManager.showScreen('shopScreen')">
+            <button class="nav-btn" onclick="showScreen('shopScreen')">
                 <div>🛒</div>
                 <div>Shop</div>
             </button>
-            <button class="nav-btn" onclick="gameManager.showScreen('minigamesScreen')">
+            <button class="nav-btn" onclick="showScreen('gamesScreen')">
                 <div>🎮</div>
                 <div>Games</div>
             </button>
         </div>
     </div>
 
-    <!-- Core Game Scripts -->
-    <script src="js/core/config.js"></script>
-    <script src="js/core/api.js"></script>
-    <script src="js/core/telegram.js"></script>
-    <script src="js/core/game.js"></script>
-    <script src="js/core/ui.js"></script>
-    <script src="js/features/ads.js"></script>
-
-    <script>
-        @keyframes loading {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        // Initialize game when page loads
-        window.addEventListener('load', () => {
-            gameManager.initialize();
-        });
-    </script>
+    <script src="game.js"></script>
 </body>
 </html>
