@@ -1846,7 +1846,7 @@
             try {
                 // Initialize the connector
                 connector = new TonConnectSDK.TonConnect({
-                    manifestUrl: 'https://cx-odyssey-backend.vercel.app/tonconnect-manifest.json'
+                    manifestUrl: 'https://muntasi179.github.io/cx-odyssey/tonconnect-manifest.json'
                 });
 
                 // Restore existing session if available
@@ -1984,21 +1984,22 @@
         // Helper functions for local storage fallback
         function loadFromLocalStorage() {
             const savedData = localStorage.getItem('cxOdysseySave');
-            return savedData ? { success: true, gameState: JSON.parse(savedData) } : { success: false };
+            return savedData ? JSON.parse(savedData) : gameState;
         }
 
         function saveToLocalStorage() {
             localStorage.setItem('cxOdysseySave', JSON.stringify(gameState));
-            return { success: true };
         }
 
         // Load game state from backend
         async function loadGameStateFromBackend() {
             try {
                 if (user) {
-                    const data = await apiCall(`/loadProgress?telegram_id=${user.id}`);
-                    if (data.success) {
-                        gameState = { ...gameState, ...data.gameState };
+                    const data = await apiCall(`/loadProgress?telegramId=${user.id}`);
+                    
+                    // Update game state with loaded data
+                    if (data && !data.error) {
+                        gameState = { ...gameState, ...data };
                     }
                 }
                 
@@ -2025,7 +2026,8 @@
             try {
                 if (user) {
                     await apiCall('/saveProgress', 'POST', {
-                        telegram_id: user.id,
+                        telegramId: user.id,
+                        username: user.first_name || 'Anonymous',
                         gameState: gameState
                     });
                 } else {
@@ -2338,7 +2340,7 @@ Start your cosmic journey now!`;
             if (upgradeType.startsWith('skin')) {
                 if (!gameState.skins.includes(upgradeType)) {
                     gameState.skins.push(upgradeType);
-                    showUpgradeModal('🚀', `${upgradeType === 'skin1' ? 'Black' : 'Gold'} ship skin unlocked!`);
+                    showUpgradeModal('🚀', `${upgradeType === 'skin1' ? 'Black' : 'Gold'} ship skin unlocked!');
                 } else {
                     gameState.gp += cost;
                     showNotification('🚀 You already own this skin!');
@@ -2373,13 +2375,13 @@ Start your cosmic journey now!`;
         // Leaderboard system
         async function loadLeaderboard() {
             try {
-                const data = await apiCall('/leaderboard');
-                if (data.success) {
-                    const leaderboard = data.leaderboard;
-                    const entriesContainer = document.getElementById('leaderboardEntries');
-                    entriesContainer.innerHTML = '';
-                    
-                    leaderboard.forEach((entry, index) => {
+                const data = await apiCall(`/leaderboard${user ? `?telegramId=${user.id}` : ''}`);
+                
+                const entriesContainer = document.getElementById('leaderboardEntries');
+                entriesContainer.innerHTML = '';
+                
+                if (data && data.topPlayers) {
+                    data.topPlayers.forEach((entry, index) => {
                         const entryEl = document.createElement('div');
                         entryEl.className = `leaderboard-entry ${index < 3 ? 'top-3' : ''}`;
                         
@@ -2396,8 +2398,31 @@ Start your cosmic journey now!`;
                         
                         entriesContainer.appendChild(entryEl);
                     });
+
+                    // Update user rank
+                    if (data.userRank) {
+                        document.getElementById('leaderboardRank').textContent = data.userRank;
+                        document.getElementById('playerRank').textContent = data.userRank;
+                    }
+                } else {
+                    // Fallback data
+                    entriesContainer.innerHTML = `
+                        <div class="leaderboard-entry top-3">
+                            <div style="font-weight: 600;"><span style="color: #ffd700; font-size: 24px;">👑</span> GalaxyMaster</div>
+                            <div style="font-weight: 700; color: var(--primary-gold);">125,000 GP</div>
+                        </div>
+                        <div class="leaderboard-entry top-3">
+                            <div style="font-weight: 600;"><span style="color: #ff6b35; font-size: 20px;">🥈</span> StarHunter</div>
+                            <div style="font-weight: 700; color: var(--primary-gold);">89,500 GP</div>
+                        </div>
+                        <div class="leaderboard-entry top-3">
+                            <div style="font-weight: 600;"><span style="color: #7209b7; font-size: 20px;">🥉</span> CosmicRider</div>
+                            <div style="font-weight: 700; color: var(--primary-gold);">67,200 GP</div>
+                        </div>
+                    `;
                 }
             } catch (error) {
+                console.error('Error loading leaderboard:', error);
                 // Fallback to dummy data
                 document.getElementById('leaderboardEntries').innerHTML = `
                     <div class="leaderboard-entry top-3">
@@ -2545,12 +2570,6 @@ Start your cosmic journey now!`;
             if (leaderboardGP) {
                 leaderboardGP.textContent = gameState.gp.toLocaleString();
             }
-            
-            const rank = Math.max(1, 1000 - Math.floor(gameState.gp / 100));
-            const leaderboardRank = document.getElementById('leaderboardRank');
-            const playerRank = document.getElementById('playerRank');
-            if (leaderboardRank) leaderboardRank.textContent = rank;
-            if (playerRank) playerRank.textContent = rank;
 
             // Update ad button state
             const adBtn = document.getElementById('adBtn');
