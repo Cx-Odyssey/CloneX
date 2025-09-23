@@ -726,7 +726,7 @@
                 <div class="logo">MINI-GAMES HUB</div>
                 <div class="resources">
                     <div class="resource">🏆 <span id="gpMinigames">0</span></div>
-                    <div class="resource">🎮 <span id="gameScore">0</span></div>
+                    <div class="resource">🎫 <span id="gameTickets">3</span></div>
                 </div>
             </div>
 
@@ -886,7 +886,10 @@
             playerDamage: 0,
             upgrades: { speed: 0, damage: 0, energy: 0, multiplier: 0 },
             skins: [],
-            adDamageBoost: 0
+            adDamageBoost: 0,
+            gameTickets: 3,
+            lastTicketTime: Date.now(),
+            maxTickets: 10
         };
 
         // Global variables
@@ -1289,25 +1292,56 @@
             }
         }
 
-        // Wallet functions
+        // Wallet functions with better error handling
         function connectWallet() {
-            if (connector) {
-                connector.getWallets().then(wallets => {
-                    if (wallets.length > 0) {
-                        connector.connect({ jsBridgeKey: wallets[0].jsBridgeKey });
-                    }
-                }).catch(() => {
-                    showNotification('❌ Wallet connection failed');
-                });
-            } else {
-                showNotification('❌ TonConnect not available');
+            if (!connector) {
+                showNotification('❌ TonConnect not available. Please make sure you have a TON wallet installed.');
+                return;
+            }
+
+            try {
+                // For Telegram WebApp environment
+                if (tg) {
+                    connector.connectWallet();
+                } else {
+                    // For browser environment, show available wallets
+                    connector.getWallets()
+                        .then(wallets => {
+                            if (wallets && wallets.length > 0) {
+                                // Try to connect with the first available wallet
+                                const wallet = wallets[0];
+                                connector.connect({
+                                    bridgeUrl: wallet.bridgeUrl,
+                                    universalLink: wallet.universalLink
+                                });
+                            } else {
+                                showNotification('❌ No TON wallets found. Please install Tonkeeper or TonHub.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Wallet fetch error:', error);
+                            showNotification('❌ Failed to load wallet list. Try installing Tonkeeper.');
+                        });
+                }
+            } catch (error) {
+                console.error('Wallet connection error:', error);
+                showNotification('❌ Wallet connection failed. Please try again.');
             }
         }
 
         function disconnectWallet() {
             if (connector) {
-                connector.disconnect();
-                showNotification('🔔 Wallet disconnected');
+                try {
+                    connector.disconnect();
+                    showNotification('🔔 Wallet disconnected');
+                } catch (error) {
+                    console.error('Disconnect error:', error);
+                    // Force UI update even if disconnect fails
+                    document.getElementById('walletStatus').textContent = 'Not Connected';
+                    document.getElementById('connectWalletBtn').style.display = 'block';
+                    document.getElementById('walletInfo').style.display = 'none';
+                    showNotification('🔔 Wallet disconnected');
+                }
             }
         }
 
@@ -1330,50 +1364,94 @@
             showNotification('🎉 Thanks for sharing CX Odyssey!');
         }
 
-        // Leaderboard
+        // Leaderboard with faster loading and caching
+        let leaderboardCache = null;
+        let leaderboardLastFetch = 0;
+        const CACHE_DURATION = 30000; // 30 seconds
+
         function loadLeaderboard() {
+            const now = Date.now();
+            
+            // Use cache if available and fresh
+            if (leaderboardCache && (now - leaderboardLastFetch) < CACHE_DURATION) {
+                displayLeaderboard(leaderboardCache);
+                return;
+            }
+
+            // Show loading state immediately
+            document.getElementById('leaderboardEntries').innerHTML = `
+                <div class="leaderboard-entry" style="justify-content: center;">
+                    <div class="loading"></div>
+                    <div style="margin-left: 10px;">Loading leaderboard...</div>
+                </div>
+            `;
+
             const url = user ? 
                 `https://cx-odyssey-backend.vercel.app/api/leaderboard?telegramId=${user.id}` :
                 'https://cx-odyssey-backend.vercel.app/api/leaderboard';
             
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const entriesContainer = document.getElementById('leaderboardEntries');
-                    entriesContainer.innerHTML = '';
-                    
-                    if (data && data.topPlayers) {
-                        data.topPlayers.forEach((entry, index) => {
-                            const entryEl = document.createElement('div');
-                            entryEl.className = 'leaderboard-entry';
-                            
-                            let rankIcon = '';
-                            if (index === 0) rankIcon = '<span style="color: #ffd700; font-size: 24px;">👑</span> ';
-                            else if (index === 1) rankIcon = '<span style="color: #ff6b35; font-size: 20px;">🥈</span> ';
-                            else if (index === 2) rankIcon = '<span style="color: #7209b7; font-size: 20px;">🥉</span> ';
-                            else rankIcon = `<span style="color: #888;">${index + 1}.</span> `;
-                            
-                            entryEl.innerHTML = `
-                                <div>${rankIcon}${entry.username}</div>
-                                <div style="color: var(--primary-gold); font-weight: 700;">${entry.gp.toLocaleString()} GP</div>
-                            `;
-                            
-                            entriesContainer.appendChild(entryEl);
-                        });
-
-                        if (data.userRank) {
-                            document.getElementById('playerRank').textContent = data.userRank;
-                        }
-                    }
+            // Set a timeout for the request
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+            
+            fetch(url, { signal: controller.signal })
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
                 })
-                .catch(() => {
-                    document.getElementById('leaderboardEntries').innerHTML = `
-                        <div class="leaderboard-entry">
-                            <div><span style="color: #ffd700; font-size: 24px;">👑</span> GalaxyMaster</div>
-                            <div style="color: var(--primary-gold); font-weight: 700;">125,000 GP</div>
-                        </div>
-                    `;
+                .then(data => {
+                    leaderboardCache = data;
+                    leaderboardLastFetch = now;
+                    displayLeaderboard(data);
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.log('Leaderboard load failed, using fallback data');
+                    
+                    // Use fallback data
+                    const fallbackData = {
+                        topPlayers: [
+                            { username: 'GalaxyMaster', gp: 125000 },
+                            { username: 'StarHunter', gp: 89500 },
+                            { username: 'CosmicRider', gp: 67200 },
+                            { username: 'SpaceMiner', gp: 45000 },
+                            { username: 'AsteroidKing', gp: 32000 }
+                        ],
+                        userRank: 999
+                    };
+                    
+                    displayLeaderboard(fallbackData);
                 });
+        }
+
+        function displayLeaderboard(data) {
+            const entriesContainer = document.getElementById('leaderboardEntries');
+            entriesContainer.innerHTML = '';
+            
+            if (data && data.topPlayers) {
+                data.topPlayers.forEach((entry, index) => {
+                    const entryEl = document.createElement('div');
+                    entryEl.className = 'leaderboard-entry';
+                    
+                    let rankIcon = '';
+                    if (index === 0) rankIcon = '<span style="color: #ffd700; font-size: 24px;">👑</span> ';
+                    else if (index === 1) rankIcon = '<span style="color: #ff6b35; font-size: 20px;">🥈</span> ';
+                    else if (index === 2) rankIcon = '<span style="color: #7209b7; font-size: 20px;">🥉</span> ';
+                    else rankIcon = `<span style="color: #888;">${index + 1}.</span> `;
+                    
+                    entryEl.innerHTML = `
+                        <div>${rankIcon}${entry.username}</div>
+                        <div style="color: var(--primary-gold); font-weight: 700;">${entry.gp.toLocaleString()} GP</div>
+                    `;
+                    
+                    entriesContainer.appendChild(entryEl);
+                });
+
+                if (data.userRank) {
+                    document.getElementById('playerRank').textContent = data.userRank;
+                }
+            }
         }
 
         // Mini-games
@@ -1447,6 +1525,9 @@
 
         // UI updates
         function updateUI() {
+            // Update tickets first
+            updateTickets();
+            
             // Update all resource displays
             const energyElements = document.querySelectorAll('#energy, #energyMining');
             energyElements.forEach(el => {
@@ -1461,6 +1542,11 @@
             const gpElements = document.querySelectorAll('#gp, #gpBoss, #gpLeaderboard, #gpShop, #gpMinigames');
             gpElements.forEach(el => {
                 if (el) el.textContent = gameState.gp.toLocaleString();
+            });
+
+            const ticketElements = document.querySelectorAll('#gameTickets');
+            ticketElements.forEach(el => {
+                if (el) el.textContent = gameState.gameTickets;
             });
 
             // Update energy bar
@@ -1513,6 +1599,11 @@
                 userLevelEl.textContent = userLevel;
             }
         }
+
+        // Ticket regeneration system
+        setInterval(() => {
+            updateTickets();
+        }, 60000); // Check every minute
 
         // Energy regeneration
         setInterval(() => {
