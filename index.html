@@ -277,6 +277,7 @@
             cursor: not-allowed;
         }
 
+        /* Improved Modal Styles */
         .modal {
             position: fixed;
             top: 0;
@@ -288,10 +289,17 @@
             align-items: center;
             justify-content: center;
             z-index: 200;
+            backdrop-filter: blur(5px);
         }
 
         .modal.active {
             display: flex;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .modal-content {
@@ -300,7 +308,17 @@
             padding: 40px;
             text-align: center;
             max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
             position: relative;
+            border: 2px solid var(--primary-gold);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .close-btn {
@@ -315,6 +333,15 @@
             height: 40px;
             border-radius: 50%;
             cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1);
+            background: #ff2a5a;
         }
 
         .notification {
@@ -329,6 +356,7 @@
             z-index: 100;
             font-weight: 700;
             animation: notificationSlide 3s ease-in-out;
+            box-shadow: 0 5px 25px rgba(255, 215, 0, 0.5);
         }
 
         @keyframes notificationSlide {
@@ -490,11 +518,96 @@
             100% { transform: translateY(-10px); }
         }
 
+        /* Task Section Styles */
+        .tasks-section {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+            border-radius: 25px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid transparent;
+        }
+
+        .task-item.completed {
+            border-left-color: var(--success-green);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .task-reward {
+            background: var(--primary-gold);
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .ticket-cooldown {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* Daily Combo Game Styles */
+        .combo-container {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .combo-digit {
+            width: 50px;
+            height: 60px;
+            border: 2px solid var(--primary-gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .combo-input {
+            width: 50px;
+            height: 60px;
+            border: 2px solid var(--neon-blue);
+            border-radius: 10px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+        }
+
+        .combo-hint {
+            margin: 10px 0;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .combo-result {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 15px 0;
+            min-height: 30px;
+        }
+
         @media (max-width: 768px) {
             .header { padding: 15px; }
             .logo { font-size: 20px; }
             .mining-area { width: 240px; height: 240px; }
             .boss-image { width: 180px; height: 180px; font-size: 60px; }
+            .combo-digit, .combo-input { width: 40px; height: 50px; font-size: 20px; }
         }
     </style>
 </head>
@@ -511,6 +624,7 @@
                 <div id="tgInitStatus" style="margin-top: 30px; font-size: 16px; color: var(--primary-gold);">
                     Initializing Game
                 </div>
+                <div id="loadingProgress" style="margin-top: 20px; font-size: 14px; opacity: 0.8;"></div>
             </div>
         </div>
 
@@ -582,6 +696,34 @@
                 <button class="action-btn" onclick="showScreen('bossScreen')">🐉 Boss Raid</button>
                 <button class="action-btn" onclick="checkDailyReward()">🎁 Daily Login</button>
                 <button class="action-btn" onclick="shareGame()">📤 Share Game</button>
+            </div>
+
+            <!-- Tasks Section -->
+            <div class="tasks-section">
+                <h3 style="color: var(--primary-gold); margin-bottom: 15px; text-align: center;">📋 Daily Tasks</h3>
+                <div id="tasksList">
+                    <div class="task-item" id="taskMine">
+                        <div>
+                            <div style="font-weight: 700;">⛏️ Mine 10 times</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Progress: <span id="taskMineProgress">0/10</span></div>
+                        </div>
+                        <div class="task-reward">+50 GP</div>
+                    </div>
+                    <div class="task-item" id="taskBoss">
+                        <div>
+                            <div style="font-weight: 700;">🐉 Attack Boss 5 times</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Progress: <span id="taskBossProgress">0/5</span></div>
+                        </div>
+                        <div class="task-reward">+100 GP</div>
+                    </div>
+                    <div class="task-item" id="taskDaily">
+                        <div>
+                            <div style="font-weight: 700;">🎮 Play Daily Combo</div>
+                            <div style="font-size: 12px; opacity: 0.8;">Status: <span id="taskDailyStatus">Not completed</span></div>
+                        </div>
+                        <div class="task-reward">+200 GP</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -749,11 +891,11 @@
                     <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Solve alien puzzles!</div>
                     <div style="color: var(--success-green); font-weight: 600;">Reward: 100-500 GP</div>
                 </div>
-                <div class="shop-item" onclick="startPvPArena()">
-                    <div style="font-size: 50px; margin-bottom: 15px;">⚔️</div>
-                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">CX Arena PvP</div>
-                    <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Battle other players!</div>
-                    <div style="color: var(--success-green); font-weight: 600;">Reward: 500-2000 GP</div>
+                <div class="shop-item" onclick="startDailyCombo()">
+                    <div style="font-size: 50px; margin-bottom: 15px;">🔢</div>
+                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Daily Combo</div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Guess today's code!</div>
+                    <div style="color: var(--success-green); font-weight: 600;">Reward: 500 GP</div>
                 </div>
             </div>
 
@@ -829,7 +971,7 @@
             </button>
         </div>
 
-        <!-- Modals -->
+        <!-- Improved Modals -->
         <div class="modal" id="adModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('adModal')">&times;</button>
@@ -852,7 +994,7 @@
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('rewardModal')">&times;</button>
                 <h2 style="color: var(--primary-gold); margin-bottom: 25px;">🎉 Reward Earned!</h2>
-                <div style="font-size: 80px; margin: 25px 0;">💎</div>
+                <div style="font-size: 80px; margin: 25px 0;" id="rewardIcon">💎</div>
                 <div style="font-size: 28px; color: var(--primary-gold); font-weight: 700; margin-bottom: 20px;" id="rewardText">+100 GP</div>
                 <p style="margin-top: 25px;">Keep collecting to unlock more rewards!</p>
                 <button class="action-btn" onclick="closeModal('rewardModal')" style="margin-top: 25px;">Continue</button>
@@ -889,25 +1031,38 @@
             adDamageBoost: 0,
             gameTickets: 3,
             lastTicketTime: Date.now(),
-            maxTickets: 10
+            maxTickets: 10,
+            tasks: {
+                mine: { current: 0, target: 10, completed: false },
+                boss: { current: 0, target: 5, completed: false },
+                dailyCombo: { completed: false }
+            },
+            dailyComboCode: '',
+            dailyComboAttempts: 0,
+            mineCount: 0,
+            bossAttackCount: 0
         };
 
         // Global variables
         let tg = null;
         let user = null;
         let connector = null;
+        let leaderboardInterval = null;
+        let ticketCooldownInterval = null;
 
-        // Initialize game
+        // Initialize game with better loading
         function initGame() {
             console.log('🚀 Initializing CX Odyssey...');
+            updateLoadingProgress("Starting game...");
             
             try {
                 generateStarfield();
+                updateLoadingProgress("Generating universe...");
                 
                 // Check if we're in Telegram WebApp
                 if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
                     console.log('📱 Telegram WebApp detected');
-                    document.getElementById('tgInitStatus').textContent = "Connecting to Telegram...";
+                    updateLoadingProgress("Connecting to Telegram...");
                     
                     tg = window.Telegram.WebApp;
                     tg.expand();
@@ -917,7 +1072,7 @@
                     
                     if (user) {
                         console.log('👤 User logged in:', user.first_name);
-                        document.getElementById('tgInitStatus').textContent = "Welcome, " + user.first_name + "!";
+                        updateLoadingProgress("Welcome, " + user.first_name + "!");
                         
                         if (user.photo_url) {
                             document.getElementById('tgAvatar').src = user.photo_url;
@@ -927,38 +1082,55 @@
                         if (user.last_name) userName += " " + user.last_name;
                         document.getElementById('tgUserName').textContent = userName;
                     } else {
-                        document.getElementById('tgInitStatus').textContent = "Browser mode";
+                        updateLoadingProgress("Browser mode");
                     }
                 } else {
                     console.log('🌐 Running in browser mode');
-                    document.getElementById('tgInitStatus').textContent = "Browser mode";
+                    updateLoadingProgress("Browser mode");
                 }
                 
                 // Initialize TonConnect
+                updateLoadingProgress("Initializing wallet...");
                 initTonConnect();
                 
                 // Load game data
+                updateLoadingProgress("Loading game data...");
                 loadGameData();
                 
             } catch (error) {
                 console.error('❌ Initialization error:', error);
-                document.getElementById('tgInitStatus').textContent = "Error: " + error.message;
+                updateLoadingProgress("Error: " + error.message);
             }
             
             // Start the game after 2 seconds
             setTimeout(startGame, 2000);
         }
 
+        function updateLoadingProgress(message) {
+            const statusEl = document.getElementById('tgInitStatus');
+            const progressEl = document.getElementById('loadingProgress');
+            if (statusEl) statusEl.textContent = message;
+            if (progressEl) progressEl.textContent = message;
+        }
+
         // Start the actual game
         function startGame() {
             console.log('🎮 Starting game...');
+            updateLoadingProgress("Finalizing setup...");
+            
+            // Generate daily combo code
+            generateDailyCombo();
+            
             updateUI();
             checkDailyLogin();
             showScreen('galaxyScreen');
             showNotification(`🚀 Welcome to CX Odyssey${user ? ', ' + user.first_name : ''}!`);
+            
+            // Start background processes
+            startBackgroundProcesses();
         }
 
-        // Initialize TonConnect
+        // Initialize TonConnect with better error handling
         function initTonConnect() {
             try {
                 if (typeof TonConnectSDK !== 'undefined') {
@@ -972,15 +1144,21 @@
                             document.getElementById('connectWalletBtn').style.display = 'none';
                             document.getElementById('walletInfo').style.display = 'block';
                             document.getElementById('connectedAddress').textContent = shortenAddress(wallet.account.address);
+                            showNotification('🔗 Wallet connected successfully!');
                         } else {
                             document.getElementById('walletStatus').textContent = 'Not Connected';
                             document.getElementById('connectWalletBtn').style.display = 'block';
                             document.getElementById('walletInfo').style.display = 'none';
                         }
                     });
+                    
+                    // Restore connection if already connected
+                    connector.restoreConnection();
+                } else {
+                    console.log('⚠️ TonConnect SDK not available');
                 }
             } catch (error) {
-                console.log('⚠️ TonConnect not available');
+                console.log('⚠️ TonConnect initialization failed:', error);
             }
         }
 
@@ -1092,6 +1270,11 @@
 
             if (screenId === 'leaderboardScreen') {
                 loadLeaderboard();
+                // Update leaderboard every 3 seconds when on leaderboard screen
+                if (leaderboardInterval) clearInterval(leaderboardInterval);
+                leaderboardInterval = setInterval(loadLeaderboard, 3000);
+            } else {
+                if (leaderboardInterval) clearInterval(leaderboardInterval);
             }
 
             updateUI();
@@ -1106,7 +1289,7 @@
             showNotification(`🌍 Landed on ${planetName}!`);
         }
 
-        // Mining mechanics
+        // Mining mechanics - FIXED
         function minePlanet() {
             if (gameState.energy <= 0) {
                 showNotification('⚡ No energy! Watch an ad or wait for regeneration.');
@@ -1118,11 +1301,20 @@
             const speedBonus = 1 + (gameState.upgrades.speed * 0.25);
             const reward = Math.floor((10 + Math.random() * 10) * planetMultiplier * speedBonus);
 
-            gameState.energy -= 5;
+            // Fixed energy consumption
+            gameState.energy = Math.max(0, gameState.energy - 5);
             gameState.shards += reward;
-            gameState.gp += Math.floor(reward * 0.5 * (1 + gameState.upgrades.multiplier));
+            
+            // Fixed GP calculation - now actually gives points
+            const gpEarned = Math.floor(reward * 0.5 * (1 + gameState.upgrades.multiplier));
+            gameState.gp += gpEarned;
+            
+            // Update task progress
+            gameState.mineCount++;
+            gameState.tasks.mine.current = Math.min(gameState.mineCount, gameState.tasks.mine.target);
+            checkTaskCompletion('mine');
 
-            showNotification(`💎 +${reward} Shards, +${Math.floor(reward * 0.5 * (1 + gameState.upgrades.multiplier))} GP!`);
+            showNotification(`💎 +${reward} Shards, +${gpEarned} GP!`);
             updateUI();
             saveGameData();
         }
@@ -1135,7 +1327,7 @@
             return multipliers[planetName] || 1.0;
         }
 
-        // Battle system
+        // Battle system - FIXED
         function battleAliens() {
             if (gameState.energy < 10) {
                 showNotification('⚡ Need at least 10 energy to battle!');
@@ -1151,7 +1343,7 @@
             saveGameData();
         }
 
-        // Boss raid system
+        // Boss raid system - FIXED
         function attackBoss() {
             const baseDamage = 10 + (gameState.upgrades.damage * 5);
             const damage = baseDamage + Math.floor(Math.random() * 20);
@@ -1159,6 +1351,11 @@
             
             gameState.bossHealth = Math.max(0, gameState.bossHealth - actualDamage);
             gameState.playerDamage += actualDamage;
+            
+            // Update task progress
+            gameState.bossAttackCount++;
+            gameState.tasks.boss.current = Math.min(gameState.bossAttackCount, gameState.tasks.boss.target);
+            checkTaskCompletion('boss');
             
             if (gameState.adDamageBoost > 0) {
                 gameState.adDamageBoost--;
@@ -1238,7 +1435,14 @@
                 multiplier: 'GP multiplier activated!'
             };
 
-            showUpgradeModal('⚡', messages[upgradeType]);
+            const icons = {
+                speed: '🚀',
+                damage: '⚔️',
+                energy: '⚡',
+                multiplier: '💰'
+            };
+
+            showUpgradeModal(icons[upgradeType], messages[upgradeType]);
             updateUI();
             saveGameData();
         }
@@ -1292,7 +1496,7 @@
             }
         }
 
-        // Wallet functions with better error handling
+        // Wallet functions with improved connection
         function connectWallet() {
             if (!connector) {
                 showNotification('❌ TonConnect not available. Please make sure you have a TON wallet installed.');
@@ -1304,11 +1508,10 @@
                 if (tg) {
                     connector.connectWallet();
                 } else {
-                    // For browser environment, show available wallets
+                    // For browser environment
                     connector.getWallets()
                         .then(wallets => {
                             if (wallets && wallets.length > 0) {
-                                // Try to connect with the first available wallet
                                 const wallet = wallets[0];
                                 connector.connect({
                                     bridgeUrl: wallet.bridgeUrl,
@@ -1336,7 +1539,6 @@
                     showNotification('🔔 Wallet disconnected');
                 } catch (error) {
                     console.error('Disconnect error:', error);
-                    // Force UI update even if disconnect fails
                     document.getElementById('walletStatus').textContent = 'Not Connected';
                     document.getElementById('connectWalletBtn').style.display = 'block';
                     document.getElementById('walletInfo').style.display = 'none';
@@ -1364,10 +1566,10 @@
             showNotification('🎉 Thanks for sharing CX Odyssey!');
         }
 
-        // Leaderboard with faster loading and caching
+        // Leaderboard with real-time updates
         let leaderboardCache = null;
         let leaderboardLastFetch = 0;
-        const CACHE_DURATION = 30000; // 30 seconds
+        const CACHE_DURATION = 5000; // 5 seconds for more frequent updates
 
         function loadLeaderboard() {
             const now = Date.now();
@@ -1392,7 +1594,7 @@
             
             // Set a timeout for the request
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
             
             fetch(url, { signal: controller.signal })
                 .then(response => {
@@ -1409,14 +1611,14 @@
                     clearTimeout(timeoutId);
                     console.log('Leaderboard load failed, using fallback data');
                     
-                    // Use fallback data
+                    // Use fallback data with current player's GP
                     const fallbackData = {
                         topPlayers: [
                             { username: 'GalaxyMaster', gp: 125000 },
                             { username: 'StarHunter', gp: 89500 },
                             { username: 'CosmicRider', gp: 67200 },
                             { username: 'SpaceMiner', gp: 45000 },
-                            { username: 'AsteroidKing', gp: 32000 }
+                            { username: user ? user.first_name : 'You', gp: gameState.gp }
                         ],
                         userRank: 999
                     };
@@ -1454,7 +1656,7 @@
             }
         }
 
-        // Mini-games
+        // Mini-games with Daily Combo
         function startAsteroidDodge() {
             document.getElementById('minigameArea').innerHTML = `
                 <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 20px;">☄️ Asteroid Dodge</h3>
@@ -1482,16 +1684,138 @@
             `;
         }
 
-        function startPvPArena() {
+        function startDailyCombo() {
+            if (gameState.tasks.dailyCombo.completed) {
+                showNotification('🎮 You already completed the daily combo today!');
+                return;
+            }
+
             document.getElementById('minigameArea').innerHTML = `
-                <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 20px;">⚔️ CX Arena PvP</h3>
-                <p style="margin-bottom: 20px;">Game coming soon!</p>
-                <div style="font-size: 60px; margin: 30px;">🚧</div>
-                <p style="opacity: 0.8;">This mini-game is under development</p>
+                <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 20px;">🔢 Daily Combo</h3>
+                <p style="margin-bottom: 10px;">Guess the 4-digit code of the day!</p>
+                <p class="combo-hint">Hint: The code is based on today's date</p>
+                
+                <div class="combo-container">
+                    <input type="number" class="combo-input" id="digit1" maxlength="1" min="0" max="9" oninput="moveToNext(1)">
+                    <input type="number" class="combo-input" id="digit2" maxlength="1" min="0" max="9" oninput="moveToNext(2)">
+                    <input type="number" class="combo-input" id="digit3" maxlength="1" min="0" max="9" oninput="moveToNext(3)">
+                    <input type="number" class="combo-input" id="digit4" maxlength="1" min="0" max="9" oninput="checkCombo()">
+                </div>
+                
+                <div class="combo-result" id="comboResult"></div>
+                <button class="action-btn" onclick="checkCombo()" style="margin-top: 20px;">Check Code</button>
+                <div style="margin-top: 15px; font-size: 14px; opacity: 0.8;">
+                    Attempts: <span id="comboAttempts">${gameState.dailyComboAttempts}</span>/5
+                </div>
             `;
         }
 
-        // Modal system
+        function moveToNext(current) {
+            const nextInput = document.getElementById(`digit${current + 1}`);
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+
+        function checkCombo() {
+            const digit1 = document.getElementById('digit1').value;
+            const digit2 = document.getElementById('digit2').value;
+            const digit3 = document.getElementById('digit3').value;
+            const digit4 = document.getElementById('digit4').value;
+            
+            const guess = digit1 + digit2 + digit3 + digit4;
+            const resultEl = document.getElementById('comboResult');
+            
+            if (guess.length !== 4) {
+                resultEl.textContent = '❌ Please enter all 4 digits';
+                resultEl.style.color = 'var(--danger-red)';
+                return;
+            }
+            
+            gameState.dailyComboAttempts++;
+            
+            if (guess === gameState.dailyComboCode) {
+                const reward = 500;
+                gameState.gp += reward;
+                gameState.tasks.dailyCombo.completed = true;
+                resultEl.textContent = `🎉 Correct! You earned ${reward} GP!`;
+                resultEl.style.color = 'var(--success-green)';
+                showNotification(`🔢 Daily Combo solved! +${reward} GP!`);
+                saveGameData();
+                updateUI();
+                updateTasksUI();
+            } else {
+                resultEl.textContent = '❌ Incorrect code. Try again!';
+                resultEl.style.color = 'var(--danger-red)';
+                
+                if (gameState.dailyComboAttempts >= 5) {
+                    resultEl.textContent += ' No more attempts left!';
+                    document.querySelector('.action-btn').disabled = true;
+                }
+            }
+            
+            document.getElementById('comboAttempts').textContent = gameState.dailyComboAttempts;
+        }
+
+        function generateDailyCombo() {
+            const today = new Date();
+            const day = today.getDate();
+            const month = today.getMonth() + 1;
+            
+            // Create a consistent code based on date
+            const code = (day * month).toString().padStart(4, '0').substring(0, 4);
+            gameState.dailyComboCode = code;
+            
+            // Reset attempts if it's a new day
+            const todayStr = today.toDateString();
+            if (gameState.lastLogin !== todayStr) {
+                gameState.dailyComboAttempts = 0;
+                gameState.tasks.dailyCombo.completed = false;
+            }
+        }
+
+        // Task system
+        function checkTaskCompletion(taskType) {
+            const task = gameState.tasks[taskType];
+            if (!task.completed && task.current >= task.target) {
+                task.completed = true;
+                
+                let reward = 0;
+                if (taskType === 'mine') reward = 50;
+                else if (taskType === 'boss') reward = 100;
+                else if (taskType === 'dailyCombo') reward = 200;
+                
+                gameState.gp += reward;
+                showNotification(`✅ Task completed! +${reward} GP`);
+                updateTasksUI();
+                saveGameData();
+            }
+        }
+
+        function updateTasksUI() {
+            // Mine task
+            document.getElementById('taskMineProgress').textContent = 
+                `${gameState.tasks.mine.current}/${gameState.tasks.mine.target}`;
+            if (gameState.tasks.mine.completed) {
+                document.getElementById('taskMine').classList.add('completed');
+            }
+            
+            // Boss task
+            document.getElementById('taskBossProgress').textContent = 
+                `${gameState.tasks.boss.current}/${gameState.tasks.boss.target}`;
+            if (gameState.tasks.boss.completed) {
+                document.getElementById('taskBoss').classList.add('completed');
+            }
+            
+            // Daily combo task
+            document.getElementById('taskDailyStatus').textContent = 
+                gameState.tasks.dailyCombo.completed ? 'Completed' : 'Not completed';
+            if (gameState.tasks.dailyCombo.completed) {
+                document.getElementById('taskDaily').classList.add('completed');
+            }
+        }
+
+        // Modal system with improved design
         function showModal(modalId) {
             document.getElementById(modalId).classList.add('active');
         }
@@ -1502,6 +1826,7 @@
 
         function showRewardModal(text, icon) {
             document.getElementById('rewardText').textContent = text;
+            document.getElementById('rewardIcon').textContent = icon;
             showModal('rewardModal');
         }
 
@@ -1523,11 +1848,63 @@
             }, 3200);
         }
 
-        // UI updates
-        function updateUI() {
-            // Update tickets first
-            updateTickets();
+        // Ticket cooldown system
+        function updateTicketCooldown() {
+            const now = Date.now();
+            const timeSinceLastTicket = now - gameState.lastTicketTime;
+            const ticketRegenerationTime = 10 * 60 * 1000; // 10 minutes
             
+            if (gameState.gameTickets < gameState.maxTickets) {
+                const timeUntilNextTicket = ticketRegenerationTime - (timeSinceLastTicket % ticketRegenerationTime);
+                const minutes = Math.floor(timeUntilNextTicket / 60000);
+                const seconds = Math.floor((timeUntilNextTicket % 60000) / 1000);
+                
+                const cooldownText = `Next ticket in: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                document.querySelectorAll('.ticket-cooldown').forEach(el => {
+                    el.textContent = cooldownText;
+                });
+            } else {
+                document.querySelectorAll('.ticket-cooldown').forEach(el => {
+                    el.textContent = 'Max tickets reached';
+                });
+            }
+        }
+
+        // Background processes
+        function startBackgroundProcesses() {
+            // Ticket regeneration
+            setInterval(() => {
+                const now = Date.now();
+                const timeSinceLastTicket = now - gameState.lastTicketTime;
+                const ticketRegenerationTime = 10 * 60 * 1000; // 10 minutes
+                
+                const ticketsToAdd = Math.floor(timeSinceLastTicket / ticketRegenerationTime);
+                if (ticketsToAdd > 0) {
+                    gameState.gameTickets = Math.min(gameState.maxTickets, gameState.gameTickets + ticketsToAdd);
+                    gameState.lastTicketTime += ticketsToAdd * ticketRegenerationTime;
+                    updateUI();
+                    saveGameData();
+                }
+                
+                updateTicketCooldown();
+            }, 1000);
+            
+            // Energy regeneration - FIXED
+            setInterval(() => {
+                if (gameState.energy < gameState.maxEnergy) {
+                    gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 1);
+                    updateUI();
+                }
+            }, 3000); // Regenerate energy every 3 seconds
+            
+            // Auto-save
+            setInterval(() => {
+                saveGameData();
+            }, 30000);
+        }
+
+        // UI updates - FIXED
+        function updateUI() {
             // Update all resource displays
             const energyElements = document.querySelectorAll('#energy, #energyMining');
             energyElements.forEach(el => {
@@ -1598,25 +1975,10 @@
             if (userLevelEl) {
                 userLevelEl.textContent = userLevel;
             }
+
+            // Update tasks
+            updateTasksUI();
         }
-
-        // Ticket regeneration system
-        setInterval(() => {
-            updateTickets();
-        }, 60000); // Check every minute
-
-        // Energy regeneration
-        setInterval(() => {
-            if (gameState.energy < gameState.maxEnergy) {
-                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 1);
-                updateUI();
-            }
-        }, 6000);
-
-        // Auto-save
-        setInterval(() => {
-            saveGameData();
-        }, 30000);
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', initGame);
