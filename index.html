@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CX Odyssey: Rise of the Collectors</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
@@ -15,8 +15,6 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
-            -webkit-text-size-adjust: none;
-            text-size-adjust: none;
         }
 
         :root {
@@ -38,7 +36,23 @@
             overflow: hidden;
             height: 100vh;
             position: relative;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            padding: 0;
+            margin: 0;
+        }
+
+        /* Telegram WebApp optimizations */
+        @media (max-width: 450px) {
+            body {
+                padding: 0;
+                margin: 0;
+                overflow-y: auto;
+                height: 100vh;
+            }
+            
+            .game-container {
+                min-height: 100vh;
+                padding-bottom: 80px;
+            }
         }
 
         .game-container {
@@ -110,7 +124,7 @@
 
         .loading-logo {
             font-family: 'Orbitron', monospace;
-            font-size: 48px;
+            font-size: 42px;
             font-weight: 900;
             background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange));
             -webkit-background-clip: text;
@@ -125,9 +139,9 @@
         }
 
         .loading-spinner {
-            width: 60px;
-            height: 60px;
-            border: 6px solid rgba(255, 215, 0, 0.3);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 215, 0, 0.3);
             border-radius: 50%;
             border-top-color: var(--primary-gold);
             animation: spin 1s ease-in-out infinite;
@@ -140,13 +154,13 @@
         }
 
         .loading-text {
-            font-size: 18px;
+            font-size: 16px;
             color: var(--primary-gold);
             margin-bottom: 10px;
         }
 
         .loading-progress {
-            width: 300px;
+            width: 280px;
             height: 4px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 2px;
@@ -169,7 +183,7 @@
             display: none;
             padding: 15px;
             overflow-y: auto;
-            padding-bottom: 70px;
+            padding-bottom: 90px;
         }
 
         .screen.active {
@@ -185,7 +199,7 @@
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
             border-radius: 20px;
             margin-bottom: 15px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
         }
 
         .logo {
@@ -201,23 +215,18 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .resource {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
             padding: 8px 12px;
-            border-radius: 20px;
+            border-radius: 25px;
             font-size: 12px;
             font-weight: 600;
-        }
-
-        .ticket-cooldown {
-            font-size: 9px;
-            opacity: 0.8;
-            margin-top: 1px;
         }
 
         .nav-bar {
@@ -228,12 +237,12 @@
             display: flex;
             background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(26, 26, 46, 0.95));
             z-index: 50;
-            padding-bottom: env(safe-area-inset-bottom);
+            padding: 5px 0;
         }
 
         .nav-btn {
             flex: 1;
-            padding: 10px 5px;
+            padding: 10px 4px;
             text-align: center;
             background: transparent;
             color: rgba(255, 255, 255, 0.6);
@@ -251,6 +260,23 @@
         .nav-btn div:first-child {
             font-size: 16px;
             margin-bottom: 3px;
+        }
+
+        .tg-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 15px;
+            margin-bottom: 15px;
+        }
+
+        .tg-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-gold);
         }
 
         .galaxy-map {
@@ -299,8 +325,8 @@
         }
 
         .mining-area {
-            width: 250px;
-            height: 250px;
+            width: 260px;
+            height: 260px;
             border-radius: 25px;
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
             display: flex;
@@ -312,7 +338,7 @@
         }
 
         .mining-area:hover {
-            transform: scale(1.03);
+            transform: scale(1.02);
         }
 
         .energy-bar {
@@ -320,7 +346,7 @@
             max-width: 300px;
             height: 20px;
             background: rgba(0, 0, 0, 0.6);
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
         }
 
@@ -345,14 +371,14 @@
             color: var(--primary-gold);
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             min-width: 120px;
         }
 
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
         }
 
         .action-btn:disabled {
@@ -374,147 +400,18 @@
             font-weight: 700;
             font-size: 14px;
             text-align: center;
-            min-width: 200px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.3);
+            min-width: 220px;
+            max-width: 320px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 215, 0, 0.3);
             animation: notificationPop 3s ease-in-out;
         }
 
         @keyframes notificationPop {
             0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-            10% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+            10% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
             15% { transform: translate(-50%, -50%) scale(1); }
             85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-        }
-
-        .daily-combo-game {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 20px;
-            padding: 20px;
-            margin: 15px 0;
-            text-align: center;
-        }
-
-        .combo-input {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 15px 0;
-        }
-
-        .combo-digit {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 215, 0, 0.1);
-            border: 2px solid var(--primary-gold);
-            border-radius: 8px;
-            color: var(--primary-gold);
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center;
-            outline: none;
-        }
-
-        .combo-keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            max-width: 180px;
-            margin: 0 auto 15px;
-        }
-
-        .combo-key {
-            padding: 12px;
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid var(--primary-gold);
-            border-radius: 8px;
-            color: var(--primary-gold);
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-
-        .combo-key:hover {
-            background: rgba(255, 215, 0, 0.3);
-        }
-
-        .tasks-section {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 20px;
-            padding: 20px;
-            margin: 10px 0;
-        }
-
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            margin: 8px 0;
-            background: rgba(255, 215, 0, 0.1);
-            border-radius: 12px;
-            border-left: 4px solid var(--primary-gold);
-        }
-
-        .task-reward {
-            background: var(--success-green);
-            color: #000;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 11px;
-        }
-
-        .task-button {
-            background: var(--primary-gold);
-            color: #000;
-            padding: 6px 12px;
-            border-radius: 15px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 11px;
-        }
-
-        .leaderboard {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 20px;
-            padding: 20px;
-            margin: 10px 0;
-        }
-
-        .leaderboard-entry {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            margin: 8px 0;
-            background: rgba(255, 215, 0, 0.1);
-            border-radius: 12px;
-            border-left: 4px solid var(--primary-gold);
-        }
-
-        .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
-            padding: 10px 0;
-        }
-
-        .shop-item {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 20px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .shop-item:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-gold);
         }
 
         .boss-image {
@@ -550,83 +447,64 @@
             transition: width 0.5s ease;
         }
 
-        .daily-reward {
-            background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
+        .tasks-section, .leaderboard, .shop-grid, .minigame-area {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
             border-radius: 20px;
             padding: 20px;
-            text-align: center;
-            margin: 10px 0;
-            color: #000;
-            font-weight: 700;
+            margin: 12px 0;
         }
 
-        .tg-user-info {
+        .task-item {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
-            padding: 15px;
+            padding: 12px 15px;
+            margin: 8px 0;
             background: rgba(255, 215, 0, 0.1);
+            border-radius: 12px;
+            border-left: 3px solid var(--primary-gold);
+        }
+
+        .task-reward {
+            background: var(--success-green);
+            color: #000;
+            padding: 6px 12px;
             border-radius: 15px;
-            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 11px;
         }
 
-        .tg-avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: 2px solid var(--primary-gold);
+        .task-button {
+            background: var(--primary-gold);
+            color: #000;
+            padding: 6px 12px;
+            border-radius: 15px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 11px;
         }
 
-        .minigame-area {
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            padding: 12px 0;
+        }
+
+        .shop-item {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
             border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            min-height: 300px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .command-center {
             padding: 15px;
             text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
         }
 
-        .command-info {
-            background: rgba(255, 215, 0, 0.1);
-            padding: 15px;
-            border-radius: 12px;
-            margin-top: 15px;
-        }
-
-        .wallet-address {
-            word-break: break-all;
-            font-family: monospace;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 8px;
-            border-radius: 6px;
-            margin: 8px 0;
-            font-size: 12px;
-        }
-
-        .referral-section {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 15px;
-            padding: 15px;
-            margin: 10px 0;
-        }
-
-        .referral-code {
-            background: rgba(255, 215, 0, 0.2);
-            padding: 10px;
-            border-radius: 10px;
-            font-family: monospace;
-            font-size: 16px;
-            margin: 10px 0;
-            word-break: break-all;
+        .shop-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-gold);
         }
 
         .modal {
@@ -640,7 +518,6 @@
             align-items: center;
             justify-content: center;
             z-index: 200;
-            padding: 15px;
         }
 
         .modal.active {
@@ -652,15 +529,15 @@
             border-radius: 25px;
             padding: 30px;
             text-align: center;
-            max-width: 100%;
+            max-width: 85%;
             position: relative;
             border: 2px solid var(--primary-gold);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
         }
 
         .close-btn {
             position: absolute;
-            top: 10px;
+            top: 12px;
             right: 15px;
             background: var(--danger-red);
             border: none;
@@ -672,39 +549,105 @@
             cursor: pointer;
         }
 
-        .task-tabs {
-            display: flex;
-            margin-bottom: 15px;
-            background: rgba(255, 215, 0, 0.1);
-            border-radius: 10px;
-            padding: 5px;
-        }
-
-        .task-tab {
-            flex: 1;
-            padding: 8px;
+        /* Daily Combo in Mini-games section */
+        .daily-combo-game {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.1));
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
             text-align: center;
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.6);
-            cursor: pointer;
+            border: 2px solid var(--primary-gold);
+        }
+
+        .combo-input {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .combo-digit {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 2px solid var(--primary-gold);
             border-radius: 8px;
-            transition: all 0.3s;
+            color: var(--primary-gold);
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            outline: none;
         }
 
-        .task-tab.active {
-            background: var(--primary-gold);
+        .combo-keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            max-width: 180px;
+            margin: 0 auto 15px;
+        }
+
+        .combo-key {
+            padding: 12px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--primary-gold);
+            border-radius: 8px;
+            color: var(--primary-gold);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .combo-key:hover {
+            background: rgba(255, 215, 0, 0.3);
+        }
+
+        /* Referral system styles */
+        .referral-section {
+            background: linear-gradient(135deg, var(--success-green), rgba(0, 255, 136, 0.8));
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
             color: #000;
+            text-align: center;
         }
 
-        @media (max-width: 768px) {
+        .referral-code {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-weight: bold;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+
+        .referral-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        /* Mobile responsiveness for Telegram */
+        @media (max-width: 400px) {
             .header { padding: 12px; }
             .logo { font-size: 18px; }
             .mining-area { width: 220px; height: 220px; }
-            .boss-image { width: 160px; height: 160px; font-size: 50px; }
+            .boss-image { width: 170px; height: 170px; font-size: 55px; }
             .nav-btn { padding: 8px 3px; font-size: 8px; }
             .nav-btn div:first-child { font-size: 14px; }
-            .screen { padding: 10px; padding-bottom: 60px; }
+            .combo-digit { width: 40px; height: 40px; font-size: 18px; }
+            .resources { gap: 8px; }
+            .resource { padding: 6px 10px; font-size: 11px; }
         }
     </style>
 </head>
@@ -735,8 +678,8 @@
             <div class="tg-user-info" id="tgUserInfo">
                 <img class="tg-avatar" id="tgAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23FFD700'/%3E%3Ctext x='50' y='65' text-anchor='middle' font-size='40' fill='%23000'%3E👤%3C/text%3E%3C/svg%3E">
                 <div>
-                    <div id="tgUserName" style="font-weight: 700; font-size: 16px;">Player</div>
-                    <div style="font-size: 12px; opacity: 0.8;">Level <span id="tgUserLevel">1</span> Explorer</div>
+                    <div id="tgUserName" style="font-weight: 700; font-size: 16px;">Explorer</div>
+                    <div style="font-size: 12px; opacity: 0.8;">Level <span id="tgUserLevel">1</span> • Rank #<span id="userRank">999</span></div>
                 </div>
             </div>
 
@@ -781,8 +724,6 @@
 
             <div class="action-buttons">
                 <button class="action-btn" onclick="showScreen('bossScreen')">🐉 Boss Raid</button>
-                <button class="action-btn" onclick="showScreen('minigamesScreen')">🎮 Mini-Games</button>
-                <button class="action-btn" onclick="showReferralModal()">👥 Refer Friends</button>
             </div>
         </div>
 
@@ -801,11 +742,11 @@
                     <div style="text-align: center;">
                         <div style="font-size: 28px; margin-bottom: 12px;">⛏️</div>
                         <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">TAP TO MINE</div>
-                        <div style="font-size: 12px; opacity: 0.9;">+<span id="mineReward">10</span> Shards</div>
+                        <div style="font-size: 12px; opacity: 0.9;">+<span id="mineReward">5</span> Shards</div>
                     </div>
                 </div>
 
-                <div style="width: 100%; max-width: 280px;">
+                <div style="width: 100%; max-width: 300px;">
                     <div style="margin-bottom: 12px; font-size: 14px; font-weight: 600;">Energy: <span id="energyText">100/100</span></div>
                     <div class="energy-bar">
                         <div class="energy-fill" id="energyFill" style="width: 100%"></div>
@@ -813,8 +754,8 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button class="action-btn" onclick="watchAdForEnergy()" id="adBtn">📺 Watch Ad (+25 Energy)</button>
-                    <button class="action-btn" onclick="battleAliens()">⚔️ Battle Aliens</button>
+                    <button class="action-btn" onclick="watchAdForEnergy()" id="adBtn">📺 Ad (+25 Energy)</button>
+                    <button class="action-btn" onclick="battleAliens()">⚔️ Battle (+30 GP)</button>
                     <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
                 </div>
             </div>
@@ -836,7 +777,7 @@
                 <div class="boss-image" onclick="attackBoss()">👹</div>
 
                 <div>
-                    <div style="margin-bottom: 12px; font-size: 16px; font-weight: 600;">Boss Health: <span id="bossHealthText">1000/1000</span></div>
+                    <div style="margin-bottom: 12px; font-size: 16px; font-weight: 600;">Boss Health: <span id="bossHealthText">500/500</span></div>
                     <div class="boss-health">
                         <div class="boss-health-fill" id="bossHealthFill" style="width: 100%"></div>
                     </div>
@@ -844,7 +785,7 @@
 
                 <div class="action-buttons">
                     <button class="action-btn" onclick="attackBoss()">⚔️ ATTACK!</button>
-                    <button class="action-btn" onclick="watchAdForDamage()">📺 Watch Ad (2x Damage)</button>
+                    <button class="action-btn" onclick="watchAdForDamage()">📺 Ad (2x Damage)</button>
                     <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
                 </div>
 
@@ -866,28 +807,28 @@
 
             <div class="shop-grid">
                 <div class="shop-item" onclick="buyUpgrade('speed')">
-                    <div style="font-size: 40px; margin-bottom: 12px;">🚀</div>
+                    <div style="font-size: 40px; margin-bottom: 10px;">🚀</div>
                     <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Speed Boost</div>
-                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="speedCost">250 GP</div>
-                    <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">+20% Mining Speed</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="speedCost">50 GP</div>
+                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+20% Mining Speed</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('damage')">
-                    <div style="font-size: 40px; margin-bottom: 12px;">⚔️</div>
+                    <div style="font-size: 40px; margin-bottom: 10px;">⚔️</div>
                     <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Damage Boost</div>
-                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="damageCost">500 GP</div>
-                    <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">+30% Battle Damage</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="damageCost">75 GP</div>
+                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+30% Battle Damage</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('energy')">
-                    <div style="font-size: 40px; margin-bottom: 12px;">⚡</div>
+                    <div style="font-size: 40px; margin-bottom: 10px;">⚡</div>
                     <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Energy Tank</div>
-                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="energyCost">750 GP</div>
-                    <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">+25 Max Energy</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="energyCost">100 GP</div>
+                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+25 Max Energy</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('multiplier')">
-                    <div style="font-size: 40px; margin-bottom: 12px;">💰</div>
+                    <div style="font-size: 40px; margin-bottom: 10px;">💰</div>
                     <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">GP Multiplier</div>
-                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="multiplierCost">1500 GP</div>
-                    <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">+50% GP Gain</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="multiplierCost">200 GP</div>
+                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+50% GP Gain</div>
                 </div>
             </div>
 
@@ -904,14 +845,14 @@
                     <div class="resource">🏆 <span id="gpMinigames">0</span></div>
                     <div class="resource">
                         🎫 <span id="gameTickets">3</span>
-                        <div class="ticket-cooldown" id="ticketCooldown"></div>
+                        <div style="font-size: 9px; opacity: 0.8;" id="ticketCooldown"></div>
                     </div>
                 </div>
             </div>
 
             <div class="daily-combo-game">
-                <h3 style="color: var(--primary-gold); margin-bottom: 15px;">🔮 Daily Combo Code</h3>
-                <p style="margin-bottom: 12px; opacity: 0.9;">Guess today's secret code!</p>
+                <h3 style="color: var(--primary-gold); margin-bottom: 15px; font-size: 18px;">🔮 Daily Combo Code</h3>
+                <p style="margin-bottom: 12px; opacity: 0.9; font-size: 13px;">Guess today's secret code!</p>
                 <div class="combo-input">
                     <input type="text" class="combo-digit" maxlength="1" id="combo1">
                     <input type="text" class="combo-digit" maxlength="1" id="combo2">
@@ -932,13 +873,13 @@
                     <button class="combo-key" onclick="inputComboDigit('0')">0</button>
                     <button class="combo-key" onclick="submitCombo()" style="background: var(--success-green); color: #000;">Submit</button>
                 </div>
-                <p style="font-size: 12px; opacity: 0.8;">Attempts: <span id="comboAttempts">3</span>/3 | Reward: 500 GP</p>
+                <p style="font-size: 12px; opacity: 0.8;">Attempts: <span id="comboAttempts">3</span>/3 | Reward: 100 GP</p>
             </div>
 
             <div class="minigame-area" id="minigameArea">
-                <h3 style="color: var(--primary-gold); font-size: 20px; margin-bottom: 12px;">🎮 New Games Coming Soon!</h3>
-                <p style="font-size: 14px; opacity: 0.9;">Exciting mini-games are being developed</p>
-                <p style="font-size: 12px; opacity: 0.7; margin-top: 8px;">Check back later for more fun challenges!</p>
+                <h3 style="color: var(--primary-gold); font-size: 20px; margin-bottom: 12px;">Coming Soon!</h3>
+                <p style="font-size: 14px; opacity: 0.9;">Mini-games are being developed...</p>
+                <p style="font-size: 12px; opacity: 0.7; margin-top: 8px;">Use tickets to play the daily combo above!</p>
             </div>
 
             <div class="action-buttons">
@@ -952,88 +893,71 @@
                 <div class="logo">TASKS & MISSIONS</div>
                 <div class="resources">
                     <div class="resource">🏆 <span id="gpTasks">0</span></div>
-                    <div class="resource">✅ <span id="completedTasks">0</span>/10</div>
+                    <div class="resource">✅ <span id="completedTasks">0</span>/8</div>
                 </div>
             </div>
 
-            <div class="task-tabs">
-                <button class="task-tab active" id="dailyTab" onclick="switchTaskTab('daily')">Daily</button>
-                <button class="task-tab" id="oneTimeTab" onclick="switchTaskTab('oneTime')">One-Time</button>
-            </div>
-
-            <div id="dailyTasks" class="tasks-section">
+            <h3 style="color: var(--primary-gold); margin-bottom: 15px; text-align: center; font-size: 18px;">📋 Daily Tasks (Reset Every Day)</h3>
+            <div class="tasks-section">
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">🌟 Daily Login</div>
+                        <div style="font-weight: bold; font-size: 13px;">🌟 Daily Login</div>
                         <div style="font-size: 11px; opacity: 0.8;">Log in to the game today</div>
                     </div>
-                    <button class="task-button" id="dailyTask1" onclick="claimDailyTask(1)">Claim +50 GP</button>
+                    <div class="task-reward" id="dailyLoginStatus">+25 GP</div>
                 </div>
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">⛏️ Mine 10 Times</div>
+                        <div style="font-weight: bold; font-size: 13px;">⛏️ Mine 10 Times</div>
                         <div style="font-size: 11px; opacity: 0.8;">Mine crystals from planets (<span id="dailyMineCount">0</span>/10)</div>
                     </div>
-                    <button class="task-button" id="dailyTask2" onclick="claimDailyTask(2)" disabled>+100 GP</button>
+                    <button class="task-button" id="dailyMineBtn" onclick="claimDailyTask('mine')" disabled>+50 GP</button>
                 </div>
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">⚔️ Battle Boss 3 Times</div>
+                        <div style="font-weight: bold; font-size: 13px;">⚔️ Battle Boss 3 Times</div>
                         <div style="font-size: 11px; opacity: 0.8;">Attack the cosmic overlord (<span id="dailyBossCount">0</span>/3)</div>
                     </div>
-                    <button class="task-button" id="dailyTask3" onclick="claimDailyTask(3)" disabled>+150 GP</button>
+                    <button class="task-button" id="dailyBossBtn" onclick="claimDailyTask('boss')" disabled>+75 GP</button>
                 </div>
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">💎 Collect 500 Shards</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Gather precious crystals (<span id="dailyShardCount">0</span>/500)</div>
+                        <div style="font-weight: bold; font-size: 13px;">🔮 Try Daily Combo</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Attempt the daily code puzzle</div>
                     </div>
-                    <button class="task-button" id="dailyTask4" onclick="claimDailyTask(4)" disabled>+200 GP</button>
-                </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold;">🎮 Play Combo Game</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Try the daily combo challenge</div>
-                    </div>
-                    <button class="task-button" id="dailyTask5" onclick="claimDailyTask(5)" disabled>+75 GP</button>
+                    <button class="task-button" id="dailyComboBtn" onclick="claimDailyTask('combo')" disabled>+30 GP</button>
                 </div>
             </div>
 
-            <div id="oneTimeTasks" class="tasks-section" style="display: none;">
+            <h3 style="color: var(--secondary-orange); margin: 20px 0 15px; text-align: center; font-size: 18px;">🎯 One-Time Tasks</h3>
+            <div class="tasks-section">
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">🚀 Reach Level 5</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Level up your explorer (<span id="levelProgress">1</span>/5)</div>
+                        <div style="font-weight: bold; font-size: 13px;">🚀 First Planet Visit</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Visit any planet for mining</div>
                     </div>
-                    <button class="task-button" id="oneTimeTask1" onclick="claimOneTimeTask(1)" disabled>+500 GP</button>
+                    <button class="task-button" id="firstPlanetBtn" onclick="claimOneTimeTask('planet')" disabled>+20 GP</button>
                 </div>
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">⛏️ Mine 100 Times</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Become a mining expert (<span id="totalMineCount">0</span>/100)</div>
+                        <div style="font-weight: bold; font-size: 13px;">💰 First Purchase</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Buy any upgrade from shop</div>
                     </div>
-                    <button class="task-button" id="oneTimeTask2" onclick="claimOneTimeTask(2)" disabled>+1000 GP</button>
+                    <button class="task-button" id="firstPurchaseBtn" onclick="claimOneTimeTask('purchase')" disabled>+40 GP</button>
                 </div>
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">⚔️ Defeat Boss 5 Times</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Vanquish the cosmic overlord (<span id="totalBossKills">0</span>/5)</div>
+                        <div style="font-weight: bold; font-size: 13px;">💎 Collect 100 Shards</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Gather precious crystals (<span id="oneTimeShardCount">0</span>/100)</div>
                     </div>
-                    <button class="task-button" id="oneTimeTask3" onclick="claimOneTimeTask(3)" disabled>+1500 GP</button>
+                    <button class="task-button" id="shards100Btn" onclick="claimOneTimeTask('shards100')" disabled>+80 GP</button>
                 </div>
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">💎 Collect 5000 Shards</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Amass a fortune (<span id="totalShardCount">0</span>/5000)</div>
+                        <div style="font-weight: bold; font-size: 13px;">👥 Invite 5 Friends</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Refer friends to the game (<span id="referralCount">0</span>/5)</div>
                     </div>
-                    <button class="task-button" id="oneTimeTask4" onclick="claimOneTimeTask(4)" disabled>+2000 GP</button>
-                </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold;">👥 Refer 3 Friends</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Invite friends to join (<span id="referralCount">0</span>/3)</div>
-                    </div>
-                    <button class="task-button" id="oneTimeTask5" onclick="claimOneTimeTask(5)" disabled>+2500 GP</button>
+                    <button class="task-button" id="invite5Btn" onclick="claimOneTimeTask('invite5')" disabled>+200 GP</button>
                 </div>
             </div>
 
@@ -1042,58 +966,68 @@
             </div>
         </div>
 
-        <!-- Command Center Screen (Replaces Wallet) -->
-        <div class="screen" id="commandCenterScreen">
+        <!-- Profile Screen (formerly Wallet) -->
+        <div class="screen" id="profileScreen">
             <div class="header">
                 <div class="logo">COMMAND CENTER</div>
                 <div class="resources">
-                    <div class="resource">🏆 <span id="gpCommand">0</span></div>
-                    <div class="resource">#<span id="playerRank">999</span></div>
+                    <div class="resource">🏆 <span id="gpProfile">0</span></div>
+                    <div class="resource">#<span id="profileRank">999</span></div>
                 </div>
             </div>
 
-            <div class="command-center">
-                <div class="tg-user-info">
-                    <img class="tg-avatar" id="commandAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23FFD700'/%3E%3Ctext x='50' y='65' text-anchor='middle' font-size='40' fill='%23000'%3E👤%3C/text%3E%3C/svg%3E">
-                    <div>
-                        <div id="commandUserName" style="font-weight: 700; font-size: 16px;">Player</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Level <span id="commandUserLevel">1</span> Explorer</div>
-                        <div style="font-size: 11px; opacity: 0.7;">Joined: <span id="joinDate">Today</span></div>
+            <!-- Referral Section -->
+            <div class="referral-section">
+                <h3 style="margin-bottom: 15px; font-size: 18px;">👥 Referral Program</h3>
+                <p style="font-size: 13px; margin-bottom: 12px;">Invite friends and earn 25 GP per referral!</p>
+                <div class="referral-code" id="referralCode">Loading...</div>
+                <button class="action-btn" onclick="shareReferral()" style="background: #000; color: var(--success-green); margin-bottom: 15px;">📤 Share Referral Link</button>
+                
+                <div class="referral-stats">
+                    <div class="stat-box">
+                        <div style="font-size: 20px; font-weight: bold;" id="totalReferrals">0</div>
+                        <div style="font-size: 12px;">Total Referrals</div>
+                    </div>
+                    <div class="stat-box">
+                        <div style="font-size: 20px; font-weight: bold;" id="referralEarnings">0</div>
+                        <div style="font-size: 12px;">GP Earned</div>
                     </div>
                 </div>
+            </div>
 
-                <div class="referral-section">
-                    <h3 style="color: var(--primary-gold); margin-bottom: 10px;">👥 Referral Program</h3>
-                    <p style="font-size: 12px; margin-bottom: 8px;">Invite friends and earn rewards!</p>
-                    <div class="referral-code" id="referralCode">CX-000000</div>
-                    <p style="font-size: 11px; opacity: 0.8;">Referrals: <span id="referralStats">0</span> | Earned: <span id="referralEarnings">0</span> GP</p>
-                    <button class="action-btn" onclick="copyReferralCode()" style="margin-top: 10px; padding: 8px 15px; font-size: 12px;">📋 Copy Referral Code</button>
-                </div>
-
-                <div class="leaderboard">
-                    <h3 style="color: var(--primary-gold); margin-bottom: 15px; font-size: 18px; text-align: center;">🏆 TOP EXPLORERS</h3>
-                    <div id="leaderboardEntries">
-                        <div class="leaderboard-entry">
-                            <div><span style="color: var(--primary-gold); font-size: 20px;">👑</span> Loading...</div>
-                            <div style="font-weight: 700; color: var(--primary-gold);">0 GP</div>
-                        </div>
+            <!-- Leaderboard Section -->
+            <div class="leaderboard">
+                <h3 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 18px; text-align: center;">🏆 TOP COLLECTORS</h3>
+                <div id="leaderboardEntries">
+                    <div class="task-item">
+                        <div><span style="color: var(--primary-gold); font-size: 20px;">👑</span> Loading...</div>
+                        <div style="font-weight: 700; color: var(--primary-gold);">0 GP</div>
                     </div>
                 </div>
+            </div>
 
-                <div class="command-info">
-                    <h4 style="color: var(--primary-gold); margin-bottom: 10px;">🔗 Wallet Connection</h4>
-                    <div style="margin-bottom: 15px; font-size: 12px;">Connect your TON wallet for future rewards</div>
-                    
-                    <button class="action-btn" onclick="connectWallet()" id="connectWalletBtn" style="margin-bottom: 10px; padding: 8px 15px; font-size: 12px;">
-                        🔗 Connect Wallet
+            <!-- Wallet Section -->
+            <div class="tasks-section">
+                <h3 style="color: var(--primary-gold); margin-bottom: 15px; text-align: center; font-size: 18px;">💼 TON Wallet</h3>
+                <p style="margin-bottom: 15px; opacity: 0.9; font-size: 13px; text-align: center;">Connect your wallet for future airdrops!</p>
+                
+                <button class="action-btn" onclick="connectWallet()" id="connectWalletBtn" style="margin-bottom: 15px; width: 100%;">
+                    🔗 Connect Wallet
+                </button>
+                
+                <div id="walletInfo" style="display: none; text-align: center;">
+                    <h4 style="color: var(--primary-gold); margin-bottom: 10px; font-size: 14px;">Connected Wallet</h4>
+                    <div style="word-break: break-all; font-family: monospace; background: rgba(0,0,0,0.5); padding: 8px; border-radius: 6px; margin: 8px 0; font-size: 11px;" id="connectedAddress"></div>
+                    <button class="action-btn" onclick="disconnectWallet()" style="margin-top: 10px; background: var(--danger-red); font-size: 12px;">
+                        Disconnect
                     </button>
-                    
-                    <div id="walletInfo" style="display: none;">
-                        <div class="wallet-address" id="connectedAddress"></div>
-                        <button class="action-btn" onclick="disconnectWallet()" style="margin-top: 8px; background: var(--danger-red); padding: 6px 12px; font-size: 11px;">
-                            Disconnect
-                        </button>
-                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 12px; text-align: center;">
+                    <h4 style="color: var(--primary-gold); margin-bottom: 10px; font-size: 14px;">Future Features</h4>
+                    <p style="margin-bottom: 6px; opacity: 0.8; font-size: 11px;">🚀 CX Token Airdrops (Coming Soon)</p>
+                    <p style="margin-bottom: 6px; opacity: 0.8; font-size: 11px;">💰 NFT Rewards (Coming Soon)</p>
+                    <p style="opacity: 0.8; font-size: 11px;">🎮 Exclusive In-Game Items (Coming Soon)</p>
                 </div>
             </div>
 
@@ -1120,9 +1054,9 @@
                 <div>📋</div>
                 <div>Tasks</div>
             </button>
-            <button class="nav-btn" onclick="showScreen('commandCenterScreen')">
-                <div>🚀</div>
-                <div>Command</div>
+            <button class="nav-btn" onclick="showScreen('profileScreen')">
+                <div>👤</div>
+                <div>Profile</div>
             </button>
         </div>
 
@@ -1130,95 +1064,76 @@
         <div class="modal" id="adModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('adModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 20px;">🎬 Watch Ad</h2>
-                <p style="margin-bottom: 20px;">Watch this short video to get your reward!</p>
-                <div style="width: 250px; height: 150px; background: #333; border-radius: 15px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 50px;">
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 18px;">🎬 Watch Ad</h2>
+                <p style="margin-bottom: 20px; font-size: 13px;">Watch this short video to get your reward!</p>
+                <div style="width: 250px; height: 150px; background: #333; border-radius: 15px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 48px;">
                     📺
                 </div>
                 <div style="margin: 20px 0;">
                     <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-bottom: 12px;">
                         <div id="adProgress" style="width: 0%; height: 100%; background: var(--primary-gold); border-radius: 3px;"></div>
                     </div>
-                    <div>Ad progress: <span id="adTime" style="color: var(--primary-gold);">0</span>/5 seconds</div>
+                    <div style="font-size: 13px;">Ad progress: <span id="adTime" style="color: var(--primary-gold);">0</span>/5 seconds</div>
                 </div>
-                <button class="action-btn" onclick="skipAd()" id="skipBtn" style="display: none; padding: 10px 20px; font-size: 14px;">✅ Claim Reward</button>
+                <button class="action-btn" onclick="skipAd()" id="skipBtn" style="display: none;">✅ Claim Reward</button>
             </div>
         </div>
 
         <div class="modal" id="rewardModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('rewardModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 20px;">🎉 Reward Earned!</h2>
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 18px;">🎉 Reward Earned!</h2>
                 <div style="font-size: 60px; margin: 20px 0;" id="rewardIcon">💎</div>
-                <div style="font-size: 22px; color: var(--primary-gold); font-weight: 700; margin-bottom: 15px;" id="rewardText">+100 GP</div>
-                <p style="margin-top: 20px;">Keep collecting to unlock more rewards!</p>
-                <button class="action-btn" onclick="closeModal('rewardModal')" style="margin-top: 20px; padding: 10px 20px; font-size: 14px;">Continue</button>
+                <div style="font-size: 22px; color: var(--primary-gold); font-weight: 700; margin-bottom: 15px;" id="rewardText">+25 GP</div>
+                <p style="margin-top: 20px; font-size: 13px;">Keep collecting to unlock more rewards!</p>
+                <button class="action-btn" onclick="closeModal('rewardModal')" style="margin-top: 20px;">Continue</button>
             </div>
         </div>
 
-        <div class="modal" id="referralModal">
+        <div class="modal" id="upgradeModal">
             <div class="modal-content">
-                <button class="close-btn" onclick="closeModal('referralModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 20px;">👥 Refer Friends</h2>
-                <p style="margin-bottom: 15px;">Share your referral code with friends to earn rewards!</p>
-                <div class="referral-code" style="font-size: 18px; margin: 15px 0;" id="modalReferralCode">CX-000000</div>
-                <p style="font-size: 12px; margin-bottom: 20px;">You earn 100 GP for each friend who joins using your code!</p>
-                <button class="action-btn" onclick="copyReferralCode()" style="margin-bottom: 10px; padding: 10px 20px; font-size: 14px;">📋 Copy Code</button>
-                <button class="action-btn" onclick="shareReferral()" style="background: var(--success-green); color: #000; padding: 10px 20px; font-size: 14px;">📤 Share on Telegram</button>
+                <button class="close-btn" onclick="closeModal('upgradeModal')">&times;</button>
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 18px;">🚀 Upgrade Complete!</h2>
+                <div style="font-size: 60px; margin: 20px 0;" id="upgradeIcon">⚡</div>
+                <div style="font-size: 18px; margin-bottom: 15px; font-weight: 600;" id="upgradeText">Speed boost activated!</div>
+                <p style="margin-top: 20px; font-size: 13px;">Your ship is now more powerful!</p>
+                <button class="action-btn" onclick="closeModal('upgradeModal')" style="margin-top: 20px;">Awesome!</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Game State with balanced values
+        // Game State with logical balance
         let gameState = {
             energy: 100,
             maxEnergy: 100,
             shards: 0,
             gp: 0,
             currentPlanet: '',
-            bossHealth: 1000,
-            maxBossHealth: 1000,
+            bossHealth: 500,
+            maxBossHealth: 500,
             playerDamage: 0,
             upgrades: { speed: 0, damage: 0, energy: 0, multiplier: 0 },
             adDamageBoost: 0,
             gameTickets: 3,
             lastTicketTime: Date.now(),
             maxTickets: 10,
-            
-            // Tasks system
-            dailyTasks: { 
-                1: false, 2: false, 3: false, 4: false, 5: false,
-                lastReset: new Date().toDateString()
-            },
-            oneTimeTasks: { 1: false, 2: false, 3: false, 4: false, 5: false },
-            taskProgress: { 
-                dailyMines: 0, dailyBossBattles: 0, 
-                totalMines: 0, totalBossKills: 0, 
-                comboPlayed: false 
-            },
-            
-            // Daily combo
+            dailyTasks: { login: false, mine: false, boss: false, combo: false },
+            oneTimeTasks: { planet: false, purchase: false, shards100: false, invite5: false },
+            dailyTaskProgress: { mines: 0, bossBattles: 0, comboAttempts: 0 },
             dailyCombo: { code: '', attempts: 3, completed: false, date: '' },
-            
-            // Referral system
+            energyLastRegen: Date.now(),
             referralCode: '',
-            referrals: 0,
+            totalReferrals: 0,
             referralEarnings: 0,
-            joinDate: new Date().toLocaleDateString(),
-            
-            // Wallet
-            walletConnected: false,
-            energyLastRegen: Date.now()
+            lastDailyReset: ''
         };
 
         // Global variables
         let tg = null;
         let user = null;
         let connector = null;
-        let leaderboardUpdateInterval = null;
         let currentComboIndex = 0;
-        let currentTaskTab = 'daily';
 
         // Initialize game with proper loading sequence
         function initGame() {
@@ -1246,26 +1161,15 @@
                             
                             if (user.photo_url) {
                                 document.getElementById('tgAvatar').src = user.photo_url;
-                                document.getElementById('commandAvatar').src = user.photo_url;
                             }
                             
                             let userName = user.first_name;
                             if (user.last_name) userName += " " + user.last_name;
                             document.getElementById('tgUserName').textContent = userName;
-                            document.getElementById('commandUserName').textContent = userName;
-                            
-                            // Generate referral code based on user ID
-                            gameState.referralCode = 'CX-' + (user.id % 1000000).toString().padStart(6, '0');
-                            document.getElementById('referralCode').textContent = gameState.referralCode;
-                            document.getElementById('modalReferralCode').textContent = gameState.referralCode;
                         }
                     }
                 } catch (error) {
                     console.log('🌐 Running in browser mode');
-                    // Generate a random referral code for browser users
-                    gameState.referralCode = 'CX-' + Math.floor(100000 + Math.random() * 900000);
-                    document.getElementById('referralCode').textContent = gameState.referralCode;
-                    document.getElementById('modalReferralCode').textContent = gameState.referralCode;
                 }
                 
                 updateLoadingProgress(60, "Loading game data...");
@@ -1293,30 +1197,37 @@
                 document.getElementById('loadingOverlay').style.display = 'none';
             }, 500);
             
-            updateUI();
             generateDailyCombo();
+            generateReferralCode();
             checkDailyReset();
-            startLeaderboardUpdates();
+            updateUI();
+            loadLeaderboard();
             showScreen('galaxyScreen');
             showNotification(`🚀 Welcome to CX Odyssey${user ? ', ' + user.first_name : ''}!`);
-            
-            // Check if user joined via referral
-            checkReferral();
         }
 
-        // Check if user joined via referral
-        function checkReferral() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const refCode = urlParams.get('ref');
-            
-            if (refCode && refCode !== gameState.referralCode) {
-                // This is a new user joining via referral
-                // In a real game, you would validate the referral code and reward the referrer
-                showNotification('👥 Welcome! You joined via a referral link.');
+        // Daily reset system
+        function checkDailyReset() {
+            const today = new Date().toDateString();
+            if (gameState.lastDailyReset !== today) {
+                gameState.dailyTasks = { login: false, mine: false, boss: false, combo: false };
+                gameState.dailyTaskProgress = { mines: 0, bossBattles: 0, comboAttempts: 0 };
+                gameState.lastDailyReset = today;
                 
-                // Save that this user was referred
-                localStorage.setItem('referredBy', refCode);
+                // Mark login as completed
+                gameState.dailyTasks.login = true;
+                gameState.gp += 25;
+                showNotification('🎁 Daily login reward: +25 GP!');
             }
+            updateTaskUI();
+        }
+
+        // Generate referral code
+        function generateReferralCode() {
+            if (!gameState.referralCode) {
+                gameState.referralCode = 'CX' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            }
+            document.getElementById('referralCode').textContent = gameState.referralCode;
         }
 
         // Generate daily combo code
@@ -1329,7 +1240,6 @@
                     completed: false,
                     date: today
                 };
-                console.log('Daily combo generated:', gameState.dailyCombo.code);
             }
             updateComboUI();
         }
@@ -1347,11 +1257,6 @@
             if (currentInput) {
                 currentInput.value = digit;
                 currentComboIndex = (currentComboIndex + 1) % 4;
-                
-                // Focus next input
-                if (currentComboIndex < 4) {
-                    document.getElementById(inputs[currentComboIndex]).focus();
-                }
             }
         }
 
@@ -1360,12 +1265,11 @@
                 document.getElementById(id).value = '';
             });
             currentComboIndex = 0;
-            document.getElementById('combo1').focus();
         }
 
         function submitCombo() {
             if (gameState.dailyCombo.completed || gameState.dailyCombo.attempts <= 0) {
-                showNotification('🔮 No attempts remaining! Try again tomorrow.');
+                showNotification('🔮 No attempts remaining!');
                 return;
             }
             
@@ -1379,29 +1283,35 @@
             }
             
             gameState.dailyCombo.attempts--;
-            gameState.taskProgress.comboPlayed = true;
-            updateTaskProgress();
+            gameState.dailyTaskProgress.comboAttempts++;
+            
+            if (!gameState.dailyTasks.combo) {
+                gameState.dailyTasks.combo = true;
+                gameState.gp += 30;
+                showNotification('✅ Daily combo task completed! +30 GP!');
+            }
             
             if (guess === gameState.dailyCombo.code) {
                 gameState.dailyCombo.completed = true;
-                gameState.gp += 500; // Balanced reward
-                showNotification('🎉 Correct! You earned 500 GP!');
+                gameState.gp += 100;
+                showNotification('🎉 Correct! You earned 100 GP!');
                 clearCombo();
             } else {
                 if (gameState.dailyCombo.attempts > 0) {
                     showNotification(`❌ Wrong code! ${gameState.dailyCombo.attempts} attempts remaining.`);
                 } else {
-                    showNotification(`❌ Game over! The code was ${gameState.dailyCombo.code}. Try again tomorrow!`);
+                    showNotification(`❌ Game over! The code was ${gameState.dailyCombo.code}.`);
                 }
                 clearCombo();
             }
             
             updateComboUI();
+            updateTaskUI();
             updateUI();
             saveGameData();
         }
 
-        // Initialize TonConnect with better error handling
+        // Initialize TonConnect
         function initTonConnect() {
             try {
                 if (typeof TonConnectSDK !== 'undefined') {
@@ -1411,12 +1321,10 @@
                     
                     connector.onStatusChange(wallet => {
                         if (wallet) {
-                            gameState.walletConnected = true;
                             document.getElementById('connectWalletBtn').style.display = 'none';
                             document.getElementById('walletInfo').style.display = 'block';
                             document.getElementById('connectedAddress').textContent = shortenAddress(wallet.account.address);
                         } else {
-                            gameState.walletConnected = false;
                             document.getElementById('connectWalletBtn').style.display = 'block';
                             document.getElementById('walletInfo').style.display = 'none';
                         }
@@ -1438,11 +1346,11 @@
                     // Regenerate energy based on time passed
                     if (gameState.energyLastRegen) {
                         const timePassed = Date.now() - gameState.energyLastRegen;
-                        const energyToAdd = Math.floor(timePassed / 15000); // 1 energy per 15 seconds (slower)
+                        const energyToAdd = Math.floor(timePassed / 30000); // 1 energy per 30 seconds
                         gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + energyToAdd);
                     }
                     
-                    console.log('💾 Game data loaded from localStorage');
+                    console.log('💾 Game data loaded');
                 }
             } catch (error) {
                 console.log('⚠️ localStorage load failed');
@@ -1463,7 +1371,7 @@
             const starfield = document.getElementById('starfield');
             const starTypes = ['star-small', 'star-medium', 'star-large'];
             
-            for (let i = 0; i < 100; i++) {
+            for (let i = 0; i < 80; i++) {
                 const star = document.createElement('div');
                 const type = starTypes[Math.floor(Math.random() * starTypes.length)];
                 star.className = `star ${type}`;
@@ -1482,11 +1390,6 @@
             
             setTimeout(() => {
                 document.getElementById(screenId).classList.add('active');
-                
-                // Load leaderboard when command center is shown
-                if (screenId === 'commandCenterScreen') {
-                    loadLeaderboard();
-                }
             }, 100);
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -1498,7 +1401,7 @@
                 'shopScreen': 1,
                 'minigamesScreen': 2,
                 'tasksScreen': 3,
-                'commandCenterScreen': 4
+                'profileScreen': 4
             };
             
             if (navMap[screenId] !== undefined) {
@@ -1506,18 +1409,30 @@
             }
 
             updateUI();
+            if (screenId === 'profileScreen') {
+                loadLeaderboard();
+            }
         }
 
         // Planet selection
         function selectPlanet(planetName, planetId) {
             gameState.currentPlanet = planetName;
             document.getElementById('currentPlanet').textContent = planetName;
-            document.getElementById('mineReward').textContent = planetId * 3 + 5; // Balanced rewards
+            document.getElementById('mineReward').textContent = Math.floor(planetId * 1.5 + 3);
+            
+            if (!gameState.oneTimeTasks.planet) {
+                gameState.oneTimeTasks.planet = true;
+                gameState.gp += 20;
+                showNotification('🚀 First planet visited! +20 GP!');
+            }
+            
             showScreen('miningScreen');
             showNotification(`🌍 Landed on ${planetName}!`);
+            updateTaskUI();
+            saveGameData();
         }
 
-        // Mining mechanics with balanced point rewards
+        // Mining mechanics with logical rewards
         function minePlanet() {
             if (gameState.energy <= 0) {
                 showNotification('⚡ No energy! Wait for regeneration or watch an ad.');
@@ -1526,40 +1441,39 @@
 
             const planetName = document.getElementById('currentPlanet').textContent;
             const planetMultiplier = getPlanetMultiplier(planetName);
-            const speedBonus = 1 + (gameState.upgrades.speed * 0.2); // Balanced upgrade
-            const baseReward = 5 + Math.random() * 10; // Balanced base reward
+            const speedBonus = 1 + (gameState.upgrades.speed * 0.2);
+            const baseReward = 3 + Math.random() * 4;
             const shardReward = Math.floor(baseReward * planetMultiplier * speedBonus);
-            const gpReward = Math.floor(shardReward * 0.5 * (1 + gameState.upgrades.multiplier * 0.5)); // Balanced GP reward
+            const gpReward = Math.floor(shardReward * 0.5 * (1 + gameState.upgrades.multiplier * 0.5));
 
-            gameState.energy -= 2; // Balanced energy cost
+            gameState.energy -= 2;
             gameState.shards += shardReward;
             gameState.gp += gpReward;
-            gameState.taskProgress.dailyMines++;
-            gameState.taskProgress.totalMines++;
+            gameState.dailyTaskProgress.mines++;
 
             showNotification(`💎 +${shardReward} Shards, +${gpReward} GP!`);
-            updateTaskProgress();
+            updateTaskUI();
             updateUI();
             saveGameData();
         }
 
         function getPlanetMultiplier(planetName) {
             const multipliers = {
-                'Pyrion': 1.1, 'Aqueos': 1.0, 'Voidex': 1.5,
-                'Verdant': 1.2, 'Aurelia': 1.8, 'Crimson': 1.3
+                'Pyrion': 1.2, 'Aqueos': 1.0, 'Voidex': 1.6,
+                'Verdant': 1.1, 'Aurelia': 1.8, 'Crimson': 1.4
             };
             return multipliers[planetName] || 1.0;
         }
 
-        // Battle system with balanced rewards
+        // Battle system
         function battleAliens() {
-            if (gameState.energy < 8) { // Balanced energy cost
-                showNotification('⚡ Need at least 8 energy to battle!');
+            if (gameState.energy < 5) {
+                showNotification('⚡ Need at least 5 energy to battle!');
                 return;
             }
 
-            gameState.energy -= 8;
-            const baseReward = 50 + Math.random() * 100; // Balanced reward
+            gameState.energy -= 5;
+            const baseReward = 25 + Math.random() * 15;
             const reward = Math.floor(baseReward * (1 + gameState.upgrades.multiplier * 0.5));
             gameState.gp += reward;
             
@@ -1568,245 +1482,140 @@
             saveGameData();
         }
 
-        // Boss raid system with balanced rewards
+        // Boss raid system
         function attackBoss() {
-            if (gameState.energy < 5) {
-                showNotification('⚡ Need at least 5 energy to attack!');
+            if (gameState.energy < 3) {
+                showNotification('⚡ Need at least 3 energy to attack!');
                 return;
             }
 
-            gameState.energy -= 5;
-            const baseDamage = 10 + (gameState.upgrades.damage * 3); // Balanced damage
-            const damage = baseDamage + Math.floor(Math.random() * 15);
+            gameState.energy -= 3;
+            const baseDamage = 8 + (gameState.upgrades.damage * 5);
+            const damage = baseDamage + Math.floor(Math.random() * 12);
             const actualDamage = gameState.adDamageBoost > 0 ? damage * 2 : damage;
             
             gameState.bossHealth = Math.max(0, gameState.bossHealth - actualDamage);
             gameState.playerDamage += actualDamage;
-            gameState.taskProgress.dailyBossBattles++;
+            gameState.dailyTaskProgress.bossBattles++;
             
             if (gameState.adDamageBoost > 0) {
                 gameState.adDamageBoost--;
             }
 
             if (gameState.bossHealth <= 0) {
-                const reward = 1000 + Math.floor(Math.random() * 500); // Balanced reward
+                const reward = 150 + Math.floor(Math.random() * 100);
                 gameState.gp += reward;
                 gameState.bossHealth = gameState.maxBossHealth;
                 gameState.playerDamage = 0;
-                gameState.taskProgress.totalBossKills++;
                 showNotification(`🐉 Boss defeated! +${reward} GP!`);
             } else {
-                const gpReward = Math.floor(actualDamage * 1.5); // Balanced reward
+                const gpReward = Math.floor(actualDamage * 1.5);
                 gameState.gp += gpReward;
                 showNotification(`⚔️ Hit for ${actualDamage} damage! +${gpReward} GP!`);
             }
 
-            updateTaskProgress();
+            updateTaskUI();
             updateUI();
             saveGameData();
         }
 
-        // Task system with daily reset
-        function checkDailyReset() {
-            const today = new Date().toDateString();
-            if (gameState.dailyTasks.lastReset !== today) {
-                // Reset daily tasks
-                gameState.dailyTasks = { 
-                    1: false, 2: false, 3: false, 4: false, 5: false,
-                    lastReset: today
-                };
-                gameState.taskProgress.dailyMines = 0;
-                gameState.taskProgress.dailyBossBattles = 0;
-                gameState.taskProgress.comboPlayed = false;
-                
-                // Reset daily combo
-                generateDailyCombo();
-                
-                console.log('🔄 Daily tasks reset');
-            }
-        }
-
-        function updateTaskProgress() {
-            // Update daily task counters
-            document.getElementById('dailyMineCount').textContent = gameState.taskProgress.dailyMines;
-            document.getElementById('dailyBossCount').textContent = gameState.taskProgress.dailyBossBattles;
-            document.getElementById('dailyShardCount').textContent = gameState.shards;
-            
-            // Update one-time task counters
-            document.getElementById('totalMineCount').textContent = gameState.taskProgress.totalMines;
-            document.getElementById('totalBossKills').textContent = gameState.taskProgress.totalBossKills;
-            document.getElementById('totalShardCount').textContent = gameState.shards;
-            document.getElementById('referralCount').textContent = gameState.referrals;
-            
-            // Update level progress
-            const userLevel = Math.floor(gameState.gp / 1000) + 1;
-            document.getElementById('levelProgress').textContent = Math.min(5, userLevel);
-            
-            // Update referral stats
-            document.getElementById('referralStats').textContent = gameState.referrals;
-            document.getElementById('referralEarnings').textContent = gameState.referralEarnings;
-            
-            // Enable/disable task buttons
-            updateTaskButtons();
-        }
-
-        function updateTaskButtons() {
+        // Task system
+        function updateTaskUI() {
             // Daily tasks
-            const dailyTask1 = document.getElementById('dailyTask1');
-            if (!gameState.dailyTasks[1]) {
-                dailyTask1.disabled = false;
-            }
-            
-            const dailyTask2 = document.getElementById('dailyTask2');
-            if (gameState.taskProgress.dailyMines >= 10 && !gameState.dailyTasks[2]) {
-                dailyTask2.disabled = false;
-            }
-            
-            const dailyTask3 = document.getElementById('dailyTask3');
-            if (gameState.taskProgress.dailyBossBattles >= 3 && !gameState.dailyTasks[3]) {
-                dailyTask3.disabled = false;
-            }
-            
-            const dailyTask4 = document.getElementById('dailyTask4');
-            if (gameState.shards >= 500 && !gameState.dailyTasks[4]) {
-                dailyTask4.disabled = false;
-            }
-            
-            const dailyTask5 = document.getElementById('dailyTask5');
-            if (gameState.taskProgress.comboPlayed && !gameState.dailyTasks[5]) {
-                dailyTask5.disabled = false;
-            }
+            document.getElementById('dailyMineCount').textContent = gameState.dailyTaskProgress.mines;
+            document.getElementById('dailyBossCount').textContent = gameState.dailyTaskProgress.bossBattles;
             
             // One-time tasks
-            const oneTimeTask1 = document.getElementById('oneTimeTask1');
-            const userLevel = Math.floor(gameState.gp / 1000) + 1;
-            if (userLevel >= 5 && !gameState.oneTimeTasks[1]) {
-                oneTimeTask1.disabled = false;
-            }
+            document.getElementById('oneTimeShardCount').textContent = gameState.shards;
+            document.getElementById('referralCount').textContent = gameState.totalReferrals;
             
-            const oneTimeTask2 = document.getElementById('oneTimeTask2');
-            if (gameState.taskProgress.totalMines >= 100 && !gameState.oneTimeTasks[2]) {
-                oneTimeTask2.disabled = false;
-            }
+            // Update daily task buttons
+            updateTaskButton('dailyMineBtn', gameState.dailyTaskProgress.mines >= 10 && !gameState.dailyTasks.mine);
+            updateTaskButton('dailyBossBtn', gameState.dailyTaskProgress.bossBattles >= 3 && !gameState.dailyTasks.boss);
+            updateTaskButton('dailyComboBtn', gameState.dailyTaskProgress.comboAttempts > 0 && !gameState.dailyTasks.combo);
             
-            const oneTimeTask3 = document.getElementById('oneTimeTask3');
-            if (gameState.taskProgress.totalBossKills >= 5 && !gameState.oneTimeTasks[3]) {
-                oneTimeTask3.disabled = false;
-            }
+            // Update one-time task buttons
+            updateTaskButton('firstPlanetBtn', gameState.oneTimeTasks.planet, true);
+            updateTaskButton('firstPurchaseBtn', gameState.oneTimeTasks.purchase, true);
+            updateTaskButton('shards100Btn', gameState.shards >= 100 && !gameState.oneTimeTasks.shards100);
+            updateTaskButton('invite5Btn', gameState.totalReferrals >= 5 && !gameState.oneTimeTasks.invite5);
             
-            const oneTimeTask4 = document.getElementById('oneTimeTask4');
-            if (gameState.shards >= 5000 && !gameState.oneTimeTasks[4]) {
-                oneTimeTask4.disabled = false;
-            }
-            
-            const oneTimeTask5 = document.getElementById('oneTimeTask5');
-            if (gameState.referrals >= 3 && !gameState.oneTimeTasks[5]) {
-                oneTimeTask5.disabled = false;
-            }
-            
-            // Update completed tasks counter
-            const completedDaily = Object.values(gameState.dailyTasks).filter(Boolean).length;
-            const completedOneTime = Object.values(gameState.oneTimeTasks).filter(Boolean).length;
-            const completedTasks = completedDaily + completedOneTime;
-            document.getElementById('completedTasks').textContent = completedTasks;
-        }
-
-        function switchTaskTab(tab) {
-            currentTaskTab = tab;
-            document.getElementById('dailyTab').classList.remove('active');
-            document.getElementById('oneTimeTab').classList.remove('active');
-            document.getElementById('dailyTasks').style.display = 'none';
-            document.getElementById('oneTimeTasks').style.display = 'none';
-            
-            if (tab === 'daily') {
-                document.getElementById('dailyTab').classList.add('active');
-                document.getElementById('dailyTasks').style.display = 'block';
-            } else {
-                document.getElementById('oneTimeTab').classList.add('active');
-                document.getElementById('oneTimeTasks').style.display = 'block';
+            // Update login status
+            document.getElementById('dailyLoginStatus').textContent = gameState.dailyTasks.login ? 'Completed' : '+25 GP';
+            if (gameState.dailyTasks.login) {
+                document.getElementById('dailyLoginStatus').className = 'task-reward';
+                document.getElementById('dailyLoginStatus').style.background = 'var(--success-green)';
             }
         }
 
-        function claimDailyTask(taskId) {
-            if (gameState.dailyTasks[taskId]) {
-                showNotification('✅ Task already completed!');
-                return;
+        function updateTaskButton(btnId, condition, isCompleted = false) {
+            const btn = document.getElementById(btnId);
+            if (btn) {
+                if (isCompleted) {
+                    btn.disabled = true;
+                    btn.textContent = 'Completed';
+                    btn.style.background = 'var(--success-green)';
+                } else {
+                    btn.disabled = !condition;
+                }
             }
-            
-            const rewards = { 1: 50, 2: 100, 3: 150, 4: 200, 5: 75 };
+        }
+
+        function claimDailyTask(taskType) {
+            const rewards = { mine: 50, boss: 75, combo: 30 };
             const requirements = {
-                1: true, // Daily login is always available
-                2: gameState.taskProgress.dailyMines >= 10,
-                3: gameState.taskProgress.dailyBossBattles >= 3,
-                4: gameState.shards >= 500,
-                5: gameState.taskProgress.comboPlayed
+                mine: gameState.dailyTaskProgress.mines >= 10,
+                boss: gameState.dailyTaskProgress.bossBattles >= 3,
+                combo: gameState.dailyTaskProgress.comboAttempts > 0
             };
             
-            if (!requirements[taskId]) {
-                showNotification('❌ Task requirements not met!');
+            if (gameState.dailyTasks[taskType] || !requirements[taskType]) {
+                showNotification('❌ Task requirements not met or already completed!');
                 return;
             }
             
-            gameState.dailyTasks[taskId] = true;
-            gameState.gp += rewards[taskId];
+            gameState.dailyTasks[taskType] = true;
+            gameState.gp += rewards[taskType];
             
-            const btn = document.getElementById(`dailyTask${taskId}`);
-            if (btn) {
-                btn.textContent = 'Completed';
-                btn.disabled = true;
-                btn.style.background = 'var(--success-green)';
-            }
-            
-            showNotification(`✅ Daily task completed! +${rewards[taskId]} GP!`);
+            showNotification(`✅ Daily task completed! +${rewards[taskType]} GP!`);
+            updateTaskUI();
             updateUI();
             saveGameData();
         }
 
-        function claimOneTimeTask(taskId) {
-            if (gameState.oneTimeTasks[taskId]) {
-                showNotification('✅ Task already completed!');
-                return;
-            }
-            
-            const rewards = { 1: 500, 2: 1000, 3: 1500, 4: 2000, 5: 2500 };
+        function claimOneTimeTask(taskType) {
+            const rewards = { planet: 20, purchase: 40, shards100: 80, invite5: 200 };
             const requirements = {
-                1: Math.floor(gameState.gp / 1000) + 1 >= 5,
-                2: gameState.taskProgress.totalMines >= 100,
-                3: gameState.taskProgress.totalBossKills >= 5,
-                4: gameState.shards >= 5000,
-                5: gameState.referrals >= 3
+                planet: true, // Already checked when visiting planet
+                purchase: true, // Already checked when making purchase
+                shards100: gameState.shards >= 100,
+                invite5: gameState.totalReferrals >= 5
             };
             
-            if (!requirements[taskId]) {
-                showNotification('❌ Task requirements not met!');
+            if (gameState.oneTimeTasks[taskType] || !requirements[taskType]) {
+                showNotification('❌ Task requirements not met or already completed!');
                 return;
             }
             
-            gameState.oneTimeTasks[taskId] = true;
-            gameState.gp += rewards[taskId];
+            gameState.oneTimeTasks[taskType] = true;
+            gameState.gp += rewards[taskType];
             
-            const btn = document.getElementById(`oneTimeTask${taskId}`);
-            if (btn) {
-                btn.textContent = 'Completed';
-                btn.disabled = true;
-                btn.style.background = 'var(--success-green)';
-            }
-            
-            showNotification(`✅ Mission completed! +${rewards[taskId]} GP!`);
+            showNotification(`✅ One-time task completed! +${rewards[taskType]} GP!`);
+            updateTaskUI();
             updateUI();
             saveGameData();
         }
 
-        // Shop system with balanced costs
+        // Shop system with logical costs
         function buyUpgrade(upgradeType) {
             const costs = {
-                speed: 250 * Math.pow(1.5, gameState.upgrades.speed),
-                damage: 500 * Math.pow(1.5, gameState.upgrades.damage),
-                energy: 750 * Math.pow(1.5, gameState.upgrades.energy),
-                multiplier: 1500 * Math.pow(1.5, gameState.upgrades.multiplier)
+                speed: 50 * Math.pow(2, gameState.upgrades.speed),
+                damage: 75 * Math.pow(2, gameState.upgrades.damage),
+                energy: 100 * Math.pow(2, gameState.upgrades.energy),
+                multiplier: 200 * Math.pow(2, gameState.upgrades.multiplier)
             };
 
-            const cost = Math.floor(costs[upgradeType]);
+            const cost = costs[upgradeType];
             if (gameState.gp < cost) {
                 showNotification('🏆 Not enough GP!');
                 return;
@@ -1819,9 +1628,15 @@
                 gameState.maxEnergy += 25;
                 gameState.energy = gameState.maxEnergy;
             }
+            
+            if (!gameState.oneTimeTasks.purchase) {
+                gameState.oneTimeTasks.purchase = true;
+                gameState.gp += 40;
+                showNotification('🚀 First purchase completed! +40 GP bonus!');
+            }
 
-            // Update cost displays
             updateShopCosts();
+            updateTaskUI();
 
             const messages = {
                 speed: 'Mining speed increased!',
@@ -1837,49 +1652,29 @@
 
         function updateShopCosts() {
             const costs = {
-                speed: 250 * Math.pow(1.5, gameState.upgrades.speed),
-                damage: 500 * Math.pow(1.5, gameState.upgrades.damage),
-                energy: 750 * Math.pow(1.5, gameState.upgrades.energy),
-                multiplier: 1500 * Math.pow(1.5, gameState.upgrades.multiplier)
+                speed: 50 * Math.pow(2, gameState.upgrades.speed),
+                damage: 75 * Math.pow(2, gameState.upgrades.damage),
+                energy: 100 * Math.pow(2, gameState.upgrades.energy),
+                multiplier: 200 * Math.pow(2, gameState.upgrades.multiplier)
             };
 
-            document.getElementById('speedCost').textContent = Math.floor(costs.speed) + ' GP';
-            document.getElementById('damageCost').textContent = Math.floor(costs.damage) + ' GP';
-            document.getElementById('energyCost').textContent = Math.floor(costs.energy) + ' GP';
-            document.getElementById('multiplierCost').textContent = Math.floor(costs.multiplier) + ' GP';
+            document.getElementById('speedCost').textContent = costs.speed + ' GP';
+            document.getElementById('damageCost').textContent = costs.damage + ' GP';
+            document.getElementById('energyCost').textContent = costs.energy + ' GP';
+            document.getElementById('multiplierCost').textContent = costs.multiplier + ' GP';
         }
 
         // Referral system
-        function showReferralModal() {
-            document.getElementById('modalReferralCode').textContent = gameState.referralCode;
-            showModal('referralModal');
-        }
-
-        function copyReferralCode() {
-            navigator.clipboard.writeText(gameState.referralCode).then(() => {
-                showNotification('📋 Referral code copied to clipboard!');
-            }).catch(() => {
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = gameState.referralCode;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showNotification('📋 Referral code copied!');
-            });
-        }
-
         function shareReferral() {
-            const shareText = `🚀 Join me in CX Odyssey - an amazing space mining adventure! Use my referral code: ${gameState.referralCode} to get bonus rewards!`;
-            const shareUrl = `https://t.me/share/url?url=https://t.me/Cx_odyssey_bot?start=${gameState.referralCode}&text=${encodeURIComponent(shareText)}`;
+            const referralText = `🚀 Join me in CX Odyssey! Use my referral code: ${gameState.referralCode} and get bonus rewards!`;
+            const shareUrl = `https://t.me/share/url?url=https://t.me/Cx_odyssey_bot?start=${gameState.referralCode}&text=${encodeURIComponent(referralText)}`;
             
             if (tg && tg.openTelegramLink) {
                 tg.openTelegramLink(shareUrl);
             } else if (navigator.share) {
                 navigator.share({
                     title: 'CX Odyssey',
-                    text: shareText,
+                    text: referralText,
                     url: `https://t.me/Cx_odyssey_bot?start=${gameState.referralCode}`
                 }).catch(() => {
                     window.open(shareUrl, '_blank');
@@ -1887,13 +1682,15 @@
             } else {
                 window.open(shareUrl, '_blank');
             }
+            
+            showNotification('📤 Referral link shared! Invite friends to earn rewards!');
         }
 
         // Ad system
         function watchAdForEnergy() {
             showModal('adModal');
             startAdTimer(() => {
-                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 25); // Balanced reward
+                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 25);
                 closeModal('adModal');
                 showRewardModal('⚡ +25 Energy!', '⚡');
                 updateUI();
@@ -1944,7 +1741,7 @@
         // Wallet functions
         function connectWallet() {
             if (!connector) {
-                showNotification('❌ Wallet connection not available in this environment.');
+                showNotification('❌ Wallet connection not available.');
                 return;
             }
 
@@ -1952,38 +1749,25 @@
                 document.getElementById('connectWalletBtn').textContent = 'Connecting...';
                 document.getElementById('connectWalletBtn').disabled = true;
 
-                if (tg && tg.platform !== 'unknown') {
-                    connector.connectWallet()
-                        .then(() => {
-                            showNotification('🔗 Wallet connected successfully!');
-                        })
-                        .catch(error => {
-                            console.error('Wallet connection error:', error);
-                            showNotification('❌ Failed to connect wallet. Please try again.');
-                            resetWalletButton();
-                        });
-                } else {
-                    connector.getWallets()
-                        .then(wallets => {
-                            if (wallets && wallets.length > 0) {
-                                const wallet = wallets.find(w => w.name === 'Tonkeeper') || wallets[0];
-                                return connector.connect(wallet.connectionParameters);
-                            } else {
-                                throw new Error('No wallets available');
-                            }
-                        })
-                        .then(() => {
-                            showNotification('🔗 Wallet connected successfully!');
-                        })
-                        .catch(error => {
-                            console.error('Wallet connection error:', error);
-                            showNotification('❌ Please install Tonkeeper or another TON wallet.');
-                            resetWalletButton();
-                        });
-                }
+                connector.getWallets()
+                    .then(wallets => {
+                        if (wallets && wallets.length > 0) {
+                            const wallet = wallets.find(w => w.name === 'Tonkeeper') || wallets[0];
+                            return connector.connect(wallet.connectionParameters);
+                        } else {
+                            throw new Error('No wallets available');
+                        }
+                    })
+                    .then(() => {
+                        showNotification('🔗 Wallet connected successfully!');
+                    })
+                    .catch(error => {
+                        console.error('Wallet connection error:', error);
+                        showNotification('❌ Please install Tonkeeper wallet.');
+                        resetWalletButton();
+                    });
             } catch (error) {
-                console.error('Wallet connection error:', error);
-                showNotification('❌ Wallet connection failed. Please try again.');
+                showNotification('❌ Wallet connection failed.');
                 resetWalletButton();
             }
         }
@@ -1999,10 +1783,6 @@
                     connector.disconnect();
                     showNotification('🔔 Wallet disconnected');
                 } catch (error) {
-                    console.error('Disconnect error:', error);
-                    gameState.walletConnected = false;
-                    document.getElementById('connectWalletBtn').style.display = 'block';
-                    document.getElementById('walletInfo').style.display = 'none';
                     showNotification('🔔 Wallet disconnected');
                 }
             }
@@ -2013,28 +1793,27 @@
             return address.substring(0, 6) + '...' + address.substring(address.length - 4);
         }
 
-        // Leaderboard with realistic data
+        // Leaderboard system
         function loadLeaderboard() {
             const baseLeaders = [
-                { username: 'GalaxyMaster', baseGp: 50000 },
-                { username: 'StarHunter', baseGp: 35000 },
-                { username: 'CosmicRider', baseGp: 28000 },
-                { username: 'SpaceMiner', baseGp: 22000 },
-                { username: 'AsteroidKing', baseGp: 18000 },
-                { username: 'QuantumExplorer', baseGp: 15000 },
-                { username: 'NebulaCrusher', baseGp: 12000 },
-                { username: 'VoidWalker', baseGp: 10000 },
-                { username: 'StarDust', baseGp: 8000 },
-                { username: 'CosmicMiner', baseGp: 6000 }
+                { username: 'GalaxyMaster', baseGp: 2500 },
+                { username: 'StarHunter', baseGp: 1890 },
+                { username: 'CosmicRider', baseGp: 1450 },
+                { username: 'SpaceMiner', baseGp: 1200 },
+                { username: 'AsteroidKing', baseGp: 980 },
+                { username: 'QuantumExplorer', baseGp: 820 },
+                { username: 'NebulaCrusher', baseGp: 650 },
+                { username: 'VoidWalker', baseGp: 540 },
+                { username: 'StarDust', baseGp: 420 },
+                { username: 'CosmicMiner', baseGp: 350 }
             ];
 
             const currentLeaders = baseLeaders.map(leader => ({
                 ...leader,
-                gp: leader.baseGp + Math.floor(Math.random() * 2000)
+                gp: leader.baseGp + Math.floor(Math.random() * 200)
             }));
 
-            // Add player to leaderboard if they have significant GP
-            if (gameState.gp > 1000) {
+            if (gameState.gp > 100) {
                 const playerEntry = {
                     username: user ? user.first_name : 'You',
                     gp: gameState.gp,
@@ -2044,48 +1823,39 @@
                 currentLeaders.sort((a, b) => b.gp - a.gp);
             }
 
-            const leaderboardData = {
-                topPlayers: currentLeaders.slice(0, 10),
-                userRank: Math.max(1, currentLeaders.findIndex(p => p.isPlayer) + 1)
-            };
-
-            displayLeaderboard(leaderboardData);
+            displayLeaderboard(currentLeaders.slice(0, 10));
+            
+            const playerRank = Math.max(1, currentLeaders.findIndex(p => p.isPlayer) + 1);
+            document.getElementById('userRank').textContent = playerRank <= 1000 ? playerRank : '999+';
+            document.getElementById('profileRank').textContent = playerRank <= 1000 ? playerRank : '999+';
         }
 
-        function displayLeaderboard(data) {
+        function displayLeaderboard(leaders) {
             const entriesContainer = document.getElementById('leaderboardEntries');
             entriesContainer.innerHTML = '';
             
-            if (data && data.topPlayers) {
-                data.topPlayers.forEach((entry, index) => {
-                    const entryEl = document.createElement('div');
-                    entryEl.className = 'leaderboard-entry';
-                    
-                    if (entry.isPlayer) {
-                        entryEl.style.background = 'rgba(255, 215, 0, 0.2)';
-                        entryEl.style.borderLeft = '4px solid var(--secondary-orange)';
-                    }
-                    
-                    let rankIcon = '';
-                    if (index === 0) rankIcon = '<span style="color: #ffd700; font-size: 20px;">👑</span> ';
-                    else if (index === 1) rankIcon = '<span style="color: #ff6b35; font-size: 18px;">🥈</span> ';
-                    else if (index === 2) rankIcon = '<span style="color: #7209b7; font-size: 18px;">🥉</span> ';
-                    else rankIcon = `<span style="color: #888;">${index + 1}.</span> `;
-                    
-                    entryEl.innerHTML = `
-                        <div>${rankIcon}${entry.username}${entry.isPlayer ? ' (You)' : ''}</div>
-                        <div style="color: var(--primary-gold); font-weight: 700;">${entry.gp.toLocaleString()} GP</div>
-                    `;
-                    
-                    entriesContainer.appendChild(entryEl);
-                });
-
-                if (data.userRank && data.userRank <= 1000) {
-                    document.getElementById('playerRank').textContent = data.userRank;
-                } else {
-                    document.getElementById('playerRank').textContent = '999+';
+            leaders.forEach((entry, index) => {
+                const entryEl = document.createElement('div');
+                entryEl.className = 'task-item';
+                
+                if (entry.isPlayer) {
+                    entryEl.style.background = 'rgba(255, 215, 0, 0.2)';
+                    entryEl.style.borderLeft = '4px solid var(--secondary-orange)';
                 }
-            }
+                
+                let rankIcon = '';
+                if (index === 0) rankIcon = '<span style="color: #ffd700; font-size: 18px;">👑</span> ';
+                else if (index === 1) rankIcon = '<span style="color: #ff6b35; font-size: 16px;">🥈</span> ';
+                else if (index === 2) rankIcon = '<span style="color: #7209b7; font-size: 16px;">🥉</span> ';
+                else rankIcon = `<span style="color: #888; font-size: 12px;">${index + 1}.</span> `;
+                
+                entryEl.innerHTML = `
+                    <div style="font-size: 13px;">${rankIcon}${entry.username}${entry.isPlayer ? ' (You)' : ''}</div>
+                    <div style="color: var(--primary-gold); font-weight: 700; font-size: 12px;">${entry.gp.toLocaleString()} GP</div>
+                `;
+                
+                entriesContainer.appendChild(entryEl);
+            });
         }
 
         // Modal system
@@ -2103,7 +1873,7 @@
             showModal('rewardModal');
         }
 
-        // Improved notification system
+        // Notification system
         function showNotification(text) {
             document.querySelectorAll('.notification').forEach(n => n.remove());
             
@@ -2114,10 +1884,10 @@
 
             setTimeout(() => {
                 if (notification.parentNode) notification.remove();
-            }, 3000);
+            }, 3200);
         }
 
-        // Energy regeneration system (slower for balance)
+        // Energy regeneration
         function startEnergyRegeneration() {
             setInterval(() => {
                 if (gameState.energy < gameState.maxEnergy) {
@@ -2125,10 +1895,10 @@
                     updateUI();
                     saveGameData();
                 }
-            }, 15000); // 1 energy every 15 seconds
+            }, 30000); // 1 energy every 30 seconds
         }
 
-        // UI updates with proper energy management
+        // UI updates
         function updateUI() {
             // Update all resource displays
             const energyElements = document.querySelectorAll('#energy, #energyMining');
@@ -2141,9 +1911,14 @@
                 if (el) el.textContent = gameState.shards.toLocaleString();
             });
             
-            const gpElements = document.querySelectorAll('#gp, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpCommand');
+            const gpElements = document.querySelectorAll('#gp, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpProfile');
             gpElements.forEach(el => {
                 if (el) el.textContent = gameState.gp.toLocaleString();
+            });
+
+            const ticketElements = document.querySelectorAll('#gameTickets');
+            ticketElements.forEach(el => {
+                if (el) el.textContent = gameState.gameTickets;
             });
 
             // Update energy bar
@@ -2175,94 +1950,40 @@
                 playerDamageEl.textContent = gameState.playerDamage.toLocaleString();
             }
 
-            // Update ad button state
-            const adBtn = document.getElementById('adBtn');
-            if (adBtn) {
-                if (gameState.energy >= gameState.maxEnergy) {
-                    adBtn.disabled = true;
-                    adBtn.textContent = '⚡ Energy Full';
-                    adBtn.style.opacity = '0.5';
-                } else {
-                    adBtn.disabled = false;
-                    adBtn.textContent = '📺 Watch Ad (+25 Energy)';
-                    adBtn.style.opacity = '1';
-                }
+            // Update user level
+            const userLevel = Math.floor(gameState.gp / 100) + 1;
+            const userLevelEl = document.getElementById('tgUserLevel');
+            if (userLevelEl) {
+                userLevelEl.textContent = userLevel;
             }
 
-            // Update user level
-            const userLevel = Math.floor(gameState.gp / 1000) + 1;
-            const userLevelElements = document.querySelectorAll('#tgUserLevel, #commandUserLevel');
-            userLevelElements.forEach(el => {
-                if (el) el.textContent = userLevel;
-            });
+            // Update referral stats
+            const totalReferralsEl = document.getElementById('totalReferrals');
+            const referralEarningsEl = document.getElementById('referralEarnings');
+            if (totalReferralsEl) totalReferralsEl.textContent = gameState.totalReferrals;
+            if (referralEarningsEl) referralEarningsEl.textContent = gameState.referralEarnings;
 
-            // Update join date
-            document.getElementById('joinDate').textContent = gameState.joinDate;
-
-            // Update shop costs
             updateShopCosts();
-
-            // Update task progress
-            updateTaskProgress();
+            updateTaskUI();
         }
 
-        // Start energy regeneration
-        window.addEventListener('load', () => {
-            startEnergyRegeneration();
-        });
+        // Auto-save
+        setInterval(() => {
+            saveGameData();
+        }, 30000);
 
-        // Initialize when page loads
+        // Initialize
         document.addEventListener('DOMContentLoaded', initGame);
-        
-        // Handle page load as fallback
         window.addEventListener('load', () => {
             if (!gameState.energy) {
                 initGame();
             }
+            startEnergyRegeneration();
         });
 
-        // Auto-save and cleanup
-        setInterval(() => {
+        // Cleanup
+        window.addEventListener('beforeunload', () => {
             saveGameData();
-        }, 30000); // Save every 30 seconds
-
-        // Handle Telegram WebApp events
-        if (typeof window !== 'undefined' && window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.onEvent('backButtonClicked', () => {
-                showScreen('galaxyScreen');
-            });
-        }
-
-        // Keyboard controls for combo game
-        document.addEventListener('keydown', function(e) {
-            if (document.querySelector('.screen.active')?.id === 'minigamesScreen') {
-                const key = e.key;
-                if (key >= '0' && key <= '9') {
-                    inputComboDigit(key);
-                } else if (key === 'Enter') {
-                    submitCombo();
-                } else if (key === 'Escape' || key === 'Backspace') {
-                    clearCombo();
-                }
-            }
-        });
-
-        // Focus management for combo inputs
-        ['combo1', 'combo2', 'combo3', 'combo4'].forEach((id, index) => {
-            const input = document.getElementById(id);
-            if (input) {
-                input.addEventListener('input', function() {
-                    if (this.value && index < 3) {
-                        document.getElementById(['combo1', 'combo2', 'combo3', 'combo4'][index + 1]).focus();
-                    }
-                });
-                
-                input.addEventListener('keydown', function(e) {
-                    if (e.key === 'Backspace' && !this.value && index > 0) {
-                        document.getElementById(['combo1', 'combo2', 'combo3', 'combo4'][index - 1]).focus();
-                    }
-                });
-            }
         });
     </script>
 </body>
