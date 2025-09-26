@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>CX Odyssey: Rise of the Collectors</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
@@ -15,6 +15,8 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: none;
+            text-size-adjust: none;
         }
 
         :root {
@@ -36,6 +38,7 @@
             overflow: hidden;
             height: 100vh;
             position: relative;
+            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
         }
 
         .game-container {
@@ -164,9 +167,9 @@
             height: 100%;
             z-index: 10;
             display: none;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
-            padding-bottom: 80px;
+            padding-bottom: 70px;
         }
 
         .screen.active {
@@ -178,16 +181,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 15px;
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
 
         .logo {
             font-family: 'Orbitron', monospace;
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 900;
             background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange));
             -webkit-background-clip: text;
@@ -196,25 +199,25 @@
 
         .resources {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
         }
 
         .resource {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
-            padding: 10px 15px;
-            border-radius: 30px;
-            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 600;
         }
 
         .ticket-cooldown {
-            font-size: 10px;
+            font-size: 9px;
             opacity: 0.8;
-            margin-top: 2px;
+            margin-top: 1px;
         }
 
         .nav-bar {
@@ -225,17 +228,18 @@
             display: flex;
             background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(26, 26, 46, 0.95));
             z-index: 50;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .nav-btn {
             flex: 1;
-            padding: 12px 6px;
+            padding: 10px 5px;
             text-align: center;
             background: transparent;
             color: rgba(255, 255, 255, 0.6);
             border: none;
             cursor: pointer;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
             transition: all 0.3s ease;
         }
@@ -245,16 +249,16 @@
         }
 
         .nav-btn div:first-child {
-            font-size: 18px;
-            margin-bottom: 4px;
+            font-size: 16px;
+            margin-bottom: 3px;
         }
 
         .galaxy-map {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 15px;
             flex: 1;
-            padding: 20px 0;
+            padding: 15px 0;
         }
 
         .planet {
@@ -267,11 +271,11 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .planet:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .planet-1 { background: radial-gradient(circle at 30% 30%, #FF6B35, #D84315, #8B2500); }
@@ -290,14 +294,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 25px;
+            gap: 20px;
             padding: 10px;
         }
 
         .mining-area {
-            width: 280px;
-            height: 280px;
-            border-radius: 30px;
+            width: 250px;
+            height: 250px;
+            border-radius: 25px;
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
             display: flex;
             align-items: center;
@@ -308,15 +312,15 @@
         }
 
         .mining-area:hover {
-            transform: scale(1.05);
+            transform: scale(1.03);
         }
 
         .energy-bar {
             width: 100%;
-            max-width: 320px;
-            height: 25px;
+            max-width: 300px;
+            height: 20px;
             background: rgba(0, 0, 0, 0.6);
-            border-radius: 15px;
+            border-radius: 10px;
             overflow: hidden;
         }
 
@@ -328,27 +332,27 @@
 
         .action-buttons {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .action-btn {
-            padding: 15px 25px;
+            padding: 12px 20px;
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
             border: 2px solid var(--primary-gold);
-            border-radius: 30px;
+            border-radius: 25px;
             color: var(--primary-gold);
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
-            min-width: 140px;
+            min-width: 120px;
         }
 
         .action-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 35px rgba(255, 215, 0, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
         }
 
         .action-btn:disabled {
@@ -364,14 +368,14 @@
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.98), rgba(22, 33, 62, 0.98));
             border: 2px solid var(--primary-gold);
             color: var(--primary-gold);
-            padding: 25px 35px;
-            border-radius: 20px;
+            padding: 20px 30px;
+            border-radius: 15px;
             z-index: 1001;
             font-weight: 700;
-            font-size: 16px;
+            font-size: 14px;
             text-align: center;
-            min-width: 250px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.3);
+            min-width: 200px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.3);
             animation: notificationPop 3s ease-in-out;
         }
 
@@ -385,27 +389,27 @@
 
         .daily-combo-game {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 25px;
-            padding: 30px;
-            margin: 20px 0;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
             text-align: center;
         }
 
         .combo-input {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
+            gap: 8px;
+            margin: 15px 0;
         }
 
         .combo-digit {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             background: rgba(255, 215, 0, 0.1);
             border: 2px solid var(--primary-gold);
-            border-radius: 10px;
+            border-radius: 8px;
             color: var(--primary-gold);
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             text-align: center;
             outline: none;
@@ -414,19 +418,19 @@
         .combo-keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            max-width: 200px;
-            margin: 0 auto 20px;
+            gap: 8px;
+            max-width: 180px;
+            margin: 0 auto 15px;
         }
 
         .combo-key {
-            padding: 15px;
+            padding: 12px;
             background: rgba(255, 215, 0, 0.2);
             border: 1px solid var(--primary-gold);
-            border-radius: 10px;
+            border-radius: 8px;
             color: var(--primary-gold);
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             transition: all 0.2s;
         }
@@ -437,71 +441,71 @@
 
         .tasks-section {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 25px;
-            padding: 25px;
-            margin: 15px 0;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 10px 0;
         }
 
         .task-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            margin: 10px 0;
+            padding: 12px 15px;
+            margin: 8px 0;
             background: rgba(255, 215, 0, 0.1);
-            border-radius: 15px;
+            border-radius: 12px;
             border-left: 4px solid var(--primary-gold);
         }
 
         .task-reward {
             background: var(--success-green);
             color: #000;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 15px;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .task-button {
             background: var(--primary-gold);
             color: #000;
-            padding: 8px 15px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 15px;
             border: none;
             font-weight: bold;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 11px;
         }
 
         .leaderboard {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 25px;
-            padding: 25px;
-            margin: 15px 0;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 10px 0;
         }
 
         .leaderboard-entry {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            margin: 10px 0;
+            padding: 12px 15px;
+            margin: 8px 0;
             background: rgba(255, 215, 0, 0.1);
-            border-radius: 15px;
+            border-radius: 12px;
             border-left: 4px solid var(--primary-gold);
         }
 
         .shop-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 20px;
-            padding: 15px 0;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            padding: 10px 0;
         }
 
         .shop-item {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 25px;
-            padding: 20px;
+            border-radius: 20px;
+            padding: 15px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -509,35 +513,35 @@
         }
 
         .shop-item:hover {
-            transform: translateY(-8px);
+            transform: translateY(-5px);
             border-color: var(--primary-gold);
         }
 
         .boss-image {
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 200px;
             background: radial-gradient(circle, var(--accent-purple), #4a148c);
-            border-radius: 30px;
-            margin: 25px auto;
+            border-radius: 25px;
+            margin: 20px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 80px;
+            font-size: 70px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .boss-image:hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
         }
 
         .boss-health {
             width: 100%;
-            height: 35px;
+            height: 30px;
             background: rgba(255, 0, 0, 0.3);
-            border-radius: 20px;
+            border-radius: 15px;
             overflow: hidden;
-            margin: 25px 0;
+            margin: 20px 0;
         }
 
         .boss-health-fill {
@@ -548,10 +552,10 @@
 
         .daily-reward {
             background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
-            border-radius: 25px;
-            padding: 25px;
+            border-radius: 20px;
+            padding: 20px;
             text-align: center;
-            margin: 15px 0;
+            margin: 10px 0;
             color: #000;
             font-weight: 700;
         }
@@ -559,52 +563,70 @@
         .tg-user-info {
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 20px;
+            gap: 12px;
+            padding: 15px;
             background: rgba(255, 215, 0, 0.1);
-            border-radius: 20px;
-            margin-bottom: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
         }
 
         .tg-avatar {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            border: 3px solid var(--primary-gold);
+            border: 2px solid var(--primary-gold);
         }
 
         .minigame-area {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 25px;
-            padding: 30px;
+            border-radius: 20px;
+            padding: 25px;
             text-align: center;
-            min-height: 350px;
+            min-height: 300px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 25px;
+            gap: 20px;
         }
 
-        .wallet-screen {
-            padding: 20px;
+        .command-center {
+            padding: 15px;
             text-align: center;
         }
 
-        .wallet-info {
+        .command-info {
             background: rgba(255, 215, 0, 0.1);
-            padding: 20px;
-            border-radius: 15px;
-            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 15px;
         }
 
         .wallet-address {
             word-break: break-all;
             font-family: monospace;
             background: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            border-radius: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            margin: 8px 0;
+            font-size: 12px;
+        }
+
+        .referral-section {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+            border-radius: 15px;
+            padding: 15px;
             margin: 10px 0;
+        }
+
+        .referral-code {
+            background: rgba(255, 215, 0, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 16px;
+            margin: 10px 0;
+            word-break: break-all;
         }
 
         .modal {
@@ -618,6 +640,7 @@
             align-items: center;
             justify-content: center;
             z-index: 200;
+            padding: 15px;
         }
 
         .modal.active {
@@ -626,36 +649,62 @@
 
         .modal-content {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border-radius: 30px;
-            padding: 40px;
+            border-radius: 25px;
+            padding: 30px;
             text-align: center;
-            max-width: 90%;
+            max-width: 100%;
             position: relative;
             border: 2px solid var(--primary-gold);
-            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
         }
 
         .close-btn {
             position: absolute;
-            top: 15px;
-            right: 20px;
+            top: 10px;
+            right: 15px;
             background: var(--danger-red);
             border: none;
             color: white;
-            font-size: 24px;
-            width: 40px;
-            height: 40px;
+            font-size: 20px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             cursor: pointer;
         }
 
+        .task-tabs {
+            display: flex;
+            margin-bottom: 15px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 10px;
+            padding: 5px;
+        }
+
+        .task-tab {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .task-tab.active {
+            background: var(--primary-gold);
+            color: #000;
+        }
+
         @media (max-width: 768px) {
-            .header { padding: 15px; }
-            .logo { font-size: 20px; }
-            .mining-area { width: 240px; height: 240px; }
-            .boss-image { width: 180px; height: 180px; font-size: 60px; }
-            .nav-btn { padding: 10px 4px; font-size: 9px; }
-            .nav-btn div:first-child { font-size: 16px; }
+            .header { padding: 12px; }
+            .logo { font-size: 18px; }
+            .mining-area { width: 220px; height: 220px; }
+            .boss-image { width: 160px; height: 160px; font-size: 50px; }
+            .nav-btn { padding: 8px 3px; font-size: 8px; }
+            .nav-btn div:first-child { font-size: 14px; }
+            .screen { padding: 10px; padding-bottom: 60px; }
         }
     </style>
 </head>
@@ -686,125 +735,54 @@
             <div class="tg-user-info" id="tgUserInfo">
                 <img class="tg-avatar" id="tgAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23FFD700'/%3E%3Ctext x='50' y='65' text-anchor='middle' font-size='40' fill='%23000'%3E👤%3C/text%3E%3C/svg%3E">
                 <div>
-                    <div id="tgUserName" style="font-weight: 700; font-size: 18px;">Player</div>
-                    <div style="font-size: 14px; opacity: 0.8;">Level <span id="tgUserLevel">1</span> Explorer</div>
+                    <div id="tgUserName" style="font-weight: 700; font-size: 16px;">Player</div>
+                    <div style="font-size: 12px; opacity: 0.8;">Level <span id="tgUserLevel">1</span> Explorer</div>
                 </div>
-            </div>
-            
-            <div class="daily-reward" id="dailyReward">
-                <div style="font-size: 20px; margin-bottom: 10px;">🎁 Daily Login Bonus!</div>
-                <div style="font-size: 28px; margin: 15px 0;">Day <span id="streakDay">1</span> Streak</div>
-                <div style="font-size: 18px;">+<span id="bonusAmount">100</span> GP Earned!</div>
-            </div>
-
-            <div class="daily-combo-game">
-                <h3 style="color: var(--primary-gold); margin-bottom: 20px;">🔮 Daily Combo Code</h3>
-                <p style="margin-bottom: 15px; opacity: 0.9;">Guess today's secret code!</p>
-                <div class="combo-input">
-                    <input type="text" class="combo-digit" maxlength="1" id="combo1">
-                    <input type="text" class="combo-digit" maxlength="1" id="combo2">
-                    <input type="text" class="combo-digit" maxlength="1" id="combo3">
-                    <input type="text" class="combo-digit" maxlength="1" id="combo4">
-                </div>
-                <div class="combo-keypad">
-                    <button class="combo-key" onclick="inputComboDigit('1')">1</button>
-                    <button class="combo-key" onclick="inputComboDigit('2')">2</button>
-                    <button class="combo-key" onclick="inputComboDigit('3')">3</button>
-                    <button class="combo-key" onclick="inputComboDigit('4')">4</button>
-                    <button class="combo-key" onclick="inputComboDigit('5')">5</button>
-                    <button class="combo-key" onclick="inputComboDigit('6')">6</button>
-                    <button class="combo-key" onclick="inputComboDigit('7')">7</button>
-                    <button class="combo-key" onclick="inputComboDigit('8')">8</button>
-                    <button class="combo-key" onclick="inputComboDigit('9')">9</button>
-                    <button class="combo-key" onclick="clearCombo()" style="background: var(--danger-red);">Clear</button>
-                    <button class="combo-key" onclick="inputComboDigit('0')">0</button>
-                    <button class="combo-key" onclick="submitCombo()" style="background: var(--success-green); color: #000;">Submit</button>
-                </div>
-                <p style="font-size: 14px; opacity: 0.8;">Attempts: <span id="comboAttempts">3</span>/3 | Reward: 2000 GP</p>
             </div>
 
             <div class="galaxy-map">
                 <div class="planet planet-1" onclick="selectPlanet('Pyrion', 1)">
                     <div class="planet-info">
-                        <div style="font-size: 18px; font-weight: 800; margin-bottom: 5px;">🔥 Pyrion</div>
-                        <div style="font-size: 11px;">Fire World</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🔥 Pyrion</div>
+                        <div style="font-size: 10px;">Fire World</div>
                     </div>
                 </div>
                 <div class="planet planet-2" onclick="selectPlanet('Aqueos', 2)">
                     <div class="planet-info">
-                        <div style="font-size: 18px; font-weight: 800; margin-bottom: 5px;">🌊 Aqueos</div>
-                        <div style="font-size: 11px;">Ocean World</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🌊 Aqueos</div>
+                        <div style="font-size: 10px;">Ocean World</div>
                     </div>
                 </div>
                 <div class="planet planet-3" onclick="selectPlanet('Voidex', 3)">
                     <div class="planet-info">
-                        <div style="font-size: 18px; font-weight: 800; margin-bottom: 5px;">🌌 Voidex</div>
-                        <div style="font-size: 11px;">Dark Matter</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🌌 Voidex</div>
+                        <div style="font-size: 10px;">Dark Matter</div>
                     </div>
                 </div>
                 <div class="planet planet-4" onclick="selectPlanet('Verdant', 4)">
                     <div class="planet-info">
-                        <div style="font-size: 18px; font-weight: 800; margin-bottom: 5px;">🌿 Verdant</div>
-                        <div style="font-size: 11px;">Bio World</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🌿 Verdant</div>
+                        <div style="font-size: 10px;">Bio World</div>
                     </div>
                 </div>
                 <div class="planet planet-5" onclick="selectPlanet('Aurelia', 5)">
                     <div class="planet-info">
-                        <div style="font-size: 18px; font-weight: 800; margin-bottom: 5px;">✨ Aurelia</div>
-                        <div style="font-size: 11px;">Gold Planet</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">✨ Aurelia</div>
+                        <div style="font-size: 10px;">Gold Planet</div>
                     </div>
                 </div>
                 <div class="planet planet-6" onclick="selectPlanet('Crimson', 6)">
                     <div class="planet-info">
-                        <div style="font-size: 18px; font-weight: 800; margin-bottom: 5px;">⚔️ Crimson</div>
-                        <div style="font-size: 11px;">War Zone</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">⚔️ Crimson</div>
+                        <div style="font-size: 10px;">War Zone</div>
                     </div>
                 </div>
             </div>
 
             <div class="action-buttons">
                 <button class="action-btn" onclick="showScreen('bossScreen')">🐉 Boss Raid</button>
-                <button class="action-btn" onclick="checkDailyReward()">🎁 Daily Login</button>
-                <button class="action-btn" onclick="shareGame()">📤 Share Game</button>
-            </div>
-
-            <div class="tasks-section">
-                <h3 style="color: var(--primary-gold); margin-bottom: 20px; text-align: center;">📋 Daily Tasks</h3>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold;">🌟 First Login</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Log in to the game</div>
-                    </div>
-                    <div class="task-reward" id="task1">+100 GP</div>
-                </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold;">⛏️ Mine 10 Times</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Mine crystals from planets (<span id="mineCount">0</span>/10)</div>
-                    </div>
-                    <button class="task-button" id="task2" onclick="claimTask(2)">Claim +500 GP</button>
-                </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold;">⚔️ Battle Boss</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Attack the cosmic overlord</div>
-                    </div>
-                    <button class="task-button" id="task3" onclick="claimTask(3)">Claim +300 GP</button>
-                </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold;">📤 Share Game</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Share with friends</div>
-                    </div>
-                    <button class="task-button" id="task4" onclick="claimTask(4)">Claim +200 GP</button>
-                </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold;">💎 Collect 1000 Shards</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Gather precious crystals (<span id="shardCount">0</span>/1000)</div>
-                    </div>
-                    <button class="task-button" id="task5" onclick="claimTask(5)">Claim +1000 GP</button>
-                </div>
+                <button class="action-btn" onclick="showScreen('minigamesScreen')">🎮 Mini-Games</button>
+                <button class="action-btn" onclick="showReferralModal()">👥 Refer Friends</button>
             </div>
         </div>
 
@@ -821,21 +799,21 @@
             <div class="mining-screen">
                 <div class="mining-area" onclick="minePlanet()">
                     <div style="text-align: center;">
-                        <div style="font-size: 32px; margin-bottom: 15px;">⛏️</div>
-                        <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">TAP TO MINE</div>
-                        <div style="font-size: 14px; opacity: 0.9;">+<span id="mineReward">10</span> Shards</div>
+                        <div style="font-size: 28px; margin-bottom: 12px;">⛏️</div>
+                        <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">TAP TO MINE</div>
+                        <div style="font-size: 12px; opacity: 0.9;">+<span id="mineReward">10</span> Shards</div>
                     </div>
                 </div>
 
-                <div style="width: 100%; max-width: 320px;">
-                    <div style="margin-bottom: 15px; font-size: 16px; font-weight: 600;">Energy: <span id="energyText">100/100</span></div>
+                <div style="width: 100%; max-width: 280px;">
+                    <div style="margin-bottom: 12px; font-size: 14px; font-weight: 600;">Energy: <span id="energyText">100/100</span></div>
                     <div class="energy-bar">
                         <div class="energy-fill" id="energyFill" style="width: 100%"></div>
                     </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="action-btn" onclick="watchAdForEnergy()" id="adBtn">📺 Watch Ad (+50 Energy)</button>
+                    <button class="action-btn" onclick="watchAdForEnergy()" id="adBtn">📺 Watch Ad (+25 Energy)</button>
                     <button class="action-btn" onclick="battleAliens()">⚔️ Battle Aliens</button>
                     <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
                 </div>
@@ -853,12 +831,12 @@
             </div>
 
             <div style="text-align: center;">
-                <h2 style="color: var(--primary-gold); margin-bottom: 25px; font-size: 24px;">🐉 COSMIC OVERLORD</h2>
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 20px;">🐉 COSMIC OVERLORD</h2>
                 
                 <div class="boss-image" onclick="attackBoss()">👹</div>
 
                 <div>
-                    <div style="margin-bottom: 15px; font-size: 18px; font-weight: 600;">Boss Health: <span id="bossHealthText">1000/1000</span></div>
+                    <div style="margin-bottom: 12px; font-size: 16px; font-weight: 600;">Boss Health: <span id="bossHealthText">1000/1000</span></div>
                     <div class="boss-health">
                         <div class="boss-health-fill" id="bossHealthFill" style="width: 100%"></div>
                     </div>
@@ -870,34 +848,9 @@
                     <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
                 </div>
 
-                <div style="margin-top: 25px; font-size: 16px; background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 15px;">
+                <div style="margin-top: 20px; font-size: 14px; background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 12px;">
                     Your Damage: <span id="playerDamage" style="color: var(--primary-gold); font-weight: 700;">0</span>
                 </div>
-            </div>
-        </div>
-
-        <!-- Leaderboard Screen -->
-        <div class="screen" id="leaderboardScreen">
-            <div class="header">
-                <div class="logo">LEADERBOARDS</div>
-                <div class="resources">
-                    <div class="resource">🏆 <span id="gpLeaderboard">0</span></div>
-                    <div class="resource">#<span id="playerRank">999</span></div>
-                </div>
-            </div>
-
-            <div class="leaderboard">
-                <h3 style="color: var(--primary-gold); margin-bottom: 25px; font-size: 22px; text-align: center;">🏆 TOP COLLECTORS</h3>
-                <div id="leaderboardEntries">
-                    <div class="leaderboard-entry">
-                        <div><span style="color: var(--primary-gold); font-size: 24px;">👑</span> Loading...</div>
-                        <div style="font-weight: 700; color: var(--primary-gold);">0 GP</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="action-buttons">
-                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
             </div>
         </div>
 
@@ -913,28 +866,28 @@
 
             <div class="shop-grid">
                 <div class="shop-item" onclick="buyUpgrade('speed')">
-                    <div style="font-size: 50px; margin-bottom: 15px;">🚀</div>
-                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Speed Boost</div>
-                    <div style="color: var(--primary-gold); font-size: 16px; font-weight: 600;" id="speedCost">500 GP</div>
-                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">+25% Mining Speed</div>
+                    <div style="font-size: 40px; margin-bottom: 12px;">🚀</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Speed Boost</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="speedCost">250 GP</div>
+                    <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">+20% Mining Speed</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('damage')">
-                    <div style="font-size: 50px; margin-bottom: 15px;">⚔️</div>
-                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Damage Boost</div>
-                    <div style="color: var(--primary-gold); font-size: 16px; font-weight: 600;" id="damageCost">750 GP</div>
-                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">+50% Battle Damage</div>
+                    <div style="font-size: 40px; margin-bottom: 12px;">⚔️</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Damage Boost</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="damageCost">500 GP</div>
+                    <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">+30% Battle Damage</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('energy')">
-                    <div style="font-size: 50px; margin-bottom: 15px;">⚡</div>
-                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Energy Tank</div>
-                    <div style="color: var(--primary-gold); font-size: 16px; font-weight: 600;" id="energyCost">1000 GP</div>
-                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">+50 Max Energy</div>
+                    <div style="font-size: 40px; margin-bottom: 12px;">⚡</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Energy Tank</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="energyCost">750 GP</div>
+                    <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">+25 Max Energy</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('multiplier')">
-                    <div style="font-size: 50px; margin-bottom: 15px;">💰</div>
-                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">GP Multiplier</div>
-                    <div style="color: var(--primary-gold); font-size: 16px; font-weight: 600;" id="multiplierCost">3000 GP</div>
-                    <div style="font-size: 12px; opacity: 0.8; margin-top: 5px;">+100% GP Gain</div>
+                    <div style="font-size: 40px; margin-bottom: 12px;">💰</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">GP Multiplier</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="multiplierCost">1500 GP</div>
+                    <div style="font-size: 11px; opacity: 0.8; margin-top: 3px;">+50% GP Gain</div>
                 </div>
             </div>
 
@@ -956,31 +909,36 @@
                 </div>
             </div>
 
-            <div class="shop-grid">
-                <div class="shop-item" onclick="startAsteroidDodge()">
-                    <div style="font-size: 50px; margin-bottom: 15px;">☄️</div>
-                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Asteroid Dodge</div>
-                    <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Dodge asteroids and survive!</div>
-                    <div style="color: var(--success-green); font-weight: 600;">Reward: 300-1000 GP</div>
+            <div class="daily-combo-game">
+                <h3 style="color: var(--primary-gold); margin-bottom: 15px;">🔮 Daily Combo Code</h3>
+                <p style="margin-bottom: 12px; opacity: 0.9;">Guess today's secret code!</p>
+                <div class="combo-input">
+                    <input type="text" class="combo-digit" maxlength="1" id="combo1">
+                    <input type="text" class="combo-digit" maxlength="1" id="combo2">
+                    <input type="text" class="combo-digit" maxlength="1" id="combo3">
+                    <input type="text" class="combo-digit" maxlength="1" id="combo4">
                 </div>
-                <div class="shop-item" onclick="startCryptoClicker()">
-                    <div style="font-size: 50px; margin-bottom: 15px;">💎</div>
-                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Crystal Collector</div>
-                    <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Collect falling crystals!</div>
-                    <div style="color: var(--success-green); font-weight: 600;">Reward: 200-800 GP</div>
+                <div class="combo-keypad">
+                    <button class="combo-key" onclick="inputComboDigit('1')">1</button>
+                    <button class="combo-key" onclick="inputComboDigit('2')">2</button>
+                    <button class="combo-key" onclick="inputComboDigit('3')">3</button>
+                    <button class="combo-key" onclick="inputComboDigit('4')">4</button>
+                    <button class="combo-key" onclick="inputComboDigit('5')">5</button>
+                    <button class="combo-key" onclick="inputComboDigit('6')">6</button>
+                    <button class="combo-key" onclick="inputComboDigit('7')">7</button>
+                    <button class="combo-key" onclick="inputComboDigit('8')">8</button>
+                    <button class="combo-key" onclick="inputComboDigit('9')">9</button>
+                    <button class="combo-key" onclick="clearCombo()" style="background: var(--danger-red);">Clear</button>
+                    <button class="combo-key" onclick="inputComboDigit('0')">0</button>
+                    <button class="combo-key" onclick="submitCombo()" style="background: var(--success-green); color: #000;">Submit</button>
                 </div>
-                <div class="shop-item" onclick="startMemoryGame()">
-                    <div style="font-size: 50px; margin-bottom: 15px;">🧩</div>
-                    <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Memory Matrix</div>
-                    <div style="font-size: 12px; opacity: 0.8; margin-bottom: 8px;">Remember the sequence!</div>
-                    <div style="color: var(--success-green); font-weight: 600;">Reward: 400-1200 GP</div>
-                </div>
+                <p style="font-size: 12px; opacity: 0.8;">Attempts: <span id="comboAttempts">3</span>/3 | Reward: 500 GP</p>
             </div>
 
             <div class="minigame-area" id="minigameArea">
-                <h3 style="color: var(--primary-gold); font-size: 24px; margin-bottom: 15px;">Select a mini-game to start!</h3>
-                <p style="font-size: 16px; opacity: 0.9;">Use tickets to play games and earn bonus GP</p>
-                <p style="font-size: 14px; opacity: 0.7; margin-top: 10px;">Tickets regenerate every 30 minutes</p>
+                <h3 style="color: var(--primary-gold); font-size: 20px; margin-bottom: 12px;">🎮 New Games Coming Soon!</h3>
+                <p style="font-size: 14px; opacity: 0.9;">Exciting mini-games are being developed</p>
+                <p style="font-size: 12px; opacity: 0.7; margin-top: 8px;">Check back later for more fun challenges!</p>
             </div>
 
             <div class="action-buttons">
@@ -991,48 +949,91 @@
         <!-- Tasks Screen -->
         <div class="screen" id="tasksScreen">
             <div class="header">
-                <div class="logo">DAILY TASKS</div>
+                <div class="logo">TASKS & MISSIONS</div>
                 <div class="resources">
                     <div class="resource">🏆 <span id="gpTasks">0</span></div>
-                    <div class="resource">✅ <span id="completedTasks">0</span>/5</div>
+                    <div class="resource">✅ <span id="completedTasks">0</span>/10</div>
                 </div>
             </div>
 
-            <div class="tasks-section">
+            <div class="task-tabs">
+                <button class="task-tab active" id="dailyTab" onclick="switchTaskTab('daily')">Daily</button>
+                <button class="task-tab" id="oneTimeTab" onclick="switchTaskTab('oneTime')">One-Time</button>
+            </div>
+
+            <div id="dailyTasks" class="tasks-section">
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">🌟 First Login</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Log in to the game today</div>
+                        <div style="font-weight: bold;">🌟 Daily Login</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Log in to the game today</div>
                     </div>
-                    <div class="task-reward" id="taskStatus1">Completed</div>
+                    <button class="task-button" id="dailyTask1" onclick="claimDailyTask(1)">Claim +50 GP</button>
                 </div>
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">⛏️ Mine 20 Times</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Mine crystals from planets (<span id="taskMineCount">0</span>/20)</div>
+                        <div style="font-weight: bold;">⛏️ Mine 10 Times</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Mine crystals from planets (<span id="dailyMineCount">0</span>/10)</div>
                     </div>
-                    <button class="task-button" id="taskBtn2" onclick="claimTask(2)" disabled>+500 GP</button>
+                    <button class="task-button" id="dailyTask2" onclick="claimDailyTask(2)" disabled>+100 GP</button>
                 </div>
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">⚔️ Battle Boss 5 Times</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Attack the cosmic overlord (<span id="taskBossCount">0</span>/5)</div>
+                        <div style="font-weight: bold;">⚔️ Battle Boss 3 Times</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Attack the cosmic overlord (<span id="dailyBossCount">0</span>/3)</div>
                     </div>
-                    <button class="task-button" id="taskBtn3" onclick="claimTask(3)" disabled>+800 GP</button>
+                    <button class="task-button" id="dailyTask3" onclick="claimDailyTask(3)" disabled>+150 GP</button>
                 </div>
                 <div class="task-item">
                     <div>
-                        <div style="font-weight: bold;">🎮 Play 3 Mini-Games</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Complete mini-game challenges (<span id="taskGameCount">0</span>/3)</div>
+                        <div style="font-weight: bold;">💎 Collect 500 Shards</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Gather precious crystals (<span id="dailyShardCount">0</span>/500)</div>
                     </div>
-                    <button class="task-button" id="taskBtn4" onclick="claimTask(4)" disabled>+600 GP</button>
+                    <button class="task-button" id="dailyTask4" onclick="claimDailyTask(4)" disabled>+200 GP</button>
+                </div>
+                <div class="task-item">
+                    <div>
+                        <div style="font-weight: bold;">🎮 Play Combo Game</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Try the daily combo challenge</div>
+                    </div>
+                    <button class="task-button" id="dailyTask5" onclick="claimDailyTask(5)" disabled>+75 GP</button>
+                </div>
+            </div>
+
+            <div id="oneTimeTasks" class="tasks-section" style="display: none;">
+                <div class="task-item">
+                    <div>
+                        <div style="font-weight: bold;">🚀 Reach Level 5</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Level up your explorer (<span id="levelProgress">1</span>/5)</div>
+                    </div>
+                    <button class="task-button" id="oneTimeTask1" onclick="claimOneTimeTask(1)" disabled>+500 GP</button>
+                </div>
+                <div class="task-item">
+                    <div>
+                        <div style="font-weight: bold;">⛏️ Mine 100 Times</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Become a mining expert (<span id="totalMineCount">0</span>/100)</div>
+                    </div>
+                    <button class="task-button" id="oneTimeTask2" onclick="claimOneTimeTask(2)" disabled>+1000 GP</button>
+                </div>
+                <div class="task-item">
+                    <div>
+                        <div style="font-weight: bold;">⚔️ Defeat Boss 5 Times</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Vanquish the cosmic overlord (<span id="totalBossKills">0</span>/5)</div>
+                    </div>
+                    <button class="task-button" id="oneTimeTask3" onclick="claimOneTimeTask(3)" disabled>+1500 GP</button>
                 </div>
                 <div class="task-item">
                     <div>
                         <div style="font-weight: bold;">💎 Collect 5000 Shards</div>
-                        <div style="font-size: 12px; opacity: 0.8;">Gather precious crystals (<span id="taskShardCount">0</span>/5000)</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Amass a fortune (<span id="totalShardCount">0</span>/5000)</div>
                     </div>
-                    <button class="task-button" id="taskBtn5" onclick="claimTask(5)" disabled>+2000 GP</button>
+                    <button class="task-button" id="oneTimeTask4" onclick="claimOneTimeTask(4)" disabled>+2000 GP</button>
+                </div>
+                <div class="task-item">
+                    <div>
+                        <div style="font-weight: bold;">👥 Refer 3 Friends</div>
+                        <div style="font-size: 11px; opacity: 0.8;">Invite friends to join (<span id="referralCount">0</span>/3)</div>
+                    </div>
+                    <button class="task-button" id="oneTimeTask5" onclick="claimOneTimeTask(5)" disabled>+2500 GP</button>
                 </div>
             </div>
 
@@ -1041,36 +1042,58 @@
             </div>
         </div>
 
-        <!-- Wallet Screen -->
-        <div class="screen" id="walletScreen">
+        <!-- Command Center Screen (Replaces Wallet) -->
+        <div class="screen" id="commandCenterScreen">
             <div class="header">
-                <div class="logo">WALLET</div>
+                <div class="logo">COMMAND CENTER</div>
                 <div class="resources">
-                    <div class="resource">💼 <span id="walletStatus">Not Connected</span></div>
+                    <div class="resource">🏆 <span id="gpCommand">0</span></div>
+                    <div class="resource">#<span id="playerRank">999</span></div>
                 </div>
             </div>
 
-            <div class="wallet-screen">
-                <h3 style="color: var(--primary-gold); margin-bottom: 20px;">Connect Your TON Wallet</h3>
-                <p style="margin-bottom: 30px; opacity: 0.9;">Connect your wallet to receive future airdrops and rewards!</p>
-                
-                <button class="action-btn" onclick="connectWallet()" id="connectWalletBtn" style="margin-bottom: 20px;">
-                    🔗 Connect Wallet
-                </button>
-                
-                <div id="walletInfo" style="display: none;" class="wallet-info">
-                    <h4 style="color: var(--primary-gold); margin-bottom: 15px;">Connected Wallet</h4>
-                    <div class="wallet-address" id="connectedAddress"></div>
-                    <button class="action-btn" onclick="disconnectWallet()" style="margin-top: 15px; background: var(--danger-red);">
-                        Disconnect
-                    </button>
+            <div class="command-center">
+                <div class="tg-user-info">
+                    <img class="tg-avatar" id="commandAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23FFD700'/%3E%3Ctext x='50' y='65' text-anchor='middle' font-size='40' fill='%23000'%3E👤%3C/text%3E%3C/svg%3E">
+                    <div>
+                        <div id="commandUserName" style="font-weight: 700; font-size: 16px;">Player</div>
+                        <div style="font-size: 12px; opacity: 0.8;">Level <span id="commandUserLevel">1</span> Explorer</div>
+                        <div style="font-size: 11px; opacity: 0.7;">Joined: <span id="joinDate">Today</span></div>
+                    </div>
                 </div>
-                
-                <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 15px;">
-                    <h4 style="color: var(--primary-gold); margin-bottom: 15px;">Future Features</h4>
-                    <p style="margin-bottom: 10px; opacity: 0.8;">🚀 CX Token Airdrops (Coming Soon)</p>
-                    <p style="margin-bottom: 10px; opacity: 0.8;">💰 NFT Rewards (Coming Soon)</p>
-                    <p style="opacity: 0.8;">🎮 Exclusive In-Game Items (Coming Soon)</p>
+
+                <div class="referral-section">
+                    <h3 style="color: var(--primary-gold); margin-bottom: 10px;">👥 Referral Program</h3>
+                    <p style="font-size: 12px; margin-bottom: 8px;">Invite friends and earn rewards!</p>
+                    <div class="referral-code" id="referralCode">CX-000000</div>
+                    <p style="font-size: 11px; opacity: 0.8;">Referrals: <span id="referralStats">0</span> | Earned: <span id="referralEarnings">0</span> GP</p>
+                    <button class="action-btn" onclick="copyReferralCode()" style="margin-top: 10px; padding: 8px 15px; font-size: 12px;">📋 Copy Referral Code</button>
+                </div>
+
+                <div class="leaderboard">
+                    <h3 style="color: var(--primary-gold); margin-bottom: 15px; font-size: 18px; text-align: center;">🏆 TOP EXPLORERS</h3>
+                    <div id="leaderboardEntries">
+                        <div class="leaderboard-entry">
+                            <div><span style="color: var(--primary-gold); font-size: 20px;">👑</span> Loading...</div>
+                            <div style="font-weight: 700; color: var(--primary-gold);">0 GP</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="command-info">
+                    <h4 style="color: var(--primary-gold); margin-bottom: 10px;">🔗 Wallet Connection</h4>
+                    <div style="margin-bottom: 15px; font-size: 12px;">Connect your TON wallet for future rewards</div>
+                    
+                    <button class="action-btn" onclick="connectWallet()" id="connectWalletBtn" style="margin-bottom: 10px; padding: 8px 15px; font-size: 12px;">
+                        🔗 Connect Wallet
+                    </button>
+                    
+                    <div id="walletInfo" style="display: none;">
+                        <div class="wallet-address" id="connectedAddress"></div>
+                        <button class="action-btn" onclick="disconnectWallet()" style="margin-top: 8px; background: var(--danger-red); padding: 6px 12px; font-size: 11px;">
+                            Disconnect
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1085,10 +1108,6 @@
                 <div>🌌</div>
                 <div>Galaxy</div>
             </button>
-            <button class="nav-btn" onclick="showScreen('leaderboardScreen')">
-                <div>🏆</div>
-                <div>Ranks</div>
-            </button>
             <button class="nav-btn" onclick="showScreen('shopScreen')">
                 <div>🛒</div>
                 <div>Shop</div>
@@ -1101,9 +1120,9 @@
                 <div>📋</div>
                 <div>Tasks</div>
             </button>
-            <button class="nav-btn" onclick="showScreen('walletScreen')">
-                <div>💼</div>
-                <div>Wallet</div>
+            <button class="nav-btn" onclick="showScreen('commandCenterScreen')">
+                <div>🚀</div>
+                <div>Command</div>
             </button>
         </div>
 
@@ -1111,66 +1130,84 @@
         <div class="modal" id="adModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('adModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 25px;">🎬 Watch Ad</h2>
-                <p style="margin-bottom: 25px;">Watch this short video to get your reward!</p>
-                <div style="width: 300px; height: 200px; background: #333; border-radius: 20px; margin: 25px auto; display: flex; align-items: center; justify-content: center; font-size: 64px;">
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px;">🎬 Watch Ad</h2>
+                <p style="margin-bottom: 20px;">Watch this short video to get your reward!</p>
+                <div style="width: 250px; height: 150px; background: #333; border-radius: 15px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 50px;">
                     📺
                 </div>
-                <div style="margin: 25px 0;">
-                    <div style="width: 100%; height: 8px; background: rgba(255,255,255,0.2); border-radius: 4px; margin-bottom: 15px;">
-                        <div id="adProgress" style="width: 0%; height: 100%; background: var(--primary-gold); border-radius: 4px;"></div>
+                <div style="margin: 20px 0;">
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-bottom: 12px;">
+                        <div id="adProgress" style="width: 0%; height: 100%; background: var(--primary-gold); border-radius: 3px;"></div>
                     </div>
                     <div>Ad progress: <span id="adTime" style="color: var(--primary-gold);">0</span>/5 seconds</div>
                 </div>
-                <button class="action-btn" onclick="skipAd()" id="skipBtn" style="display: none;">✅ Claim Reward</button>
+                <button class="action-btn" onclick="skipAd()" id="skipBtn" style="display: none; padding: 10px 20px; font-size: 14px;">✅ Claim Reward</button>
             </div>
         </div>
 
         <div class="modal" id="rewardModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('rewardModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 25px;">🎉 Reward Earned!</h2>
-                <div style="font-size: 80px; margin: 25px 0;" id="rewardIcon">💎</div>
-                <div style="font-size: 28px; color: var(--primary-gold); font-weight: 700; margin-bottom: 20px;" id="rewardText">+100 GP</div>
-                <p style="margin-top: 25px;">Keep collecting to unlock more rewards!</p>
-                <button class="action-btn" onclick="closeModal('rewardModal')" style="margin-top: 25px;">Continue</button>
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px;">🎉 Reward Earned!</h2>
+                <div style="font-size: 60px; margin: 20px 0;" id="rewardIcon">💎</div>
+                <div style="font-size: 22px; color: var(--primary-gold); font-weight: 700; margin-bottom: 15px;" id="rewardText">+100 GP</div>
+                <p style="margin-top: 20px;">Keep collecting to unlock more rewards!</p>
+                <button class="action-btn" onclick="closeModal('rewardModal')" style="margin-top: 20px; padding: 10px 20px; font-size: 14px;">Continue</button>
             </div>
         </div>
 
-        <div class="modal" id="upgradeModal">
+        <div class="modal" id="referralModal">
             <div class="modal-content">
-                <button class="close-btn" onclick="closeModal('upgradeModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 25px;">🚀 Upgrade Complete!</h2>
-                <div style="font-size: 80px; margin: 25px 0;" id="upgradeIcon">⚡</div>
-                <div style="font-size: 20px; margin-bottom: 20px; font-weight: 600;" id="upgradeText">Speed boost activated!</div>
-                <p style="margin-top: 25px;">Your ship is now more powerful!</p>
-                <button class="action-btn" onclick="closeModal('upgradeModal')" style="margin-top: 25px;">Awesome!</button>
+                <button class="close-btn" onclick="closeModal('referralModal')">&times;</button>
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px;">👥 Refer Friends</h2>
+                <p style="margin-bottom: 15px;">Share your referral code with friends to earn rewards!</p>
+                <div class="referral-code" style="font-size: 18px; margin: 15px 0;" id="modalReferralCode">CX-000000</div>
+                <p style="font-size: 12px; margin-bottom: 20px;">You earn 100 GP for each friend who joins using your code!</p>
+                <button class="action-btn" onclick="copyReferralCode()" style="margin-bottom: 10px; padding: 10px 20px; font-size: 14px;">📋 Copy Code</button>
+                <button class="action-btn" onclick="shareReferral()" style="background: var(--success-green); color: #000; padding: 10px 20px; font-size: 14px;">📤 Share on Telegram</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Game State
+        // Game State with balanced values
         let gameState = {
             energy: 100,
             maxEnergy: 100,
             shards: 0,
             gp: 0,
             currentPlanet: '',
-            dailyStreak: 1,
-            lastLogin: '',
             bossHealth: 1000,
             maxBossHealth: 1000,
             playerDamage: 0,
             upgrades: { speed: 0, damage: 0, energy: 0, multiplier: 0 },
-            skins: [],
             adDamageBoost: 0,
             gameTickets: 3,
             lastTicketTime: Date.now(),
             maxTickets: 10,
-            tasks: { 1: true, 2: false, 3: false, 4: false, 5: false },
-            taskProgress: { mines: 0, bossBattles: 0, gamesPlayed: 0 },
-            dailyCombo: { code: '', attempts: 3, completed: false },
+            
+            // Tasks system
+            dailyTasks: { 
+                1: false, 2: false, 3: false, 4: false, 5: false,
+                lastReset: new Date().toDateString()
+            },
+            oneTimeTasks: { 1: false, 2: false, 3: false, 4: false, 5: false },
+            taskProgress: { 
+                dailyMines: 0, dailyBossBattles: 0, 
+                totalMines: 0, totalBossKills: 0, 
+                comboPlayed: false 
+            },
+            
+            // Daily combo
+            dailyCombo: { code: '', attempts: 3, completed: false, date: '' },
+            
+            // Referral system
+            referralCode: '',
+            referrals: 0,
+            referralEarnings: 0,
+            joinDate: new Date().toLocaleDateString(),
+            
+            // Wallet
             walletConnected: false,
             energyLastRegen: Date.now()
         };
@@ -1181,6 +1218,7 @@
         let connector = null;
         let leaderboardUpdateInterval = null;
         let currentComboIndex = 0;
+        let currentTaskTab = 'daily';
 
         // Initialize game with proper loading sequence
         function initGame() {
@@ -1208,15 +1246,26 @@
                             
                             if (user.photo_url) {
                                 document.getElementById('tgAvatar').src = user.photo_url;
+                                document.getElementById('commandAvatar').src = user.photo_url;
                             }
                             
                             let userName = user.first_name;
                             if (user.last_name) userName += " " + user.last_name;
                             document.getElementById('tgUserName').textContent = userName;
+                            document.getElementById('commandUserName').textContent = userName;
+                            
+                            // Generate referral code based on user ID
+                            gameState.referralCode = 'CX-' + (user.id % 1000000).toString().padStart(6, '0');
+                            document.getElementById('referralCode').textContent = gameState.referralCode;
+                            document.getElementById('modalReferralCode').textContent = gameState.referralCode;
                         }
                     }
                 } catch (error) {
                     console.log('🌐 Running in browser mode');
+                    // Generate a random referral code for browser users
+                    gameState.referralCode = 'CX-' + Math.floor(100000 + Math.random() * 900000);
+                    document.getElementById('referralCode').textContent = gameState.referralCode;
+                    document.getElementById('modalReferralCode').textContent = gameState.referralCode;
                 }
                 
                 updateLoadingProgress(60, "Loading game data...");
@@ -1246,10 +1295,28 @@
             
             updateUI();
             generateDailyCombo();
-            checkDailyLogin();
+            checkDailyReset();
             startLeaderboardUpdates();
             showScreen('galaxyScreen');
             showNotification(`🚀 Welcome to CX Odyssey${user ? ', ' + user.first_name : ''}!`);
+            
+            // Check if user joined via referral
+            checkReferral();
+        }
+
+        // Check if user joined via referral
+        function checkReferral() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            
+            if (refCode && refCode !== gameState.referralCode) {
+                // This is a new user joining via referral
+                // In a real game, you would validate the referral code and reward the referrer
+                showNotification('👥 Welcome! You joined via a referral link.');
+                
+                // Save that this user was referred
+                localStorage.setItem('referredBy', refCode);
+            }
         }
 
         // Generate daily combo code
@@ -1312,11 +1379,13 @@
             }
             
             gameState.dailyCombo.attempts--;
+            gameState.taskProgress.comboPlayed = true;
+            updateTaskProgress();
             
             if (guess === gameState.dailyCombo.code) {
                 gameState.dailyCombo.completed = true;
-                gameState.gp += 2000;
-                showNotification('🎉 Correct! You earned 2000 GP!');
+                gameState.gp += 500; // Balanced reward
+                showNotification('🎉 Correct! You earned 500 GP!');
                 clearCombo();
             } else {
                 if (gameState.dailyCombo.attempts > 0) {
@@ -1343,13 +1412,11 @@
                     connector.onStatusChange(wallet => {
                         if (wallet) {
                             gameState.walletConnected = true;
-                            document.getElementById('walletStatus').textContent = 'Connected';
                             document.getElementById('connectWalletBtn').style.display = 'none';
                             document.getElementById('walletInfo').style.display = 'block';
                             document.getElementById('connectedAddress').textContent = shortenAddress(wallet.account.address);
                         } else {
                             gameState.walletConnected = false;
-                            document.getElementById('walletStatus').textContent = 'Not Connected';
                             document.getElementById('connectWalletBtn').style.display = 'block';
                             document.getElementById('walletInfo').style.display = 'none';
                         }
@@ -1371,7 +1438,7 @@
                     // Regenerate energy based on time passed
                     if (gameState.energyLastRegen) {
                         const timePassed = Date.now() - gameState.energyLastRegen;
-                        const energyToAdd = Math.floor(timePassed / 10000); // 1 energy per 10 seconds
+                        const energyToAdd = Math.floor(timePassed / 15000); // 1 energy per 15 seconds (slower)
                         gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + energyToAdd);
                     }
                     
@@ -1415,6 +1482,11 @@
             
             setTimeout(() => {
                 document.getElementById(screenId).classList.add('active');
+                
+                // Load leaderboard when command center is shown
+                if (screenId === 'commandCenterScreen') {
+                    loadLeaderboard();
+                }
             }, 100);
 
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -1423,11 +1495,10 @@
             
             const navMap = {
                 'galaxyScreen': 0,
-                'leaderboardScreen': 1,
-                'shopScreen': 2,
-                'minigamesScreen': 3,
-                'tasksScreen': 4,
-                'walletScreen': 5
+                'shopScreen': 1,
+                'minigamesScreen': 2,
+                'tasksScreen': 3,
+                'commandCenterScreen': 4
             };
             
             if (navMap[screenId] !== undefined) {
@@ -1441,12 +1512,12 @@
         function selectPlanet(planetName, planetId) {
             gameState.currentPlanet = planetName;
             document.getElementById('currentPlanet').textContent = planetName;
-            document.getElementById('mineReward').textContent = planetId * 5 + 5;
+            document.getElementById('mineReward').textContent = planetId * 3 + 5; // Balanced rewards
             showScreen('miningScreen');
             showNotification(`🌍 Landed on ${planetName}!`);
         }
 
-        // Mining mechanics with proper point rewards
+        // Mining mechanics with balanced point rewards
         function minePlanet() {
             if (gameState.energy <= 0) {
                 showNotification('⚡ No energy! Wait for regeneration or watch an ad.');
@@ -1455,15 +1526,16 @@
 
             const planetName = document.getElementById('currentPlanet').textContent;
             const planetMultiplier = getPlanetMultiplier(planetName);
-            const speedBonus = 1 + (gameState.upgrades.speed * 0.25);
-            const baseReward = 10 + Math.random() * 15;
+            const speedBonus = 1 + (gameState.upgrades.speed * 0.2); // Balanced upgrade
+            const baseReward = 5 + Math.random() * 10; // Balanced base reward
             const shardReward = Math.floor(baseReward * planetMultiplier * speedBonus);
-            const gpReward = Math.floor(shardReward * 0.8 * (1 + gameState.upgrades.multiplier));
+            const gpReward = Math.floor(shardReward * 0.5 * (1 + gameState.upgrades.multiplier * 0.5)); // Balanced GP reward
 
-            gameState.energy -= 3;
+            gameState.energy -= 2; // Balanced energy cost
             gameState.shards += shardReward;
             gameState.gp += gpReward;
-            gameState.taskProgress.mines++;
+            gameState.taskProgress.dailyMines++;
+            gameState.taskProgress.totalMines++;
 
             showNotification(`💎 +${shardReward} Shards, +${gpReward} GP!`);
             updateTaskProgress();
@@ -1473,22 +1545,22 @@
 
         function getPlanetMultiplier(planetName) {
             const multipliers = {
-                'Pyrion': 1.2, 'Aqueos': 1.0, 'Voidex': 1.8,
-                'Verdant': 1.1, 'Aurelia': 2.0, 'Crimson': 1.5
+                'Pyrion': 1.1, 'Aqueos': 1.0, 'Voidex': 1.5,
+                'Verdant': 1.2, 'Aurelia': 1.8, 'Crimson': 1.3
             };
             return multipliers[planetName] || 1.0;
         }
 
-        // Battle system
+        // Battle system with balanced rewards
         function battleAliens() {
-            if (gameState.energy < 10) {
-                showNotification('⚡ Need at least 10 energy to battle!');
+            if (gameState.energy < 8) { // Balanced energy cost
+                showNotification('⚡ Need at least 8 energy to battle!');
                 return;
             }
 
-            gameState.energy -= 10;
-            const baseReward = 150 + Math.random() * 200;
-            const reward = Math.floor(baseReward * (1 + gameState.upgrades.multiplier));
+            gameState.energy -= 8;
+            const baseReward = 50 + Math.random() * 100; // Balanced reward
+            const reward = Math.floor(baseReward * (1 + gameState.upgrades.multiplier * 0.5));
             gameState.gp += reward;
             
             showNotification(`⚔️ Defeated aliens! +${reward} GP!`);
@@ -1496,7 +1568,7 @@
             saveGameData();
         }
 
-        // Boss raid system
+        // Boss raid system with balanced rewards
         function attackBoss() {
             if (gameState.energy < 5) {
                 showNotification('⚡ Need at least 5 energy to attack!');
@@ -1504,26 +1576,27 @@
             }
 
             gameState.energy -= 5;
-            const baseDamage = 15 + (gameState.upgrades.damage * 8);
-            const damage = baseDamage + Math.floor(Math.random() * 25);
+            const baseDamage = 10 + (gameState.upgrades.damage * 3); // Balanced damage
+            const damage = baseDamage + Math.floor(Math.random() * 15);
             const actualDamage = gameState.adDamageBoost > 0 ? damage * 2 : damage;
             
             gameState.bossHealth = Math.max(0, gameState.bossHealth - actualDamage);
             gameState.playerDamage += actualDamage;
-            gameState.taskProgress.bossBattles++;
+            gameState.taskProgress.dailyBossBattles++;
             
             if (gameState.adDamageBoost > 0) {
                 gameState.adDamageBoost--;
             }
 
             if (gameState.bossHealth <= 0) {
-                const reward = 3000 + Math.floor(Math.random() * 2000);
+                const reward = 1000 + Math.floor(Math.random() * 500); // Balanced reward
                 gameState.gp += reward;
                 gameState.bossHealth = gameState.maxBossHealth;
                 gameState.playerDamage = 0;
+                gameState.taskProgress.totalBossKills++;
                 showNotification(`🐉 Boss defeated! +${reward} GP!`);
             } else {
-                const gpReward = Math.floor(actualDamage * 2);
+                const gpReward = Math.floor(actualDamage * 1.5); // Balanced reward
                 gameState.gp += gpReward;
                 showNotification(`⚔️ Hit for ${actualDamage} damage! +${gpReward} GP!`);
             }
@@ -1533,60 +1606,140 @@
             saveGameData();
         }
 
-        // Task system
+        // Task system with daily reset
+        function checkDailyReset() {
+            const today = new Date().toDateString();
+            if (gameState.dailyTasks.lastReset !== today) {
+                // Reset daily tasks
+                gameState.dailyTasks = { 
+                    1: false, 2: false, 3: false, 4: false, 5: false,
+                    lastReset: today
+                };
+                gameState.taskProgress.dailyMines = 0;
+                gameState.taskProgress.dailyBossBattles = 0;
+                gameState.taskProgress.comboPlayed = false;
+                
+                // Reset daily combo
+                generateDailyCombo();
+                
+                console.log('🔄 Daily tasks reset');
+            }
+        }
+
         function updateTaskProgress() {
-            // Update task counters
-            document.getElementById('taskMineCount').textContent = gameState.taskProgress.mines;
-            document.getElementById('taskBossCount').textContent = gameState.taskProgress.bossBattles;
-            document.getElementById('taskGameCount').textContent = gameState.taskProgress.gamesPlayed;
-            document.getElementById('taskShardCount').textContent = gameState.shards;
+            // Update daily task counters
+            document.getElementById('dailyMineCount').textContent = gameState.taskProgress.dailyMines;
+            document.getElementById('dailyBossCount').textContent = gameState.taskProgress.dailyBossBattles;
+            document.getElementById('dailyShardCount').textContent = gameState.shards;
             
-            // Update main screen counters
-            document.getElementById('mineCount').textContent = gameState.taskProgress.mines;
-            document.getElementById('shardCount').textContent = gameState.shards;
+            // Update one-time task counters
+            document.getElementById('totalMineCount').textContent = gameState.taskProgress.totalMines;
+            document.getElementById('totalBossKills').textContent = gameState.taskProgress.totalBossKills;
+            document.getElementById('totalShardCount').textContent = gameState.shards;
+            document.getElementById('referralCount').textContent = gameState.referrals;
+            
+            // Update level progress
+            const userLevel = Math.floor(gameState.gp / 1000) + 1;
+            document.getElementById('levelProgress').textContent = Math.min(5, userLevel);
+            
+            // Update referral stats
+            document.getElementById('referralStats').textContent = gameState.referrals;
+            document.getElementById('referralEarnings').textContent = gameState.referralEarnings;
             
             // Enable/disable task buttons
             updateTaskButtons();
         }
 
         function updateTaskButtons() {
-            const btn2 = document.getElementById('taskBtn2');
-            if (gameState.taskProgress.mines >= 20 && !gameState.tasks[2]) {
-                btn2.disabled = false;
-                btn2.textContent = 'Claim +500 GP';
+            // Daily tasks
+            const dailyTask1 = document.getElementById('dailyTask1');
+            if (!gameState.dailyTasks[1]) {
+                dailyTask1.disabled = false;
             }
             
-            const btn3 = document.getElementById('taskBtn3');
-            if (gameState.taskProgress.bossBattles >= 5 && !gameState.tasks[3]) {
-                btn3.disabled = false;
-                btn3.textContent = 'Claim +800 GP';
+            const dailyTask2 = document.getElementById('dailyTask2');
+            if (gameState.taskProgress.dailyMines >= 10 && !gameState.dailyTasks[2]) {
+                dailyTask2.disabled = false;
             }
             
-            const btn4 = document.getElementById('taskBtn4');
-            if (gameState.taskProgress.gamesPlayed >= 3 && !gameState.tasks[4]) {
-                btn4.disabled = false;
-                btn4.textContent = 'Claim +600 GP';
+            const dailyTask3 = document.getElementById('dailyTask3');
+            if (gameState.taskProgress.dailyBossBattles >= 3 && !gameState.dailyTasks[3]) {
+                dailyTask3.disabled = false;
             }
             
-            const btn5 = document.getElementById('taskBtn5');
-            if (gameState.shards >= 5000 && !gameState.tasks[5]) {
-                btn5.disabled = false;
-                btn5.textContent = 'Claim +2000 GP';
+            const dailyTask4 = document.getElementById('dailyTask4');
+            if (gameState.shards >= 500 && !gameState.dailyTasks[4]) {
+                dailyTask4.disabled = false;
+            }
+            
+            const dailyTask5 = document.getElementById('dailyTask5');
+            if (gameState.taskProgress.comboPlayed && !gameState.dailyTasks[5]) {
+                dailyTask5.disabled = false;
+            }
+            
+            // One-time tasks
+            const oneTimeTask1 = document.getElementById('oneTimeTask1');
+            const userLevel = Math.floor(gameState.gp / 1000) + 1;
+            if (userLevel >= 5 && !gameState.oneTimeTasks[1]) {
+                oneTimeTask1.disabled = false;
+            }
+            
+            const oneTimeTask2 = document.getElementById('oneTimeTask2');
+            if (gameState.taskProgress.totalMines >= 100 && !gameState.oneTimeTasks[2]) {
+                oneTimeTask2.disabled = false;
+            }
+            
+            const oneTimeTask3 = document.getElementById('oneTimeTask3');
+            if (gameState.taskProgress.totalBossKills >= 5 && !gameState.oneTimeTasks[3]) {
+                oneTimeTask3.disabled = false;
+            }
+            
+            const oneTimeTask4 = document.getElementById('oneTimeTask4');
+            if (gameState.shards >= 5000 && !gameState.oneTimeTasks[4]) {
+                oneTimeTask4.disabled = false;
+            }
+            
+            const oneTimeTask5 = document.getElementById('oneTimeTask5');
+            if (gameState.referrals >= 3 && !gameState.oneTimeTasks[5]) {
+                oneTimeTask5.disabled = false;
+            }
+            
+            // Update completed tasks counter
+            const completedDaily = Object.values(gameState.dailyTasks).filter(Boolean).length;
+            const completedOneTime = Object.values(gameState.oneTimeTasks).filter(Boolean).length;
+            const completedTasks = completedDaily + completedOneTime;
+            document.getElementById('completedTasks').textContent = completedTasks;
+        }
+
+        function switchTaskTab(tab) {
+            currentTaskTab = tab;
+            document.getElementById('dailyTab').classList.remove('active');
+            document.getElementById('oneTimeTab').classList.remove('active');
+            document.getElementById('dailyTasks').style.display = 'none';
+            document.getElementById('oneTimeTasks').style.display = 'none';
+            
+            if (tab === 'daily') {
+                document.getElementById('dailyTab').classList.add('active');
+                document.getElementById('dailyTasks').style.display = 'block';
+            } else {
+                document.getElementById('oneTimeTab').classList.add('active');
+                document.getElementById('oneTimeTasks').style.display = 'block';
             }
         }
 
-        function claimTask(taskId) {
-            if (gameState.tasks[taskId]) {
+        function claimDailyTask(taskId) {
+            if (gameState.dailyTasks[taskId]) {
                 showNotification('✅ Task already completed!');
                 return;
             }
             
-            const rewards = { 2: 500, 3: 800, 4: 600, 5: 2000 };
+            const rewards = { 1: 50, 2: 100, 3: 150, 4: 200, 5: 75 };
             const requirements = {
-                2: gameState.taskProgress.mines >= 20,
-                3: gameState.taskProgress.bossBattles >= 5,
-                4: gameState.taskProgress.gamesPlayed >= 3,
-                5: gameState.shards >= 5000
+                1: true, // Daily login is always available
+                2: gameState.taskProgress.dailyMines >= 10,
+                3: gameState.taskProgress.dailyBossBattles >= 3,
+                4: gameState.shards >= 500,
+                5: gameState.taskProgress.comboPlayed
             };
             
             if (!requirements[taskId]) {
@@ -1594,61 +1747,66 @@
                 return;
             }
             
-            gameState.tasks[taskId] = true;
+            gameState.dailyTasks[taskId] = true;
             gameState.gp += rewards[taskId];
             
-            const btn = document.getElementById(`taskBtn${taskId}`);
+            const btn = document.getElementById(`dailyTask${taskId}`);
             if (btn) {
                 btn.textContent = 'Completed';
                 btn.disabled = true;
                 btn.style.background = 'var(--success-green)';
             }
             
-            showNotification(`✅ Task completed! +${rewards[taskId]} GP!`);
+            showNotification(`✅ Daily task completed! +${rewards[taskId]} GP!`);
             updateUI();
             saveGameData();
         }
 
-        // Daily rewards
-        function checkDailyLogin() {
-            const today = new Date().toDateString();
-            if (gameState.lastLogin !== today) {
-                const streakBonus = gameState.dailyStreak * 100;
-                gameState.gp += streakBonus;
-                gameState.dailyStreak++;
-                gameState.lastLogin = today;
-
-                document.getElementById('streakDay').textContent = gameState.dailyStreak;
-                document.getElementById('bonusAmount').textContent = streakBonus;
-                
-                setTimeout(() => {
-                    document.getElementById('dailyReward').style.display = 'none';
-                }, 8000);
-
-                updateUI();
-                saveGameData();
-            } else {
-                document.getElementById('dailyReward').style.display = 'none';
+        function claimOneTimeTask(taskId) {
+            if (gameState.oneTimeTasks[taskId]) {
+                showNotification('✅ Task already completed!');
+                return;
             }
+            
+            const rewards = { 1: 500, 2: 1000, 3: 1500, 4: 2000, 5: 2500 };
+            const requirements = {
+                1: Math.floor(gameState.gp / 1000) + 1 >= 5,
+                2: gameState.taskProgress.totalMines >= 100,
+                3: gameState.taskProgress.totalBossKills >= 5,
+                4: gameState.shards >= 5000,
+                5: gameState.referrals >= 3
+            };
+            
+            if (!requirements[taskId]) {
+                showNotification('❌ Task requirements not met!');
+                return;
+            }
+            
+            gameState.oneTimeTasks[taskId] = true;
+            gameState.gp += rewards[taskId];
+            
+            const btn = document.getElementById(`oneTimeTask${taskId}`);
+            if (btn) {
+                btn.textContent = 'Completed';
+                btn.disabled = true;
+                btn.style.background = 'var(--success-green)';
+            }
+            
+            showNotification(`✅ Mission completed! +${rewards[taskId]} GP!`);
+            updateUI();
+            saveGameData();
         }
 
-        function checkDailyReward() {
-            checkDailyLogin();
-            if (document.getElementById('dailyReward').style.display === 'none') {
-                showNotification('🎁 Already claimed today! Come back tomorrow.');
-            }
-        }
-
-        // Shop system with updated costs
+        // Shop system with balanced costs
         function buyUpgrade(upgradeType) {
             const costs = {
-                speed: 500 * Math.pow(2, gameState.upgrades.speed),
-                damage: 750 * Math.pow(2, gameState.upgrades.damage),
-                energy: 1000 * Math.pow(2, gameState.upgrades.energy),
-                multiplier: 3000 * Math.pow(2, gameState.upgrades.multiplier)
+                speed: 250 * Math.pow(1.5, gameState.upgrades.speed),
+                damage: 500 * Math.pow(1.5, gameState.upgrades.damage),
+                energy: 750 * Math.pow(1.5, gameState.upgrades.energy),
+                multiplier: 1500 * Math.pow(1.5, gameState.upgrades.multiplier)
             };
 
-            const cost = costs[upgradeType];
+            const cost = Math.floor(costs[upgradeType]);
             if (gameState.gp < cost) {
                 showNotification('🏆 Not enough GP!');
                 return;
@@ -1658,7 +1816,7 @@
             gameState.upgrades[upgradeType]++;
             
             if (upgradeType === 'energy') {
-                gameState.maxEnergy += 50;
+                gameState.maxEnergy += 25;
                 gameState.energy = gameState.maxEnergy;
             }
 
@@ -1679,341 +1837,65 @@
 
         function updateShopCosts() {
             const costs = {
-                speed: 500 * Math.pow(2, gameState.upgrades.speed),
-                damage: 750 * Math.pow(2, gameState.upgrades.damage),
-                energy: 1000 * Math.pow(2, gameState.upgrades.energy),
-                multiplier: 3000 * Math.pow(2, gameState.upgrades.multiplier)
+                speed: 250 * Math.pow(1.5, gameState.upgrades.speed),
+                damage: 500 * Math.pow(1.5, gameState.upgrades.damage),
+                energy: 750 * Math.pow(1.5, gameState.upgrades.energy),
+                multiplier: 1500 * Math.pow(1.5, gameState.upgrades.multiplier)
             };
 
-            document.getElementById('speedCost').textContent = costs.speed + ' GP';
-            document.getElementById('damageCost').textContent = costs.damage + ' GP';
-            document.getElementById('energyCost').textContent = costs.energy + ' GP';
-            document.getElementById('multiplierCost').textContent = costs.multiplier + ' GP';
+            document.getElementById('speedCost').textContent = Math.floor(costs.speed) + ' GP';
+            document.getElementById('damageCost').textContent = Math.floor(costs.damage) + ' GP';
+            document.getElementById('energyCost').textContent = Math.floor(costs.energy) + ' GP';
+            document.getElementById('multiplierCost').textContent = Math.floor(costs.multiplier) + ' GP';
         }
 
-        // Ticket system with cooldown display
-        function updateTickets() {
-            const now = Date.now();
-            const timeSinceLastTicket = now - gameState.lastTicketTime;
-            const ticketRegenTime = 30 * 60 * 1000; // 30 minutes
-            
-            const ticketsToAdd = Math.floor(timeSinceLastTicket / ticketRegenTime);
-            if (ticketsToAdd > 0) {
-                gameState.gameTickets = Math.min(gameState.maxTickets, gameState.gameTickets + ticketsToAdd);
-                gameState.lastTicketTime = now;
-            }
-            
-            // Update cooldown display
-            const timeToNextTicket = ticketRegenTime - (timeSinceLastTicket % ticketRegenTime);
-            const minutes = Math.floor(timeToNextTicket / (60 * 1000));
-            const seconds = Math.floor((timeToNextTicket % (60 * 1000)) / 1000);
-            
-            const cooldownEl = document.getElementById('ticketCooldown');
-            if (cooldownEl && gameState.gameTickets < gameState.maxTickets) {
-                cooldownEl.textContent = `+1 in ${minutes}:${seconds.toString().padStart(2, '0')}`;
-            } else if (cooldownEl) {
-                cooldownEl.textContent = '';
-            }
+        // Referral system
+        function showReferralModal() {
+            document.getElementById('modalReferralCode').textContent = gameState.referralCode;
+            showModal('referralModal');
         }
 
-        // Mini-games with actual functionality
-        function startAsteroidDodge() {
-            if (gameState.gameTickets <= 0) {
-                showNotification('🎫 No tickets remaining! Wait for regeneration.');
-                return;
-            }
-            
-            gameState.gameTickets--;
-            gameState.taskProgress.gamesPlayed++;
-            
-            document.getElementById('minigameArea').innerHTML = `
-                <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 20px;">☄️ Asteroid Dodge</h3>
-                <div style="width: 300px; height: 200px; background: #000; border: 2px solid var(--primary-gold); border-radius: 15px; position: relative; overflow: hidden; margin: 20px 0;" id="gameArea">
-                    <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 30px; height: 30px; background: var(--primary-gold); border-radius: 50%; transition: left 0.1s;" id="player">🚀</div>
-                </div>
-                <p>Use A/D keys to move left/right!</p>
-                <button class="action-btn" onclick="endMiniGame()" style="margin-top: 15px;">End Game</button>
-            `;
-            
-            // Simple asteroid dodge game
-            let gameRunning = true;
-            let score = 0;
-            let player = document.getElementById('player');
-            let gameArea = document.getElementById('gameArea');
-            let playerPos = 50;
-            
-            // Player movement
-            document.addEventListener('keydown', function(e) {
-                if (!gameRunning) return;
-                if (e.key === 'a' || e.key === 'A') {
-                    playerPos = Math.max(10, playerPos - 10);
-                    player.style.left = playerPos + '%';
-                }
-                if (e.key === 'd' || e.key === 'D') {
-                    playerPos = Math.min(90, playerPos + 10);
-                    player.style.left = playerPos + '%';
-                }
+        function copyReferralCode() {
+            navigator.clipboard.writeText(gameState.referralCode).then(() => {
+                showNotification('📋 Referral code copied to clipboard!');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = gameState.referralCode;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification('📋 Referral code copied!');
             });
-            
-            // Asteroid spawning
-            let asteroidInterval = setInterval(() => {
-                if (!gameRunning) return;
-                
-                const asteroid = document.createElement('div');
-                asteroid.style.cssText = `
-                    position: absolute;
-                    top: 0px;
-                    left: ${Math.random() * 90}%;
-                    width: 20px;
-                    height: 20px;
-                    background: var(--danger-red);
-                    border-radius: 50%;
-                    transition: top 0.1s linear;
-                `;
-                asteroid.textContent = '☄️';
-                gameArea.appendChild(asteroid);
-                
-                // Move asteroid down
-                let asteroidTop = 0;
-                let moveInterval = setInterval(() => {
-                    asteroidTop += 5;
-                    asteroid.style.top = asteroidTop + 'px';
-                    
-                    if (asteroidTop > 200) {
-                        clearInterval(moveInterval);
-                        if (asteroid.parentNode) asteroid.remove();
-                        score += 10;
-                    }
-                    
-                    // Collision detection (simplified)
-                    if (asteroidTop > 170 && asteroidTop < 190) {
-                        const asteroidLeft = parseFloat(asteroid.style.left);
-                        if (Math.abs(asteroidLeft - playerPos) < 15) {
-                            gameRunning = false;
-                            clearInterval(asteroidInterval);
-                            clearInterval(moveInterval);
-                            endAsteroidGame(score);
-                        }
-                    }
-                }, 50);
-            }, 800);
-            
-            // Auto-end after 15 seconds
-            setTimeout(() => {
-                if (gameRunning) {
-                    gameRunning = false;
-                    clearInterval(asteroidInterval);
-                    endAsteroidGame(score);
-                }
-            }, 15000);
         }
 
-        function endAsteroidGame(score) {
-            const reward = Math.max(300, Math.min(1000, score * 2));
-            gameState.gp += reward;
+        function shareReferral() {
+            const shareText = `🚀 Join me in CX Odyssey - an amazing space mining adventure! Use my referral code: ${gameState.referralCode} to get bonus rewards!`;
+            const shareUrl = `https://t.me/share/url?url=https://t.me/Cx_odyssey_bot?start=${gameState.referralCode}&text=${encodeURIComponent(shareText)}`;
             
-            document.getElementById('minigameArea').innerHTML = `
-                <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 20px;">🎉 Game Complete!</h3>
-                <div style="font-size: 48px; margin: 20px 0;">☄️</div>
-                <p style="font-size: 18px; margin-bottom: 15px;">Score: ${score}</p>
-                <p style="color: var(--success-green); font-size: 20px; font-weight: bold;">+${reward} GP Earned!</p>
-                <button class="action-btn" onclick="resetMinigameArea()" style="margin-top: 20px;">Play Again</button>
-            `;
-            
-            updateTaskProgress();
-            updateUI();
-            saveGameData();
-            showNotification(`🎮 Game completed! +${reward} GP!`);
-        }
-
-        function startCryptoClicker() {
-            if (gameState.gameTickets <= 0) {
-                showNotification('🎫 No tickets remaining! Wait for regeneration.');
-                return;
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(shareUrl);
+            } else if (navigator.share) {
+                navigator.share({
+                    title: 'CX Odyssey',
+                    text: shareText,
+                    url: `https://t.me/Cx_odyssey_bot?start=${gameState.referralCode}`
+                }).catch(() => {
+                    window.open(shareUrl, '_blank');
+                });
+            } else {
+                window.open(shareUrl, '_blank');
             }
-            
-            gameState.gameTickets--;
-            gameState.taskProgress.gamesPlayed++;
-            
-            let clicks = 0;
-            let timeLeft = 10;
-            
-            document.getElementById('minigameArea').innerHTML = `
-                <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 20px;">💎 Crystal Collector</h3>
-                <div style="font-size: 64px; margin: 20px 0; cursor: pointer;" onclick="clickCrystal()" id="crystal">💎</div>
-                <p>Clicks: <span id="clickCount">0</span></p>
-                <p>Time: <span id="timeLeft">10</span>s</p>
-                <p style="font-size: 14px; opacity: 0.8;">Click the crystal as fast as you can!</p>
-            `;
-            
-            window.clickCrystal = function() {
-                clicks++;
-                document.getElementById('clickCount').textContent = clicks;
-                
-                // Visual feedback
-                const crystal = document.getElementById('crystal');
-                crystal.style.transform = 'scale(1.2)';
-                setTimeout(() => {
-                    crystal.style.transform = 'scale(1)';
-                }, 100);
-            };
-            
-            const timer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('timeLeft').textContent = timeLeft;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    endCryptoClicker(clicks);
-                }
-            }, 1000);
-        }
-
-        function endCryptoClicker(clicks) {
-            const reward = Math.max(200, Math.min(800, clicks * 25));
-            gameState.gp += reward;
-            
-            document.getElementById('minigameArea').innerHTML = `
-                <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 20px;">🎉 Game Complete!</h3>
-                <div style="font-size: 48px; margin: 20px 0;">💎</div>
-                <p style="font-size: 18px; margin-bottom: 15px;">Clicks: ${clicks}</p>
-                <p style="color: var(--success-green); font-size: 20px; font-weight: bold;">+${reward} GP Earned!</p>
-                <button class="action-btn" onclick="resetMinigameArea()" style="margin-top: 20px;">Play Again</button>
-            `;
-            
-            updateTaskProgress();
-            updateUI();
-            saveGameData();
-            showNotification(`🎮 Game completed! +${reward} GP!`);
-        }
-
-        function startMemoryGame() {
-            if (gameState.gameTickets <= 0) {
-                showNotification('🎫 No tickets remaining! Wait for regeneration.');
-                return;
-            }
-            
-            gameState.gameTickets--;
-            gameState.taskProgress.gamesPlayed++;
-            
-            const sequence = [];
-            const colors = ['🔴', '🟢', '🔵', '🟡'];
-            let level = 1;
-            let userSequence = [];
-            let showingSequence = false;
-            
-            for (let i = 0; i < 4; i++) {
-                sequence.push(Math.floor(Math.random() * 4));
-            }
-            
-            document.getElementById('minigameArea').innerHTML = `
-                <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 20px;">🧩 Memory Matrix</h3>
-                <p>Level: <span id="memoryLevel">1</span>/4</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 200px; margin: 20px auto;" id="memoryGrid">
-                    <button class="action-btn" onclick="memoryClick(0)" id="btn0" style="padding: 20px; font-size: 24px;">⚪</button>
-                    <button class="action-btn" onclick="memoryClick(1)" id="btn1" style="padding: 20px; font-size: 24px;">⚪</button>
-                    <button class="action-btn" onclick="memoryClick(2)" id="btn2" style="padding: 20px; font-size: 24px;">⚪</button>
-                    <button class="action-btn" onclick="memoryClick(3)" id="btn3" style="padding: 20px; font-size: 24px;">⚪</button>
-                </div>
-                <p style="font-size: 14px; opacity: 0.8;">Watch the sequence, then repeat it!</p>
-            `;
-            
-            window.memoryClick = function(index) {
-                if (showingSequence) return;
-                
-                userSequence.push(index);
-                document.getElementById(`btn${index}`).textContent = colors[index];
-                
-                setTimeout(() => {
-                    document.getElementById(`btn${index}`).textContent = '⚪';
-                }, 200);
-                
-                if (userSequence.length === level) {
-                    checkMemorySequence();
-                }
-            };
-            
-            function showSequence() {
-                showingSequence = true;
-                userSequence = [];
-                
-                for (let i = 0; i < level; i++) {
-                    setTimeout(() => {
-                        const btn = document.getElementById(`btn${sequence[i]}`);
-                        btn.textContent = colors[sequence[i]];
-                        
-                        setTimeout(() => {
-                            btn.textContent = '⚪';
-                            if (i === level - 1) {
-                                showingSequence = false;
-                            }
-                        }, 400);
-                    }, i * 600);
-                }
-            }
-            
-            function checkMemorySequence() {
-                let correct = true;
-                for (let i = 0; i < level; i++) {
-                    if (userSequence[i] !== sequence[i]) {
-                        correct = false;
-                        break;
-                    }
-                }
-                
-                if (correct) {
-                    if (level < 4) {
-                        level++;
-                        document.getElementById('memoryLevel').textContent = level;
-                        setTimeout(showSequence, 1000);
-                    } else {
-                        endMemoryGame(true);
-                    }
-                } else {
-                    endMemoryGame(false);
-                }
-            }
-            
-            showSequence();
-        }
-
-        function endMemoryGame(won) {
-            const reward = won ? 1200 : 400;
-            gameState.gp += reward;
-            
-            document.getElementById('minigameArea').innerHTML = `
-                <h3 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 20px;">🎉 Game Complete!</h3>
-                <div style="font-size: 48px; margin: 20px 0;">🧩</div>
-                <p style="font-size: 18px; margin-bottom: 15px;">${won ? 'Perfect Score!' : 'Good Effort!'}</p>
-                <p style="color: var(--success-green); font-size: 20px; font-weight: bold;">+${reward} GP Earned!</p>
-                <button class="action-btn" onclick="resetMinigameArea()" style="margin-top: 20px;">Play Again</button>
-            `;
-            
-            updateTaskProgress();
-            updateUI();
-            saveGameData();
-            showNotification(`🎮 Game completed! +${reward} GP!`);
-        }
-
-        function resetMinigameArea() {
-            document.getElementById('minigameArea').innerHTML = `
-                <h3 style="color: var(--primary-gold); font-size: 24px; margin-bottom: 15px;">Select a mini-game to start!</h3>
-                <p style="font-size: 16px; opacity: 0.9;">Use tickets to play games and earn bonus GP</p>
-                <p style="font-size: 14px; opacity: 0.7; margin-top: 10px;">Tickets regenerate every 30 minutes</p>
-            `;
-        }
-
-        function endMiniGame() {
-            resetMinigameArea();
         }
 
         // Ad system
         function watchAdForEnergy() {
             showModal('adModal');
             startAdTimer(() => {
-                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 50);
+                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 25); // Balanced reward
                 closeModal('adModal');
-                showRewardModal('⚡ +50 Energy!', '⚡');
+                showRewardModal('⚡ +25 Energy!', '⚡');
                 updateUI();
                 saveGameData();
             });
@@ -2059,7 +1941,7 @@
             }
         }
 
-        // Wallet functions with improved error handling
+        // Wallet functions
         function connectWallet() {
             if (!connector) {
                 showNotification('❌ Wallet connection not available in this environment.');
@@ -2067,11 +1949,9 @@
             }
 
             try {
-                // Show loading state
                 document.getElementById('connectWalletBtn').textContent = 'Connecting...';
                 document.getElementById('connectWalletBtn').disabled = true;
 
-                // For Telegram WebApp environment
                 if (tg && tg.platform !== 'unknown') {
                     connector.connectWallet()
                         .then(() => {
@@ -2083,7 +1963,6 @@
                             resetWalletButton();
                         });
                 } else {
-                    // For browser environment
                     connector.getWallets()
                         .then(wallets => {
                             if (wallets && wallets.length > 0) {
@@ -2121,9 +2000,7 @@
                     showNotification('🔔 Wallet disconnected');
                 } catch (error) {
                     console.error('Disconnect error:', error);
-                    // Force UI update even if disconnect fails
                     gameState.walletConnected = false;
-                    document.getElementById('walletStatus').textContent = 'Not Connected';
                     document.getElementById('connectWalletBtn').style.display = 'block';
                     document.getElementById('walletInfo').style.display = 'none';
                     showNotification('🔔 Wallet disconnected');
@@ -2136,74 +2013,24 @@
             return address.substring(0, 6) + '...' + address.substring(address.length - 4);
         }
 
-        // Share game
-        function shareGame() {
-            gameState.tasks[4] = true; // Mark share task as completed
-            
-            const shareText = `🚀 Join me in CX Odyssey - an amazing space mining adventure! Start your cosmic journey now!`;
-            const shareUrl = `https://t.me/share/url?url=https://t.me/Cx_odyssey_bot&text=${encodeURIComponent(shareText)}`;
-            
-            if (tg && tg.openTelegramLink) {
-                tg.openTelegramLink(shareUrl);
-            } else if (navigator.share) {
-                navigator.share({
-                    title: 'CX Odyssey',
-                    text: shareText,
-                    url: 'https://t.me/Cx_odyssey_bot'
-                }).catch(() => {
-                    window.open(shareUrl, '_blank');
-                });
-            } else {
-                window.open(shareUrl, '_blank');
-            }
-            
-            showNotification('🎉 Thanks for sharing CX Odyssey! Task completed!');
-            updateTaskProgress();
-            saveGameData();
-        }
-
-        // Leaderboard with real-time updates
-        let leaderboardCache = null;
-        let leaderboardLastFetch = 0;
-        const CACHE_DURATION = 5000; // 5 seconds for real-time feel
-
-        function startLeaderboardUpdates() {
-            // Update leaderboard every 5 seconds when on leaderboard screen
-            leaderboardUpdateInterval = setInterval(() => {
-                const currentScreen = document.querySelector('.screen.active');
-                if (currentScreen && currentScreen.id === 'leaderboardScreen') {
-                    loadLeaderboard(true); // Force refresh
-                }
-            }, 5000);
-        }
-
-        function loadLeaderboard(forceRefresh = false) {
-            const now = Date.now();
-            
-            // Use cache if available, fresh, and not forced refresh
-            if (!forceRefresh && leaderboardCache && (now - leaderboardLastFetch) < CACHE_DURATION) {
-                displayLeaderboard(leaderboardCache);
-                return;
-            }
-
-            // Generate realistic leaderboard data with some randomness
+        // Leaderboard with realistic data
+        function loadLeaderboard() {
             const baseLeaders = [
-                { username: 'GalaxyMaster', baseGp: 125000 },
-                { username: 'StarHunter', baseGp: 89500 },
-                { username: 'CosmicRider', baseGp: 67200 },
-                { username: 'SpaceMiner', baseGp: 45000 },
-                { username: 'AsteroidKing', baseGp: 32000 },
-                { username: 'QuantumExplorer', baseGp: 28500 },
-                { username: 'NebulaCrusher', baseGp: 25000 },
-                { username: 'VoidWalker', baseGp: 22000 },
-                { username: 'StarDust', baseGp: 19500 },
-                { username: 'CosmicMiner', baseGp: 17000 }
+                { username: 'GalaxyMaster', baseGp: 50000 },
+                { username: 'StarHunter', baseGp: 35000 },
+                { username: 'CosmicRider', baseGp: 28000 },
+                { username: 'SpaceMiner', baseGp: 22000 },
+                { username: 'AsteroidKing', baseGp: 18000 },
+                { username: 'QuantumExplorer', baseGp: 15000 },
+                { username: 'NebulaCrusher', baseGp: 12000 },
+                { username: 'VoidWalker', baseGp: 10000 },
+                { username: 'StarDust', baseGp: 8000 },
+                { username: 'CosmicMiner', baseGp: 6000 }
             ];
 
-            // Add some randomness to make it feel live
             const currentLeaders = baseLeaders.map(leader => ({
                 ...leader,
-                gp: leader.baseGp + Math.floor(Math.random() * 5000)
+                gp: leader.baseGp + Math.floor(Math.random() * 2000)
             }));
 
             // Add player to leaderboard if they have significant GP
@@ -2222,8 +2049,6 @@
                 userRank: Math.max(1, currentLeaders.findIndex(p => p.isPlayer) + 1)
             };
 
-            leaderboardCache = leaderboardData;
-            leaderboardLastFetch = now;
             displayLeaderboard(leaderboardData);
         }
 
@@ -2242,9 +2067,9 @@
                     }
                     
                     let rankIcon = '';
-                    if (index === 0) rankIcon = '<span style="color: #ffd700; font-size: 24px;">👑</span> ';
-                    else if (index === 1) rankIcon = '<span style="color: #ff6b35; font-size: 20px;">🥈</span> ';
-                    else if (index === 2) rankIcon = '<span style="color: #7209b7; font-size: 20px;">🥉</span> ';
+                    if (index === 0) rankIcon = '<span style="color: #ffd700; font-size: 20px;">👑</span> ';
+                    else if (index === 1) rankIcon = '<span style="color: #ff6b35; font-size: 18px;">🥈</span> ';
+                    else if (index === 2) rankIcon = '<span style="color: #7209b7; font-size: 18px;">🥉</span> ';
                     else rankIcon = `<span style="color: #888;">${index + 1}.</span> `;
                     
                     entryEl.innerHTML = `
@@ -2280,7 +2105,6 @@
 
         // Improved notification system
         function showNotification(text) {
-            // Remove existing notifications
             document.querySelectorAll('.notification').forEach(n => n.remove());
             
             const notification = document.createElement('div');
@@ -2290,10 +2114,10 @@
 
             setTimeout(() => {
                 if (notification.parentNode) notification.remove();
-            }, 3200);
+            }, 3000);
         }
 
-        // Energy regeneration system
+        // Energy regeneration system (slower for balance)
         function startEnergyRegeneration() {
             setInterval(() => {
                 if (gameState.energy < gameState.maxEnergy) {
@@ -2301,14 +2125,11 @@
                     updateUI();
                     saveGameData();
                 }
-            }, 10000); // 1 energy every 10 seconds
+            }, 15000); // 1 energy every 15 seconds
         }
 
         // UI updates with proper energy management
         function updateUI() {
-            // Update tickets first
-            updateTickets();
-            
             // Update all resource displays
             const energyElements = document.querySelectorAll('#energy, #energyMining');
             energyElements.forEach(el => {
@@ -2320,14 +2141,9 @@
                 if (el) el.textContent = gameState.shards.toLocaleString();
             });
             
-            const gpElements = document.querySelectorAll('#gp, #gpBoss, #gpLeaderboard, #gpShop, #gpMinigames, #gpTasks');
+            const gpElements = document.querySelectorAll('#gp, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpCommand');
             gpElements.forEach(el => {
                 if (el) el.textContent = gameState.gp.toLocaleString();
-            });
-
-            const ticketElements = document.querySelectorAll('#gameTickets');
-            ticketElements.forEach(el => {
-                if (el) el.textContent = gameState.gameTickets;
             });
 
             // Update energy bar
@@ -2368,36 +2184,32 @@
                     adBtn.style.opacity = '0.5';
                 } else {
                     adBtn.disabled = false;
-                    adBtn.textContent = '📺 Watch Ad (+50 Energy)';
+                    adBtn.textContent = '📺 Watch Ad (+25 Energy)';
                     adBtn.style.opacity = '1';
                 }
             }
 
             // Update user level
             const userLevel = Math.floor(gameState.gp / 1000) + 1;
-            const userLevelEl = document.getElementById('tgUserLevel');
-            if (userLevelEl) {
-                userLevelEl.textContent = userLevel;
-            }
+            const userLevelElements = document.querySelectorAll('#tgUserLevel, #commandUserLevel');
+            userLevelElements.forEach(el => {
+                if (el) el.textContent = userLevel;
+            });
+
+            // Update join date
+            document.getElementById('joinDate').textContent = gameState.joinDate;
 
             // Update shop costs
             updateShopCosts();
 
             // Update task progress
             updateTaskProgress();
-
-            // Update completed tasks counter
-            const completedTasks = Object.values(gameState.tasks).filter(Boolean).length;
-            const completedTasksEl = document.getElementById('completedTasks');
-            if (completedTasksEl) {
-                completedTasksEl.textContent = completedTasks;
-            }
         }
 
-        // Auto-save and cleanup
-        setInterval(() => {
-            saveGameData();
-        }, 30000); // Save every 30 seconds
+        // Start energy regeneration
+        window.addEventListener('load', () => {
+            startEnergyRegeneration();
+        });
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', initGame);
@@ -2409,25 +2221,13 @@
             }
         });
 
-        // Start energy regeneration
-        window.addEventListener('load', () => {
-            startEnergyRegeneration();
-        });
-
-        // Cleanup intervals on page unload
-        window.addEventListener('beforeunload', () => {
-            if (leaderboardUpdateInterval) {
-                clearInterval(leaderboardUpdateInterval);
-            }
+        // Auto-save and cleanup
+        setInterval(() => {
             saveGameData();
-        });
-        
+        }, 30000); // Save every 30 seconds
+
         // Handle Telegram WebApp events
         if (typeof window !== 'undefined' && window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.onEvent('mainButtonClicked', () => {
-                shareGame();
-            });
-            
             window.Telegram.WebApp.onEvent('backButtonClicked', () => {
                 showScreen('galaxyScreen');
             });
@@ -2435,7 +2235,7 @@
 
         // Keyboard controls for combo game
         document.addEventListener('keydown', function(e) {
-            if (document.querySelector('.screen.active')?.id === 'galaxyScreen') {
+            if (document.querySelector('.screen.active')?.id === 'minigamesScreen') {
                 const key = e.key;
                 if (key >= '0' && key <= '9') {
                     inputComboDigit(key);
