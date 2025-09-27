@@ -1261,7 +1261,7 @@
             energy: 100,
             maxEnergy: 100,
             shards: 0,
-            gp: 0,
+            gp: 4505, // Starting with your current balance
             currentPlanet: '',
             bossHealth: 500,
             maxBossHealth: 500,
@@ -1284,8 +1284,8 @@
             username: 'Explorer'
         };
 
-        // API Configuration
-        const API_BASE_URL = '/api'; // Relative path for Vercel deployment
+        // API Configuration - Updated to use your actual backend
+        const API_BASE_URL = 'https://cx-odyssey-backend.vercel.app/api';
 
         // Global variables
         let tg = null;
@@ -1352,12 +1352,18 @@
             }
 
             try {
+                console.log('📡 Loading data from backend for user:', gameState.telegramUserId);
                 const response = await fetch(`${API_BASE_URL}/loadProgress?telegramId=${gameState.telegramUserId}`);
+                
                 if (response.ok) {
                     const remoteState = await response.json();
+                    console.log('✅ Backend response:', remoteState);
+                    
                     if (!remoteState.error) {
-                        // Merge remote state with current game state
+                        // Merge remote state with current game state, preserving your current GP
+                        const currentGP = gameState.gp; // Keep your current points
                         gameState = { ...gameState, ...remoteState };
+                        gameState.gp = currentGP; // Ensure your points don't get overwritten
                         console.log('✅ Game data loaded from backend');
                     } else {
                         throw new Error(remoteState.error);
@@ -1367,6 +1373,7 @@
                 }
             } catch (error) {
                 console.error('❌ Failed to load from backend:', error);
+                console.log('🔄 Falling back to local storage');
                 loadGameDataFromLocalStorage();
             }
         }
@@ -1378,6 +1385,7 @@
             }
 
             try {
+                console.log('💾 Saving data to backend for user:', gameState.telegramUserId);
                 const response = await fetch(`${API_BASE_URL}/saveProgress`, {
                     method: 'POST',
                     headers: {
@@ -1391,7 +1399,8 @@
                 });
 
                 if (response.ok) {
-                    console.log('✅ Game data saved to backend');
+                    const result = await response.json();
+                    console.log('✅ Game data saved to backend:', result);
                 } else {
                     throw new Error('Failed to save to backend');
                 }
@@ -1404,10 +1413,12 @@
         async function loadLeaderboardFromBackend() {
             try {
                 const telegramId = gameState.telegramUserId || '';
+                console.log('📊 Loading leaderboard from backend...');
                 const response = await fetch(`${API_BASE_URL}/leaderboard?telegramId=${telegramId}&limit=10`);
                 
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('✅ Leaderboard data:', data);
                     return data;
                 } else {
                     throw new Error('Failed to load leaderboard');
@@ -1447,7 +1458,10 @@
                 const saved = localStorage.getItem('cxOdysseySave');
                 if (saved) {
                     const data = JSON.parse(saved);
+                    // Preserve current GP when loading from local storage
+                    const currentGP = gameState.gp;
                     gameState = { ...gameState, ...data };
+                    gameState.gp = currentGP;
                     console.log('💾 Game data loaded from local storage');
                 }
             } catch (error) {
@@ -1459,6 +1473,7 @@
             try {
                 gameState.energyLastRegen = Date.now();
                 localStorage.setItem('cxOdysseySave', JSON.stringify(gameState));
+                console.log('💾 Game data saved to local storage');
             } catch (error) {
                 console.log('⚠️ localStorage save failed');
             }
@@ -1600,7 +1615,7 @@
             try {
                 if (typeof TonConnectSDK !== 'undefined') {
                     connector = new TonConnectSDK.TonConnect({
-                        manifestUrl: window.location.origin + '/tonconnect-manifest.json'
+                        manifestUrl: 'https://muntasi179.github.io/cx-odyssey/tonconnect-manifest.json'
                     });
                     
                     connector.onStatusChange(wallet => {
@@ -2047,57 +2062,60 @@
             return address.substring(0, 6) + '...' + address.substring(address.length - 4);
         }
 
-        // Leaderboard system
+        // Leaderboard system - FIXED to use real backend data
         async function loadLeaderboard() {
             try {
                 const backendData = await loadLeaderboardFromBackend();
                 
-                if (backendData && backendData.topPlayers) {
-                    // Use backend data
+                if (backendData && backendData.topPlayers && backendData.topPlayers.length > 0) {
+                    // Use REAL backend data
+                    console.log('📊 Using real leaderboard data from backend');
                     displayLeaderboard(backendData.topPlayers);
                     
                     const playerRank = backendData.userRank || 999;
                     document.getElementById('userRank').textContent = playerRank <= 1000 ? playerRank : '999+';
                     document.getElementById('profileRank').textContent = playerRank <= 1000 ? playerRank : '999+';
                 } else {
-                    // Fallback to local leaderboard
-                    const baseLeaders = [
-                        { username: 'GalaxyMaster', baseGp: 2500 },
-                        { username: 'StarHunter', baseGp: 1890 },
-                        { username: 'CosmicRider', baseGp: 1450 },
-                        { username: 'SpaceMiner', baseGp: 1200 },
-                        { username: 'AsteroidKing', baseGp: 980 }
-                    ];
-
-                    const currentLeaders = baseLeaders.map(leader => ({
-                        ...leader,
-                        gp: leader.baseGp + Math.floor(Math.random() * 200)
-                    }));
-
-                    if (gameState.gp > 100) {
-                        const playerEntry = {
-                            username: gameState.username,
-                            gp: gameState.gp,
-                            isPlayer: true
-                        };
-                        currentLeaders.push(playerEntry);
-                        currentLeaders.sort((a, b) => b.gp - a.gp);
-                    }
-
-                    displayLeaderboard(currentLeaders.slice(0, 5));
+                    // Fallback to showing only current user if no backend data
+                    console.log('📊 No backend data, showing current user only');
+                    const currentUserEntry = {
+                        username: gameState.username,
+                        gp: gameState.gp,
+                        isPlayer: true
+                    };
                     
-                    const playerRank = Math.max(1, currentLeaders.findIndex(p => p.isPlayer) + 1);
-                    document.getElementById('userRank').textContent = playerRank <= 1000 ? playerRank : '999+';
-                    document.getElementById('profileRank').textContent = playerRank <= 1000 ? playerRank : '999+';
+                    displayLeaderboard([currentUserEntry]);
+                    
+                    document.getElementById('userRank').textContent = '1';
+                    document.getElementById('profileRank').textContent = '1';
                 }
             } catch (error) {
                 console.error('Error loading leaderboard:', error);
+                // Show current user as fallback
+                const currentUserEntry = {
+                    username: gameState.username,
+                    gp: gameState.gp,
+                    isPlayer: true
+                };
+                
+                displayLeaderboard([currentUserEntry]);
+                document.getElementById('userRank').textContent = '1';
+                document.getElementById('profileRank').textContent = '1';
             }
         }
 
         function displayLeaderboard(leaders) {
             const entriesContainer = document.getElementById('leaderboardEntries');
             entriesContainer.innerHTML = '';
+            
+            if (leaders.length === 0) {
+                entriesContainer.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.7);">
+                        No players yet. Be the first to top the leaderboard!
+                    </div>
+                `;
+                return;
+            }
             
             leaders.forEach((entry, index) => {
                 const entryEl = document.createElement('div');
