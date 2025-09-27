@@ -266,17 +266,19 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 15px;
-            background: rgba(255, 215, 0, 0.1);
-            border-radius: 15px;
-            margin-bottom: 15px;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 53, 0.1));
+            border-radius: 20px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
         }
 
         .tg-avatar {
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            border: 2px solid var(--primary-gold);
+            border: 3px solid var(--primary-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
 
         .galaxy-map {
@@ -897,67 +899,115 @@
                 </div>
             </div>
 
-            <h3 style="color: var(--primary-gold); margin-bottom: 15px; text-align: center; font-size: 18px;">📋 Daily Tasks (Reset Every Day)</h3>
-            <div class="tasks-section">
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold; font-size: 13px;">🌟 Daily Login</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Log in to the game today</div>
+            <!-- Daily Tasks Section -->
+            <div style="text-align: center; margin: 20px 0;">
+                <h3 style="color: var(--primary-gold); font-size: 24px; margin-bottom: 8px;">Daily Tasks</h3>
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">Reset every day at 00:00 UTC</p>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 25px; padding: 20px; margin: 15px 0; border: 1px solid rgba(255, 215, 0, 0.2);">
+                <!-- Daily Login Task -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 12px 0; background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.05)); border-radius: 15px; border-left: 4px solid var(--primary-gold);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🌟</div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Daily Login</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Log in to the game today</div>
+                        </div>
                     </div>
-                    <div class="task-reward" id="dailyLoginStatus">+25 GP</div>
+                    <div style="background: var(--success-green); color: #000; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px;" id="dailyLoginStatus">Completed</div>
                 </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold; font-size: 13px;">⛏️ Mine 10 Times</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Mine crystals from planets (<span id="dailyMineCount">0</span>/10)</div>
+
+                <!-- Mine 10 Times Task -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 12px 0; background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.05)); border-radius: 15px; border-left: 4px solid var(--primary-gold);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">⛏️</div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Mine 10 Times</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Mine crystals from planets (<span id="dailyMineCount">0</span>/10)</div>
+                        </div>
                     </div>
-                    <button class="task-button" id="dailyMineBtn" onclick="claimDailyTask('mine')" disabled>+50 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="dailyMineBtn" onclick="claimDailyTask('mine')" disabled>+50 GP</button>
                 </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold; font-size: 13px;">⚔️ Battle Boss 3 Times</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Attack the cosmic overlord (<span id="dailyBossCount">0</span>/3)</div>
+
+                <!-- Boss Battle Task -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 12px 0; background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.05)); border-radius: 15px; border-left: 4px solid var(--primary-gold);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #9C27B0, #6A1B9A); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">⚔️</div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Battle Boss 3 Times</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Attack the cosmic overlord (<span id="dailyBossCount">0</span>/3)</div>
+                        </div>
                     </div>
-                    <button class="task-button" id="dailyBossBtn" onclick="claimDailyTask('boss')" disabled>+75 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="dailyBossBtn" onclick="claimDailyTask('boss')" disabled>+75 GP</button>
                 </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold; font-size: 13px;">🔮 Try Daily Combo</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Attempt the daily code puzzle</div>
+
+                <!-- Daily Combo Task -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 12px 0; background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.05)); border-radius: 15px; border-left: 4px solid var(--primary-gold);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #7209B7, #4A148C); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🔮</div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Try Daily Combo</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Attempt the daily code puzzle</div>
+                        </div>
                     </div>
-                    <button class="task-button" id="dailyComboBtn" onclick="claimDailyTask('combo')" disabled>+30 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="dailyComboBtn" onclick="claimDailyTask('combo')" disabled>+30 GP</button>
                 </div>
             </div>
 
-            <h3 style="color: var(--secondary-orange); margin: 20px 0 15px; text-align: center; font-size: 18px;">🎯 One-Time Tasks</h3>
-            <div class="tasks-section">
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold; font-size: 13px;">🚀 First Planet Visit</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Visit any planet for mining</div>
+            <!-- One-Time Tasks Section -->
+            <div style="text-align: center; margin: 30px 0 20px;">
+                <h3 style="color: var(--secondary-orange); font-size: 24px; margin-bottom: 8px;">One-Time Tasks</h3>
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 14px;">Complete once for permanent rewards</p>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 25px; padding: 20px; margin: 15px 0; border: 1px solid rgba(255, 107, 53, 0.2);">
+                <!-- First Planet Visit -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 12px 0; background: linear-gradient(90deg, rgba(255, 107, 53, 0.1), rgba(255, 215, 0, 0.05)); border-radius: 15px; border-left: 4px solid var(--secondary-orange);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🚀</div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">First Planet Visit</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Visit any planet for mining</div>
+                        </div>
                     </div>
-                    <button class="task-button" id="firstPlanetBtn" onclick="claimOneTimeTask('planet')" disabled>+20 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="firstPlanetBtn" onclick="claimOneTimeTask('planet')" disabled>+20 GP</button>
                 </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold; font-size: 13px;">💰 First Purchase</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Buy any upgrade from shop</div>
+
+                <!-- First Purchase -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 12px 0; background: linear-gradient(90deg, rgba(255, 107, 53, 0.1), rgba(255, 215, 0, 0.05)); border-radius: 15px; border-left: 4px solid var(--secondary-orange);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #4CAF50, #2E7D32); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">💰</div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">First Purchase</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Buy any upgrade from shop</div>
+                        </div>
                     </div>
-                    <button class="task-button" id="firstPurchaseBtn" onclick="claimOneTimeTask('purchase')" disabled>+40 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="firstPurchaseBtn" onclick="claimOneTimeTask('purchase')" disabled>+40 GP</button>
                 </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold; font-size: 13px;">💎 Collect 100 Shards</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Gather precious crystals (<span id="oneTimeShardCount">0</span>/100)</div>
+
+                <!-- Collect 100 Shards -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 12px 0; background: linear-gradient(90deg, rgba(255, 107, 53, 0.1), rgba(255, 215, 0, 0.05)); border-radius: 15px; border-left: 4px solid var(--secondary-orange);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #00F5FF, #0091EA); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">💎</div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Collect 100 Shards</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Gather precious crystals (<span id="oneTimeShardCount">0</span>/100)</div>
+                        </div>
                     </div>
-                    <button class="task-button" id="shards100Btn" onclick="claimOneTimeTask('shards100')" disabled>+80 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="shards100Btn" onclick="claimOneTimeTask('shards100')" disabled>+80 GP</button>
                 </div>
-                <div class="task-item">
-                    <div>
-                        <div style="font-weight: bold; font-size: 13px;">👥 Invite 5 Friends</div>
-                        <div style="font-size: 11px; opacity: 0.8;">Refer friends to the game (<span id="referralCount">0</span>/5)</div>
+
+                <!-- Invite 5 Friends -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 12px 0; background: linear-gradient(90deg, rgba(255, 107, 53, 0.1), rgba(255, 215, 0, 0.05)); border-radius: 15px; border-left: 4px solid var(--secondary-orange);">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #E91E63, #AD1457); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">👥</div>
+                        <div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Invite 5 Friends</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Refer friends to the game (<span id="referralCount">0</span>/5)</div>
+                        </div>
                     </div>
-                    <button class="task-button" id="invite5Btn" onclick="claimOneTimeTask('invite5')" disabled>+200 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="invite5Btn" onclick="claimOneTimeTask('invite5')" disabled>+200 GP</button>
                 </div>
             </div>
 
