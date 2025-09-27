@@ -28,8 +28,39 @@ function shareReferral() {
     showNotification('📤 Referral link shared! Invite friends to earn rewards!');
 }
 
-// Leaderboard system
-function loadLeaderboard() {
+// Leaderboard system - Updated with backend integration
+async function loadLeaderboard() {
+    try {
+        const telegramId = user?.id || tg?.initDataUnsafe?.user?.id;
+        
+        const response = await fetch(`${API_BASE}/leaderboard?telegramId=${telegramId || ''}`);
+        
+        if (!response.ok) {
+            throw new Error('Failed to fetch leaderboard');
+        }
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
+        displayLeaderboard(data.topPlayers);
+        
+        // Update user rank
+        const userRank = data.userRank || 999;
+        document.getElementById('userRank').textContent = userRank <= 1000 ? userRank : '999+';
+        document.getElementById('profileRank').textContent = userRank <= 1000 ? userRank : '999+';
+        
+        console.log('🏆 Leaderboard loaded from backend');
+        
+    } catch (error) {
+        console.error('❌ Leaderboard load failed, using fallback:', error);
+        loadFallbackLeaderboard();
+    }
+}
+
+function loadFallbackLeaderboard() {
     const baseLeaders = [
         { username: 'GalaxyMaster', baseGp: 2500 },
         { username: 'StarHunter', baseGp: 1890 },
