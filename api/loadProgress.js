@@ -43,8 +43,8 @@ export default async function handler(req, res) {
           currentPlanet: '',
           dailyStreak: 1,
           lastLogin: new Date().toISOString().split('T')[0],
-          bossHealth: 1000,
-          maxBossHealth: 1000,
+          bossHealth: 500,
+          maxBossHealth: 500,
           playerDamage: 0,
           upgrades: { speed: 0, damage: 0, energy: 0, multiplier: 0 },
           skins: [],
@@ -111,3 +111,4 @@ export default async function handler(req, res) {
     });
   }
 }
+
