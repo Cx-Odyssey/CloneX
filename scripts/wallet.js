@@ -1,3 +1,43 @@
+// Save wallet to backend
+async function saveWalletToBackend(walletAddress) {
+    try {
+        const telegramId = user?.id || tg?.initDataUnsafe?.user?.id;
+        
+        if (!telegramId) {
+            console.log('⚠️ No Telegram ID, cannot save wallet');
+            return false;
+        }
+
+        const response = await fetch(`${API_BASE}/saveWallet`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                telegram_id: telegramId,
+                wallet_address: walletAddress
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.error) {
+            throw new Error(result.error);
+        }
+
+        console.log('✅ Wallet saved to backend');
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Wallet save failed:', error);
+        return false;
+    }
+}
+
 // Initialize TonConnect
 function initTonConnect() {
     try {
@@ -11,6 +51,9 @@ function initTonConnect() {
                     document.getElementById('connectWalletBtn').style.display = 'none';
                     document.getElementById('walletInfo').style.display = 'block';
                     document.getElementById('connectedAddress').textContent = shortenAddress(wallet.account.address);
+                    
+                    // Save wallet to backend
+                    saveWalletToBackend(wallet.account.address);
                 } else {
                     document.getElementById('connectWalletBtn').style.display = 'block';
                     document.getElementById('walletInfo').style.display = 'none';
