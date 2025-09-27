@@ -899,7 +899,7 @@
             </div>
 
             <!-- Balance Section (Pinned at Top) -->
-            <div style="text-align: center; background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9)); border-radius: 25px; padding: 30px; margin: 20px 0; border: 1px solid rgba(255, 215, 0, 0.3);">
+            <div style="text-align: center; background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9)); border-radius: 25px; padding: 30px; margin: 20px 0; border: 1px solid rgba(255, 215, 0, 0.3); position: relative; overflow: hidden;">
                 <div style="color: rgba(255, 255, 255, 0.7); font-size: 16px; margin-bottom: 10px;">Your balance</div>
                 <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
                     <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">🏆</div>
@@ -908,7 +908,7 @@
             </div>
 
             <!-- Task Tabs -->
-            <div style="display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 5px; margin: 20px 0;">
+            <div style="display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 5px; margin: 20px 0; position: relative; z-index: 15;">
                 <button style="flex: 1; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer;" id="dailyTasksTab" onclick="switchTaskTab('daily')">
                     Daily Tasks
                 </button>
@@ -918,84 +918,265 @@
             </div>
 
             <!-- Daily Tasks Content -->
-            <div id="dailyTasksContent">
+            <div id="dailyTasksContent" style="position: relative; z-index: 10;">
                 <!-- Daily Login Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2);">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">📅</div>
-                        <div>
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">📅</div>
+                        <div style="flex: 1; min-width: 0;">
                             <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Daily reward</div>
                             <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Log in daily</div>
                         </div>
                     </div>
-                    <div style="background: var(--success-green); color: #000; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px;" id="dailyLoginStatus">Completed</div>
+                    <div style="background: var(--success-green); color: #000; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px; flex-shrink: 0;" id="dailyLoginStatus">Completed</div>
                 </div>
 
                 <!-- Mine 10 Times Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2);">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">⛏️</div>
-                        <div>
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">⛏️</div>
+                        <div style="flex: 1; min-width: 0;">
                             <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Mine crystals</div>
                             <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Mine 10 times (<span id="dailyMineCount">0</span>/10)</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="dailyMineBtn" onclick="claimDailyTask('mine')" disabled>+50 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="dailyMineBtn" onclick="claimDailyTask('mine')" disabled>+50 GP</button>
                 </div>
 
                 <!-- Boss Battle Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2);">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #9C27B0, #6A1B9A); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">⚔️</div>
-                        <div>
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #9C27B0, #6A1B9A); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">⚔️</div>
+                        <div style="flex: 1; min-width: 0;">
                             <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Battle cosmic overlord</div>
                             <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Attack boss 3 times (<span id="dailyBossCount">0</span>/3)</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="dailyBossBtn" onclick="claimDailyTask('boss')" disabled>+75 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="dailyBossBtn" onclick="claimDailyTask('boss')" disabled>+75 GP</button>
                 </div>
 
                 <!-- Daily Combo Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2);">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #7209B7, #4A148C); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🔮</div>
-                        <div>
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #7209B7, #4A148C); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🔮</div>
+                        <div style="flex: 1; min-width: 0;">
                             <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Code puzzle</div>
                             <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Try the daily combo</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="dailyComboBtn" onclick="claimDailyTask('combo')" disabled>+30 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="dailyComboBtn" onclick="claimDailyTask('combo')" disabled>+30 GP</button>
                 </div>
             </div>
 
             <!-- One-Time Tasks Content (Hidden by default) -->
-            <div id="oneTimeTasksContent" style="display: none;">
+            <div id="oneTimeTasksContent" style="display: none; position: relative; z-index: 10;">
                 <!-- First Planet Visit -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2);">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">🚀</div>
-                        <div>
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🚀</div>
+                        <div style="flex: 1; min-width: 0;">
                             <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">First exploration</div>
                             <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Visit any planet for mining</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="firstPlanetBtn" onclick="claimOneTimeTask('planet')" disabled>+20 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="firstPlanetBtn" onclick="claimOneTimeTask('planet')" disabled>+20 GP</button>
                 </div>
 
                 <!-- First Purchase -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2);">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
                     <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #4CAF50, #2E7D32); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">💰</div>
-                        <div>
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #4CAF50, #2E7D32); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">💰</div>
+                        <div style="flex: 1; min-width: 0;">
                             <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">First upgrade</div>
                             <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Buy any upgrade from shop</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px;" id="firstPurchaseBtn" onclick="claimOneTimeTask('purchase')" disabled>+40 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="firstPurchaseBtn" onclick="claimOneTimeTask('purchase')" disabled>+40 GP</button>
                 </div>
 
                 <!-- Collect 100 Shards -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2);">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #00F5FF, #0091EA); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">💎</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Crystal collector</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Collect 100 shards (<span id="oneTimeShardCount">0</span>/100)</div>
+                        </div>
+                    </div>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="shards100Btn" onclick="claimOneTimeTask('shards100')" disabled>+80 GP</button>
+                </div>
+
+                <!-- Invite 5 Friends -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #E91E63, #AD1457); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">👥</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Invite friends</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Refer 5 friends to game (<span id="referralCount">0</span>/5)</div>
+                        </div>
+                    </div>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="invite5Btn" onclick="claimOneTimeTask('invite5')" disabled>+200 GP</button>
+                </div>
+            </div>
+
+            <div class="action-buttons" style="margin-top: 30px;">
+                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
+            </div>
+        </div>
+
+        <!-- Profile Screen (formerly Wallet) -->
+        <div class="screen" id="profileScreen">
+            <div class="header">
+                <div class="logo">COMMAND CENTER</div>
+                <div class="resources">
+                    <div class="resource">#<span id="profileRank">999</span></div>
+                </div>
+            </div>
+
+            <!-- Balance Section (Pinned at Top) -->
+            <div style="text-align: center; background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9)); border-radius: 25px; padding: 30px; margin: 20px 0; border: 1px solid rgba(255, 215, 0, 0.3); position: relative; overflow: hidden;">
+                <div style="color: rgba(255, 255, 255, 0.7); font-size: 16px; margin-bottom: 10px;">Your balance</div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
+                    <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">🏆</div>
+                    <div style="font-size: 36px; font-weight: bold; color: white;" id="profileBalanceDisplay">0</div>
+                </div>
+            </div>
+
+            <!-- Section Tabs -->
+            <div style="display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 5px; margin: 20px 0; position: relative; z-index: 15;">
+                <button style="flex: 1; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 10px 5px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer;" id="referralTab" onclick="switchProfileTab('referral')">
+                    Referral
+                </button>
+                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 10px 5px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer;" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">
+                    Leaderboard
+                </button>
+                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 10px 5px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer;" id="walletTab" onclick="switchProfileTab('wallet')">
+                    Wallet
+                </button>
+            </div>
+
+            <!-- Referral Content -->
+            <div id="referralContent" style="position: relative; z-index: 10;">
+                <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(0, 255, 136, 0.3); position: relative; overflow: hidden;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3 style="color: var(--success-green); font-size: 20px; margin-bottom: 8px;">Referral Program</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Invite friends and earn 25 GP per referral</p>
+                    </div>
+                    
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 15px; margin: 15px 0; text-align: center;">
+                        <div style="color: var(--success-green); font-size: 12px; font-weight: 600; margin-bottom: 8px;">Your Referral Code</div>
+                        <div style="font-family: monospace; font-weight: bold; font-size: 18px; color: white;" id="referralCode">Loading...</div>
+                    </div>
+                    
+                    <button style="width: 100%; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 15px; border-radius: 15px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 20px;" onclick="shareReferral()">
+                        📤 Share Referral Link
+                    </button>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: white;" id="totalReferrals">0</div>
+                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Total Referrals</div>
+                        </div>
+                        <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: white;" id="referralEarnings">0</div>
+                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">GP Earned</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Content (Hidden by default) -->
+            <div id="leaderboardContent" style="display: none; position: relative; z-index: 10;">
+                <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 53, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(255, 215, 0, 0.3); position: relative; overflow: hidden;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3 style="color: var(--primary-gold); font-size: 20px; margin-bottom: 8px;">Top Collectors</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Compete with other players</p>
+                    </div>
+                    
+                    <div id="leaderboardEntries">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 8px 0; background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.05)); border-radius: 15px; border-left: 4px solid var(--primary-gold); position: relative; overflow: hidden;">
+                            <div><span style="color: var(--primary-gold); font-size: 16px;">👑</span> Loading...</div>
+                            <div style="font-weight: 700; color: var(--primary-gold); font-size: 14px;">0 GP</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallet Content (Hidden by default) -->
+            <div id="walletContent" style="display: none; position: relative; z-index: 10;">
+                <div style="background: linear-gradient(135deg, rgba(114, 9, 183, 0.15), rgba(74, 20, 140, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(114, 9, 183, 0.3); position: relative; overflow: hidden;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3 style="color: var(--accent-purple); font-size: 20px; margin-bottom: 8px;">TON Wallet</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Connect wallet for future airdrops</p>
+                    </div>
+                    
+                    <button style="width: 100%; background: linear-gradient(135deg, var(--accent-purple), #5A0F8C); color: white; border: none; padding: 15px; border-radius: 15px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 15px;" onclick="connectWallet()" id="connectWalletBtn">
+                        🔗 Connect Wallet
+                    </button>
+                    
+                    <div id="walletInfo" style="display: none; text-align: center;">
+                        <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 15px; margin: 15px 0;">
+                            <div style="color: var(--accent-purple); font-size: 12px; font-weight: 600; margin-bottom: 8px;">Connected Wallet</div>
+                            <div style="word-break: break-all; font-family: monospace; font-size: 13px; color: white;" id="connectedAddress"></div>
+                        </div>
+                        <button style="width: 100%; background: var(--danger-red); color: white; border: none; padding: 12px; border-radius: 15px; font-weight: bold; font-size: 14px; cursor: pointer;" onclick="disconnectWallet()">
+                            Disconnect Wallet
+                        </button>
+                    </div>
+                    
+                    <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; margin-top: 20px; text-align: center;">
+                        <div style="color: var(--accent-purple); font-size: 14px; font-weight: 600; margin-bottom: 12px;">Future Features</div>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(114, 9, 183, 0.1); border-radius: 8px;">
+                                <span style="font-size: 16px;">🚀</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">CX Token Airdrops</span>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(114, 9, 183, 0.1); border-radius: 8px;">
+                                <span style="font-size: 16px;">💰</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">NFT Rewards</span>
+                            </div>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(114, 9, 183, 0.1); border-radius: 8px;">
+                                <span style="font-size: 16px;">🎮</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Exclusive Items</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons" style="margin-top: 30px;">
+                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
+            </div>
+        </div>
+
+        <!-- Navigation Bar --> 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #00F5FF, #0091EA); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">💎</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Crystal collector</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Collect 100 shards (<span id="oneTimeShardCount">0</span>/100)</div>
+                        </div>
+                    </div>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="shards100Btn" onclick="claimOneTimeTask('shards100')" disabled>+80 GP</button>
+                </div>
+
+                <!-- Invite 5 Friends -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #E91E63, #AD1457); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">👥</div>
+                        <div style="flex: 1; min-width: 0;">
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Invite friends</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Refer 5 friends to game (<span id="referralCount">0</span>/5)</div>
+                        </div>
+                    </div>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="invite5Btn" onclick="claimOneTimeTask('invite5')" disabled>+200 GP</button>
+                </div>
+            </div>
+
+            <div class="action-buttons" style="margin-top: 30px;">
+                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
+            </div>
+        </div> 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2);">
                     <div style="display: flex; align-items: center; gap: 15px;">
                         <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #00F5FF, #0091EA); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px;">💎</div>
                         <div>
