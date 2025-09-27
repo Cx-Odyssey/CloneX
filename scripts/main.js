@@ -29,14 +29,19 @@ let tg = null;
 let user = null;
 let connector = null;
 
+// Backend API base URL
+const API_BASE = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api' 
+    : '/api';
+
 // Initialize game with proper loading sequence
-function initGame() {
+async function initGame() {
     console.log('🚀 Initializing CX Odyssey...');
     
     updateLoadingProgress(0, "Generating starfield...");
     generateStarfield();
     
-    setTimeout(() => {
+    setTimeout(async () => {
         updateLoadingProgress(20, "Initializing systems...");
         
         // Check if we're in Telegram WebApp
@@ -67,14 +72,13 @@ function initGame() {
         }
         
         updateLoadingProgress(60, "Loading game data...");
+        await loadGameData();
+        
+        updateLoadingProgress(80, "Initializing wallet...");
         setTimeout(() => {
-            loadGameData();
-            updateLoadingProgress(80, "Initializing wallet...");
-            setTimeout(() => {
-                initTonConnect();
-                updateLoadingProgress(100, "Ready to launch!");
-                setTimeout(startGame, 500);
-            }, 500);
+            initTonConnect();
+            updateLoadingProgress(100, "Ready to launch!");
+            setTimeout(startGame, 500);
         }, 500);
     }, 300);
 }
@@ -118,34 +122,107 @@ function generateStarfield() {
     }
 }
 
-// Load and save game data
-function loadGameData() {
+// Load and save game data with backend integration
+async function loadGameData() {
+    try {
+        console.log('🔄 Loading game data from backend...');
+        
+        // Get Telegram user ID for backend
+        const telegramId = user?.id || tg?.initDataUnsafe?.user?.id;
+        if (!telegramId) {
+            console.log('⚠️ No Telegram ID, using local storage');
+            loadFromLocalStorage();
+            return;
+        }
+
+        const response = await fetch(`${API_BASE}/loadProgress?telegramId=${telegramId}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.error) {
+            throw new Error(data.error);
+        }
+
+        // Merge backend data with current game state
+        if (data.isNewPlayer) {
+            console.log('👶 New player detected, keeping default state');
+        } else {
+            gameState = { ...gameState, ...data };
+            console.log('✅ Game data loaded from backend:', data);
+        }
+        
+    } catch (error) {
+        console.error('❌ Backend load failed, using local storage:', error);
+        loadFromLocalStorage();
+    }
+}
+
+// Save game data to backend
+async function saveGameData() {
+    try {
+        const telegramId = user?.id || tg?.initDataUnsafe?.user?.id;
+        const username = user?.first_name || 'Anonymous';
+        
+        if (!telegramId) {
+            console.log('⚠️ No Telegram ID, saving to local storage only');
+            saveToLocalStorage();
+            return;
+        }
+
+        const response = await fetch(`${API_BASE}/saveProgress`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                telegramId: telegramId,
+                username: username,
+                gameState: gameState
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.error) {
+            throw new Error(result.error);
+        }
+
+        console.log('✅ Game data saved to backend');
+        
+    } catch (error) {
+        console.error('❌ Backend save failed, saving to local storage:', error);
+        saveToLocalStorage();
+    }
+}
+
+// Fallback to local storage
+function loadFromLocalStorage() {
     try {
         const saved = localStorage.getItem('cxOdysseySave');
         if (saved) {
             const data = JSON.parse(saved);
             gameState = { ...gameState, ...data };
-            
-            // Regenerate energy based on time passed
-            if (gameState.energyLastRegen) {
-                const timePassed = Date.now() - gameState.energyLastRegen;
-                const energyToAdd = Math.floor(timePassed / 30000); // 1 energy per 30 seconds
-                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + energyToAdd);
-            }
-            
-            console.log('💾 Game data loaded');
+            console.log('💾 Loaded from local storage');
         }
     } catch (error) {
-        console.log('⚠️ localStorage load failed');
+        console.log('⚠️ Local storage load failed');
     }
 }
 
-function saveGameData() {
+function saveToLocalStorage() {
     try {
         gameState.energyLastRegen = Date.now();
         localStorage.setItem('cxOdysseySave', JSON.stringify(gameState));
     } catch (error) {
-        console.log('⚠️ localStorage save failed');
+        console.log('⚠️ Local storage save failed');
     }
 }
 
