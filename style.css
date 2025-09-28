@@ -1,0 +1,1044 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+:root {
+    --primary-gold: #FFD700;
+    --secondary-orange: #FF6B35;
+    --accent-purple: #7209B7;
+    --neon-blue: #00F5FF;
+    --deep-space: #0A0A0A;
+    --space-blue: #1A1A2E;
+    --cosmic-purple: #16213E;
+    --success-green: #00FF88;
+    --danger-red: #FF073A;
+}
+
+body {
+    font-family: 'Exo 2', sans-serif;
+    background: radial-gradient(ellipse at center, var(--space-blue) 0%, var(--deep-space) 50%, #000 100%);
+    color: #ffffff;
+    overflow: hidden;
+    height: 100vh;
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+
+.game-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Stars Animation */
+.stars {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 1;
+}
+
+.star {
+    position: absolute;
+    border-radius: 50%;
+    animation: twinkle 3s infinite ease-in-out;
+}
+
+.star-small {
+    width: 1px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
+}
+
+.star-medium {
+    width: 2px;
+    height: 2px;
+    background: var(--neon-blue);
+    box-shadow: 0 0 4px var(--neon-blue);
+}
+
+.star-large {
+    width: 3px;
+    height: 3px;
+    background: var(--primary-gold);
+    box-shadow: 0 0 6px var(--primary-gold);
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Loading Screen */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, var(--space-blue) 0%, var(--deep-space) 50%, #000 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    transition: opacity 0.5s ease;
+}
+
+.loading-overlay.hide {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.loading-logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 42px;
+    font-weight: 900;
+    background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 30px;
+    animation: logoFloat 3s ease-in-out infinite alternate;
+}
+
+@keyframes logoFloat {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-10px); }
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-gold);
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 16px;
+    color: var(--primary-gold);
+    margin-bottom: 10px;
+}
+
+.loading-progress {
+    width: 280px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 20px;
+}
+
+.loading-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary-orange), var(--primary-gold));
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* Screen Management */
+.screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    display: none;
+    padding: 15px;
+    overflow-y: auto;
+    padding-bottom: 90px;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+    border-radius: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
+}
+
+.logo {
+    font-family: 'Orbitron', monospace;
+    font-size: 20px;
+    font-weight: 900;
+    background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.resources {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.resource {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
+    padding: 8px 12px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* User Info */
+.tg-user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 53, 0.1));
+    border-radius: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.tg-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 3px solid var(--primary-gold);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+/* Galaxy Map */
+.galaxy-map {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    flex: 1;
+    padding: 15px 0;
+}
+
+.planet {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.planet:hover {
+    transform: scale(1.05);
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+}
+
+.planet-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    border-radius: 50%;
+}
+
+.planet-info {
+    text-align: center;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+    z-index: 2;
+}
+
+.planet-name {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 3px;
+}
+
+.planet-desc {
+    font-size: 10px;
+}
+
+/* Planet backgrounds - will be set via JavaScript with proper URLs */
+.planet-pyrion { 
+    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/pyrion.png');
+    border-color: #ff6b35;
+}
+.planet-aqueos { 
+    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/aqueos.png');
+    border-color: #00f5ff;
+}
+.planet-voidex { 
+    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/voidex.png');
+    border-color: #7209b7;
+}
+.planet-chloros { 
+    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/chloros.png');
+    border-color: #00ff88;
+}
+.planet-aurelia { 
+    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/aurelia.png');
+    border-color: #ffd700;
+}
+.planet-crimson { 
+    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/crimson.png');
+    border-color: #ff073a;
+}
+
+/* Mining Screen */
+.mining-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 10px;
+    flex: 1;
+}
+
+.mining-planet {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 3px solid var(--primary-gold);
+    position: relative;
+    overflow: hidden;
+}
+
+.mining-planet:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+}
+
+.mining-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.mine-text {
+    text-align: center;
+    color: white;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.mine-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+}
+
+.mine-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.mine-reward {
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.energy-section {
+    width: 100%;
+    max-width: 300px;
+}
+
+.energy-info {
+    margin-bottom: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.energy-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.energy-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--secondary-orange), var(--primary-gold));
+    transition: width 0.5s ease;
+}
+
+.mining-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Boss Screen */
+.boss-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+    gap: 20px;
+}
+
+.boss-title {
+    color: var(--primary-gold);
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+.boss-image {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, var(--accent-purple), #4a148c);
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 70px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.boss-image:hover {
+    transform: scale(1.05);
+}
+
+.boss-health-section {
+    width: 100%;
+    max-width: 350px;
+}
+
+.boss-health-text {
+    margin-bottom: 12px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.boss-health {
+    width: 100%;
+    height: 30px;
+    background: rgba(255, 0, 0, 0.3);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.boss-health-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--danger-red), var(--primary-gold));
+    transition: width 0.5s ease;
+}
+
+.boss-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.player-damage-display {
+    font-size: 14px;
+    background: rgba(255, 215, 0, 0.1);
+    padding: 12px;
+    border-radius: 12px;
+    margin-top: 20px;
+}
+
+.damage-value {
+    color: var(--primary-gold);
+    font-weight: 700;
+}
+
+/* Action Buttons */
+.action-buttons, .shop-actions, .task-actions, .profile-actions, .minigame-actions {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.action-btn {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+    border: 2px solid var(--primary-gold);
+    border-radius: 25px;
+    color: var(--primary-gold);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 120px;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+}
+
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Shop */
+.shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+    padding: 12px 0;
+    flex: 1;
+}
+
+.shop-item {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+    border-radius: 20px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.shop-item:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-gold);
+}
+
+.shop-icon {
+    font-size: 40px;
+}
+
+.shop-title {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.shop-cost {
+    color: var(--primary-gold);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.shop-desc {
+    font-size: 10px;
+    opacity: 0.8;
+}
+
+/* Balance Sections */
+.balance-section {
+    text-align: center;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+    border-radius: 25px;
+    padding: 30px;
+    margin: 20px 0;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.balance-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.balance-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.balance-icon {
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.balance-amount {
+    font-size: 36px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Tabs */
+.task-tabs, .profile-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 5px;
+    margin: 20px 0;
+}
+
+.task-tab, .profile-tab {
+    flex: 1;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.task-tab.active {
+    background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
+    color: #000;
+}
+
+.profile-tab.active {
+    background: linear-gradient(135deg, var(--success-green), #00CC70);
+    color: #000;
+}
+
+/* Daily Combo Game */
+.daily-combo-game {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.1));
+    border-radius: 20px;
+    padding: 20px;
+    margin: 15px 0;
+    text-align: center;
+    border: 2px solid var(--primary-gold);
+}
+
+.combo-title {
+    color: var(--primary-gold);
+    margin-bottom: 15px;
+    font-size: 18px;
+}
+
+.combo-description {
+    margin-bottom: 12px;
+    opacity: 0.9;
+    font-size: 13px;
+}
+
+.combo-input {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 15px 0;
+}
+
+.combo-digit {
+    width: 45px;
+    height: 45px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid var(--primary-gold);
+    border-radius: 8px;
+    color: var(--primary-gold);
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+}
+
+.combo-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 180px;
+    margin: 0 auto 15px;
+}
+
+.combo-key {
+    padding: 12px;
+    background: rgba(255, 215, 0, 0.2);
+    border: 1px solid var(--primary-gold);
+    border-radius: 8px;
+    color: var(--primary-gold);
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.combo-key:hover {
+    background: rgba(255, 215, 0, 0.3);
+}
+
+.combo-key.clear-btn {
+    background: var(--danger-red);
+    color: white;
+    border-color: var(--danger-red);
+}
+
+.combo-key.submit-btn {
+    background: var(--success-green);
+    color: #000;
+    border-color: var(--success-green);
+}
+
+.combo-info {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.ticket-cooldown {
+    font-size: 9px;
+    opacity: 0.8;
+}
+
+/* Navigation Bar */
+.nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(26, 26, 46, 0.95));
+    z-index: 50;
+    padding: 5px 0;
+    backdrop-filter: blur(10px);
+}
+
+.nav-btn {
+    flex: 1;
+    padding: 10px 4px;
+    text-align: center;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border: none;
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.nav-btn.active {
+    color: var(--primary-gold);
+}
+
+.nav-icon {
+    font-size: 16px;
+}
+
+.nav-label {
+    font-size: 9px;
+}
+
+/* Modals */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
+    border-radius: 25px;
+    padding: 30px;
+    text-align: center;
+    max-width: 85%;
+    position: relative;
+    border: 2px solid var(--primary-gold);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+}
+
+.close-btn {
+    position: absolute;
+    top: 12px;
+    right: 15px;
+    background: var(--danger-red);
+    border: none;
+    color: white;
+    font-size: 20px;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.modal-title {
+    color: var(--primary-gold);
+    margin-bottom: 20px;
+    font-size: 18px;
+}
+
+.modal-text {
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+.ad-video {
+    width: 250px;
+    height: 150px;
+    background: #333;
+    border-radius: 15px;
+    margin: 20px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+}
+
+.ad-progress-section {
+    margin: 20px 0;
+}
+
+.ad-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    margin-bottom: 12px;
+}
+
+.ad-progress-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--primary-gold);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.ad-time-text {
+    font-size: 13px;
+}
+
+.reward-icon, .upgrade-icon {
+    font-size: 60px;
+    margin: 20px 0;
+}
+
+.reward-text, .upgrade-text {
+    font-size: 22px;
+    color: var(--primary-gold);
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+/* Notifications */
+.notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.98), rgba(22, 33, 62, 0.98));
+    border: 2px solid var(--primary-gold);
+    color: var(--primary-gold);
+    padding: 20px 30px;
+    border-radius: 15px;
+    z-index: 1001;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+    min-width: 220px;
+    max-width: 320px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 215, 0, 0.3);
+    animation: notificationPop 3s ease-in-out;
+}
+
+@keyframes notificationPop {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+    10% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
+    15% { transform: translate(-50%, -50%) scale(1); }
+    85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+
+/* Task Items */
+.task-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    margin: 12px 0;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
+    border-radius: 20px;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.task-item .task-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+}
+
+.task-item .task-info {
+    flex: 1;
+    min-width: 0;
+    margin-left: 15px;
+}
+
+.task-item .task-title {
+    font-weight: bold;
+    font-size: 16px;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.task-item .task-desc {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.task-reward, .task-button {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+.task-reward {
+    background: var(--success-green);
+    color: #000;
+}
+
+.task-button {
+    background: var(--primary-gold);
+    color: #000;
+}
+
+.task-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 450px) {
+    body {
+        padding: 0;
+        margin: 0;
+        overflow-y: auto;
+        height: 100vh;
+    }
+    
+    .game-container {
+        min-height: 100vh;
+        padding-bottom: 80px;
+    }
+    
+    .header { 
+        padding: 12px; 
+    }
+    
+    .logo { 
+        font-size: 18px; 
+    }
+    
+    .mining-planet { 
+        width: 240px; 
+        height: 240px; 
+    }
+    
+    .boss-image { 
+        width: 170px; 
+        height: 170px; 
+        font-size: 55px; 
+    }
+    
+    .nav-btn { 
+        padding: 8px 3px; 
+        font-size: 8px; 
+    }
+    
+    .nav-icon { 
+        font-size: 14px; 
+    }
+    
+    .combo-digit { 
+        width: 40px; 
+        height: 40px; 
+        font-size: 18px; 
+    }
+    
+    .resources { 
+        gap: 8px; 
+    }
+    
+    .resource { 
+        padding: 6px 10px; 
+        font-size: 11px; 
+    }
+    
+    .balance-amount {
+        font-size: 28px;
+    }
+    
+    .shop-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .modal-content {
+        padding: 20px;
+        max-width: 95%;
+    }
+}

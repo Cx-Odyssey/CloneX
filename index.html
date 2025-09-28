@@ -6,726 +6,9 @@
     <title>CX Odyssey: Rise of the Collectors</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;800&display=swap');
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        :root {
-            --primary-gold: #FFD700;
-            --secondary-orange: #FF6B35;
-            --accent-purple: #7209B7;
-            --neon-blue: #00F5FF;
-            --deep-space: #0A0A0A;
-            --space-blue: #1A1A2E;
-            --cosmic-purple: #16213E;
-            --success-green: #00FF88;
-            --danger-red: #FF073A;
-        }
-
-        body {
-            font-family: 'Exo 2', sans-serif;
-            background: radial-gradient(ellipse at center, var(--space-blue) 0%, var(--deep-space) 50%, #000 100%);
-            color: #ffffff;
-            overflow: hidden;
-            height: 100vh;
-            position: relative;
-            padding: 0;
-            margin: 0;
-        }
-
-        /* Telegram WebApp optimizations */
-        @media (max-width: 450px) {
-            body {
-                padding: 0;
-                margin: 0;
-                overflow-y: auto;
-                height: 100vh;
-            }
-            
-            .game-container {
-                min-height: 100vh;
-                padding-bottom: 80px;
-            }
-        }
-
-        .game-container {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .stars {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: transparent;
-            z-index: 1;
-        }
-
-        .star {
-            position: absolute;
-            border-radius: 50%;
-            animation: twinkle 3s infinite ease-in-out;
-        }
-
-        .star-small {
-            width: 1px;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
-        }
-
-        .star-medium {
-            width: 2px;
-            height: 2px;
-            background: var(--neon-blue);
-            box-shadow: 0 0 4px var(--neon-blue);
-        }
-
-        .star-large {
-            width: 3px;
-            height: 3px;
-            background: var(--primary-gold);
-            box-shadow: 0 0 6px var(--primary-gold);
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at center, var(--space-blue) 0%, var(--deep-space) 50%, #000 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease;
-        }
-
-        .loading-overlay.hide {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .loading-logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 42px;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 30px;
-            animation: logoFloat 3s ease-in-out infinite alternate;
-        }
-
-        @keyframes logoFloat {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(-10px); }
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid rgba(255, 215, 0, 0.3);
-            border-radius: 50%;
-            border-top-color: var(--primary-gold);
-            animation: spin 1s ease-in-out infinite;
-            margin-bottom: 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-size: 16px;
-            color: var(--primary-gold);
-            margin-bottom: 10px;
-        }
-
-        .loading-progress {
-            width: 280px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-
-        .loading-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--secondary-orange), var(--primary-gold));
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            display: none;
-            padding: 15px;
-            overflow-y: auto;
-            padding-bottom: 90px;
-        }
-
-        .screen.active {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px;
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
-        }
-
-        .logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 20px;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .resources {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .resource {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
-            padding: 8px 12px;
-            border-radius: 25px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(26, 26, 46, 0.95));
-            z-index: 50;
-            padding: 5px 0;
-        }
-
-        .nav-btn {
-            flex: 1;
-            padding: 10px 4px;
-            text-align: center;
-            background: transparent;
-            color: rgba(255, 255, 255, 0.6);
-            border: none;
-            cursor: pointer;
-            font-size: 9px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .nav-btn.active {
-            color: var(--primary-gold);
-        }
-
-        .nav-btn div:first-child {
-            font-size: 16px;
-            margin-bottom: 3px;
-        }
-
-        .tg-user-info {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px 20px;
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 53, 0.1));
-            border-radius: 20px;
-            margin-bottom: 20px;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-        }
-
-        .tg-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 3px solid var(--primary-gold);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
-
-        .galaxy-map {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            flex: 1;
-            padding: 15px 0;
-        }
-
-        /* Updated planet styles to show just the world image */
-        .planet {
-            position: relative;
-            aspect-ratio: 1;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 14px;
-            overflow: hidden;
-            background-size: cover;
-            background-position: center;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            /* Ensure the planet image fits properly */
-            background-repeat: no-repeat;
-            background-size: contain;
-            background-color: transparent;
-        }
-
-        /* Specific planet images - using your uploaded assets */
-        .planet-1 { 
-            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Pyrion.png');
-            background-size: 80% 80%;
-            background-color: #ff6b35;
-        }
-        .planet-2 { 
-            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Aqueous.png');
-            background-size: 80% 80%;
-            background-color: #00a8ff;
-        }
-        .planet-3 { 
-            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Voldex.png');
-            background-size: 80% 80%;
-            background-color: #7209b7;
-        }
-        .planet-4 { 
-            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Chloros.png');
-            background-size: 80% 80%;
-            background-color: #00b894;
-        }
-        .planet-5 { 
-            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Aurelia.png');
-            background-size: 80% 80%;
-            background-color: #fdcb6e;
-        }
-        .planet-6 { 
-            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Crimson.png');
-            background-size: 80% 80%;
-            background-color: #e84118;
-        }
-
-        .planet-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7); /* Darker overlay for better text visibility */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 10px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .planet:hover .planet-overlay {
-            background: rgba(0, 0, 0, 0.4);
-        }
-
-        .planet-info {
-            text-align: center;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
-            z-index: 2;
-            position: relative;
-        }
-
-        .mining-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 20px;
-            padding: 10px;
-        }
-
-        /* Updated mining area with planet background */
-        .mining-area {
-            width: 260px;
-            height: 260px;
-            border-radius: 25px;
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 3px solid var(--primary-gold);
-            position: relative;
-            overflow: hidden;
-            background-size: cover !important;
-            background-position: center !important;
-            background-repeat: no-repeat !important;
-        }
-
-        /* Add overlay for mining area to make text readable */
-        .mining-area::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1;
-        }
-
-        .mining-area > div {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-        }
-
-        .energy-bar {
-            width: 100%;
-            max-width: 300px;
-            height: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .energy-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--secondary-orange), var(--primary-gold));
-            transition: width 0.5s ease;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .action-btn {
-            padding: 12px 20px;
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border: 2px solid var(--primary-gold);
-            border-radius: 25px;
-            color: var(--primary-gold);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 13px;
-            font-weight: 600;
-            min-width: 120px;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
-        }
-
-        .action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .notification {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.98), rgba(22, 33, 62, 0.98));
-            border: 2px solid var(--primary-gold);
-            color: var(--primary-gold);
-            padding: 20px 30px;
-            border-radius: 15px;
-            z-index: 1001;
-            font-weight: 700;
-            font-size: 14px;
-            text-align: center;
-            min-width: 220px;
-            max-width: 320px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 215, 0, 0.3);
-            animation: notificationPop 3s ease-in-out;
-        }
-
-        @keyframes notificationPop {
-            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-            10% { opacity: 1; transform: translate(-50%, -50%) scale(1.02); }
-            15% { transform: translate(-50%, -50%) scale(1); }
-            85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
-        }
-
-        .boss-image {
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, var(--accent-purple), #4a148c);
-            border-radius: 25px;
-            margin: 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 70px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .boss-image:hover {
-            transform: scale(1.05);
-        }
-
-        .boss-health {
-            width: 100%;
-            height: 30px;
-            background: rgba(255, 0, 0, 0.3);
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .boss-health-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--danger-red), var(--primary-gold));
-            transition: width 0.5s ease;
-        }
-
-        .tasks-section, .leaderboard, .shop-grid, .minigame-area {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 20px;
-            padding: 20px;
-            margin: 12px 0;
-        }
-
-        .task-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            margin: 8px 0;
-            background: rgba(255, 215, 0, 0.1);
-            border-radius: 12px;
-            border-left: 3px solid var(--primary-gold);
-        }
-
-        .task-reward {
-            background: var(--success-green);
-            color: #000;
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 11px;
-        }
-
-        .task-button {
-            background: var(--primary-gold);
-            color: #000;
-            padding: 6px 12px;
-            border-radius: 15px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 11px;
-        }
-
-        .shop-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 15px;
-            padding: 12px 0;
-        }
-
-        .shop-item {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 20px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-
-        .shop-item:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-gold);
-        }
-
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border-radius: 25px;
-            padding: 30px;
-            text-align: center;
-            max-width: 85%;
-            position: relative;
-            border: 2px solid var(--primary-gold);
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 12px;
-            right: 15px;
-            background: var(--danger-red);
-            border: none;
-            color: white;
-            font-size: 20px;
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
-
-        /* Daily Combo in Mini-games section */
-        .daily-combo-game {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.1));
-            border-radius: 20px;
-            padding: 20px;
-            margin: 15px 0;
-            text-align: center;
-            border: 2px solid var(--primary-gold);
-        }
-
-        .combo-input {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin: 15px 0;
-        }
-
-        .combo-digit {
-            width: 45px;
-            height: 45px;
-            background: rgba(255, 215, 0, 0.1);
-            border: 2px solid var(--primary-gold);
-            border-radius: 8px;
-            color: var(--primary-gold);
-            font-size: 20px;
-            font-weight: bold;
-            text-align: center;
-            outline: none;
-        }
-
-        .combo-keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            max-width: 180px;
-            margin: 0 auto 15px;
-        }
-
-        .combo-key {
-            padding: 12px;
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid var(--primary-gold);
-            border-radius: 8px;
-            color: var(--primary-gold);
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-
-        .combo-key:hover {
-            background: rgba(255, 215, 0, 0.3);
-        }
-
-        /* Referral system styles */
-        .referral-section {
-            background: linear-gradient(135deg, var(--success-green), rgba(0, 255, 136, 0.8));
-            border-radius: 20px;
-            padding: 20px;
-            margin: 15px 0;
-            color: #000;
-            text-align: center;
-        }
-
-        .referral-code {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-family: monospace;
-            font-weight: bold;
-            margin: 10px 0;
-            word-break: break-all;
-        }
-
-        .referral-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .stat-box {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        /* Mobile responsiveness for Telegram */
-        @media (max-width: 400px) {
-            .header { padding: 12px; }
-            .logo { font-size: 18px; }
-            .mining-area { width: 220px; height: 220px; }
-            .boss-image { width: 170px; height: 170px; font-size: 55px; }
-            .nav-btn { padding: 8px 3px; font-size: 8px; }
-            .nav-btn div:first-child { font-size: 14px; }
-            .combo-digit { width: 40px; height: 40px; font-size: 18px; }
-            .resources { gap: 8px; }
-            .resource { padding: 6px 10px; font-size: 11px; }
-        }
-    </style>
+    
+    <!-- Load external CSS -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="loading-overlay" id="loadingOverlay">
@@ -760,46 +43,46 @@
             </div>
 
             <div class="galaxy-map">
-                <div class="planet planet-1" onclick="selectPlanet('Pyrion', 1)">
+                <div class="planet planet-pyrion" onclick="selectPlanet('Pyrion', 1)" data-planet="pyrion">
                     <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🔥 Pyrion</div>
-                        <div style="font-size: 10px;">Fire World</div>
+                        <div class="planet-name">🔥 Pyrion</div>
+                        <div class="planet-desc">Fire World</div>
                     </div>
                 </div>
-                <div class="planet planet-2" onclick="selectPlanet('Aqueos', 2)">
+                <div class="planet planet-aqueos" onclick="selectPlanet('Aqueos', 2)" data-planet="aqueos">
                     <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🌊 Aqueos</div>
-                        <div style="font-size: 10px;">Ocean World</div>
+                        <div class="planet-name">🌊 Aqueos</div>
+                        <div class="planet-desc">Ocean World</div>
                     </div>
                 </div>
-                <div class="planet planet-3" onclick="selectPlanet('Voidex', 3)">
+                <div class="planet planet-voidex" onclick="selectPlanet('Voidex', 3)" data-planet="voidex">
                     <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🌌 Voidex</div>
-                        <div style="font-size: 10px;">Dark Matter</div>
+                        <div class="planet-name">🌌 Voidex</div>
+                        <div class="planet-desc">Dark Matter</div>
                     </div>
                 </div>
-                <div class="planet planet-4" onclick="selectPlanet('Chloros', 4)">
+                <div class="planet planet-chloros" onclick="selectPlanet('Chloros', 4)" data-planet="chloros">
                     <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🌿 Chloros</div>
-                        <div style="font-size: 10px;">Bio World</div>
+                        <div class="planet-name">🌿 Chloros</div>
+                        <div class="planet-desc">Bio World</div>
                     </div>
                 </div>
-                <div class="planet planet-5" onclick="selectPlanet('Aurelia', 5)">
+                <div class="planet planet-aurelia" onclick="selectPlanet('Aurelia', 5)" data-planet="aurelia">
                     <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">✨ Aurelia</div>
-                        <div style="font-size: 10px;">Gold Planet</div>
+                        <div class="planet-name">✨ Aurelia</div>
+                        <div class="planet-desc">Gold Planet</div>
                     </div>
                 </div>
-                <div class="planet planet-6" onclick="selectPlanet('Crimson', 6)">
+                <div class="planet planet-crimson" onclick="selectPlanet('Crimson', 6)" data-planet="crimson">
                     <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">⚔️ Crimson</div>
-                        <div style="font-size: 10px;">War Zone</div>
+                        <div class="planet-name">⚔️ Crimson</div>
+                        <div class="planet-desc">War Zone</div>
                     </div>
                 </div>
             </div>
@@ -819,23 +102,26 @@
                 </div>
             </div>
 
-            <div class="mining-screen">
-                <div class="mining-area" onclick="minePlanet()">
-                    <div style="text-align: center;">
-                        <div style="font-size: 28px; margin-bottom: 12px;">⛏️</div>
-                        <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">TAP TO MINE</div>
-                        <div style="font-size: 12px; opacity: 0.9;">+<span id="mineReward">5</span> Shards</div>
+            <div class="mining-container">
+                <!-- Dynamic planet background will be set via JavaScript -->
+                <div class="mining-planet" id="miningPlanet" onclick="minePlanet()">
+                    <div class="mining-overlay">
+                        <div class="mine-text">
+                            <div class="mine-icon">⛏️</div>
+                            <div class="mine-title">TAP TO MINE</div>
+                            <div class="mine-reward">+<span id="mineReward">5</span> Shards</div>
+                        </div>
                     </div>
                 </div>
 
-                <div style="width: 100%; max-width: 300px;">
-                    <div style="margin-bottom: 12px; font-size: 14px; font-weight: 600;">Energy: <span id="energyText">100/100</span></div>
+                <div class="energy-section">
+                    <div class="energy-info">Energy: <span id="energyText">100/100</span></div>
                     <div class="energy-bar">
                         <div class="energy-fill" id="energyFill" style="width: 100%"></div>
                     </div>
                 </div>
 
-                <div class="action-buttons">
+                <div class="mining-actions">
                     <button class="action-btn" onclick="watchAdForEnergy()" id="adBtn">📺 Ad (+25 Energy)</button>
                     <button class="action-btn" onclick="battleAliens()">⚔️ Battle (+30 GP)</button>
                     <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
@@ -853,26 +139,26 @@
                 </div>
             </div>
 
-            <div style="text-align: center;">
-                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 20px;">🐉 COSMIC OVERLORD</h2>
+            <div class="boss-container">
+                <h2 class="boss-title">🐉 COSMIC OVERLORD</h2>
                 
                 <div class="boss-image" onclick="attackBoss()">👹</div>
 
-                <div>
-                    <div style="margin-bottom: 12px; font-size: 16px; font-weight: 600;">Boss Health: <span id="bossHealthText">500/500</span></div>
+                <div class="boss-health-section">
+                    <div class="boss-health-text">Boss Health: <span id="bossHealthText">500/500</span></div>
                     <div class="boss-health">
                         <div class="boss-health-fill" id="bossHealthFill" style="width: 100%"></div>
                     </div>
                 </div>
 
-                <div class="action-buttons">
+                <div class="boss-actions">
                     <button class="action-btn" onclick="attackBoss()">⚔️ ATTACK!</button>
                     <button class="action-btn" onclick="watchAdForDamage()">📺 Ad (2x Damage)</button>
                     <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
                 </div>
 
-                <div style="margin-top: 20px; font-size: 14px; background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 12px;">
-                    Your Damage: <span id="playerDamage" style="color: var(--primary-gold); font-weight: 700;">0</span>
+                <div class="player-damage-display">
+                    Your Damage: <span id="playerDamage" class="damage-value">0</span>
                 </div>
             </div>
         </div>
@@ -889,32 +175,68 @@
 
             <div class="shop-grid">
                 <div class="shop-item" onclick="buyUpgrade('speed')">
-                    <div style="font-size: 40px; margin-bottom: 10px;">🚀</div>
-                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Speed Boost</div>
-                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="speedCost">50 GP</div>
-                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+20% Mining Speed</div>
+                    <div class="shop-icon">🚀</div>
+                    <div class="shop-title">Speed Boost</div>
+                    <div class="shop-cost" id="speedCost">50 GP</div>
+                    <div class="shop-desc">+20% Mining Speed</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('damage')">
-                    <div style="font-size: 40px; margin-bottom: 10px;">⚔️</div>
-                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Damage Boost</div>
-                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="damageCost">75 GP</div>
-                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+30% Battle Damage</div>
+                    <div class="shop-icon">⚔️</div>
+                    <div class="shop-title">Damage Boost</div>
+                    <div class="shop-cost" id="damageCost">75 GP</div>
+                    <div class="shop-desc">+30% Battle Damage</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('energy')">
-                    <div style="font-size: 40px; margin-bottom: 10px;">⚡</div>
-                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Energy Tank</div>
-                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="energyCost">100 GP</div>
-                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+25 Max Energy</div>
+                    <div class="shop-icon">⚡</div>
+                    <div class="shop-title">Energy Tank</div>
+                    <div class="shop-cost" id="energyCost">100 GP</div>
+                    <div class="shop-desc">+25 Max Energy</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('multiplier')">
-                    <div style="font-size: 40px; margin-bottom: 10px;">💰</div>
-                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">GP Multiplier</div>
-                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="multiplierCost">200 GP</div>
-                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+50% GP Gain</div>
+                    <div class="shop-icon">💰</div>
+                    <div class="shop-title">GP Multiplier</div>
+                    <div class="shop-cost" id="multiplierCost">200 GP</div>
+                    <div class="shop-desc">+50% GP Gain</div>
                 </div>
             </div>
 
-            <div class="action-buttons">
+            <div class="shop-actions">
+                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
+            </div>
+        </div>
+
+        <!-- Tasks Screen -->
+        <div class="screen" id="tasksScreen">
+            <div class="header">
+                <div class="logo">TASKS & MISSIONS</div>
+                <div class="resources">
+                    <div class="resource">✅ <span id="completedTasks">0</span>/8</div>
+                </div>
+            </div>
+
+            <!-- Balance Section -->
+            <div class="balance-section">
+                <div class="balance-label">Your balance</div>
+                <div class="balance-display">
+                    <div class="balance-icon">🏆</div>
+                    <div class="balance-amount" id="taskBalanceDisplay">0</div>
+                </div>
+            </div>
+
+            <!-- Task Tabs -->
+            <div class="task-tabs">
+                <button class="task-tab active" id="dailyTasksTab" onclick="switchTaskTab('daily')">
+                    Daily Tasks
+                </button>
+                <button class="task-tab" id="oneTimeTasksTab" onclick="switchTaskTab('onetime')">
+                    Main Tasks
+                </button>
+            </div>
+
+            <!-- Task Content will be loaded dynamically -->
+            <div id="taskContent"></div>
+
+            <div class="task-actions">
                 <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
             </div>
         </div>
@@ -927,14 +249,15 @@
                     <div class="resource">🏆 <span id="gpMinigames">0</span></div>
                     <div class="resource">
                         🎫 <span id="gameTickets">3</span>
-                        <div style="font-size: 9px; opacity: 0.8;" id="ticketCooldown"></div>
+                        <div class="ticket-cooldown" id="ticketCooldown"></div>
                     </div>
                 </div>
             </div>
 
+            <!-- Daily Combo Game -->
             <div class="daily-combo-game">
-                <h3 style="color: var(--primary-gold); margin-bottom: 15px; font-size: 18px;">🔮 Daily Combo Code</h3>
-                <p style="margin-bottom: 12px; opacity: 0.9; font-size: 13px;">Guess today's secret code!</p>
+                <h3 class="combo-title">🔮 Daily Combo Code</h3>
+                <p class="combo-description">Guess today's secret code!</p>
                 <div class="combo-input">
                     <input type="text" class="combo-digit" maxlength="1" id="combo1">
                     <input type="text" class="combo-digit" maxlength="1" id="combo2">
@@ -951,160 +274,19 @@
                     <button class="combo-key" onclick="inputComboDigit('7')">7</button>
                     <button class="combo-key" onclick="inputComboDigit('8')">8</button>
                     <button class="combo-key" onclick="inputComboDigit('9')">9</button>
-                    <button class="combo-key" onclick="clearCombo()" style="background: var(--danger-red);">Clear</button>
+                    <button class="combo-key clear-btn" onclick="clearCombo()">Clear</button>
                     <button class="combo-key" onclick="inputComboDigit('0')">0</button>
-                    <button class="combo-key" onclick="submitCombo()" style="background: var(--success-green); color: #000;">Submit</button>
+                    <button class="combo-key submit-btn" onclick="submitCombo()">Submit</button>
                 </div>
-                <p style="font-size: 12px; opacity: 0.8;">Attempts: <span id="comboAttempts">3</span>/3 | Reward: 100 GP</p>
+                <p class="combo-info">Attempts: <span id="comboAttempts">3</span>/3 | Reward: 100 GP</p>
             </div>
 
-            <div class="minigame-area" id="minigameArea">
-                <h3 style="color: var(--primary-gold); font-size: 20px; margin-bottom: 12px;">Coming Soon!</h3>
-                <p style="font-size: 14px; opacity: 0.9;">Mini-games are being developed...</p>
-                <p style="font-size: 12px; opacity: 0.7; margin-top: 8px;">Use tickets to play the daily combo above!</p>
-            </div>
-
-            <div class="action-buttons">
+            <div class="minigame-actions">
                 <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
             </div>
         </div>
 
-        <!-- Tasks Screen -->
-        <div class="screen" id="tasksScreen">
-            <div class="header">
-                <div class="logo">TASKS & MISSIONS</div>
-                <div class="resources">
-                    <div class="resource">✅ <span id="completedTasks">0</span>/8</div>
-                </div>
-            </div>
-
-            <!-- Balance Section (Pinned at Top) -->
-            <div style="text-align: center; background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9)); border-radius: 25px; padding: 30px; margin: 20px 0; border: 1px solid rgba(255, 215, 0, 0.3); position: relative; overflow: hidden;">
-                <div style="color: rgba(255, 255, 255, 0.7); font-size: 16px; margin-bottom: 10px;">Your balance</div>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
-                    <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">🏆</div>
-                    <div style="font-size: 36px; font-weight: bold; color: white;" id="taskBalanceDisplay">0</div>
-                </div>
-            </div>
-
-            <!-- Task Tabs -->
-            <div style="display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 5px; margin: 20px 0; position: relative; z-index: 15;">
-                <button style="flex: 1; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer;" id="dailyTasksTab" onclick="switchTaskTab('daily')">
-                    Daily Tasks
-                </button>
-                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer;" id="oneTimeTasksTab" onclick="switchTaskTab('onetime')">
-                    Main Tasks
-                </button>
-            </div>
-
-            <!-- Daily Tasks Content -->
-            <div id="dailyTasksContent" style="position: relative; z-index: 10;">
-                <!-- Daily Login Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">📅</div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Daily reward</div>
-                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Log in daily</div>
-                        </div>
-                    </div>
-                    <div style="background: var(--success-green); color: #000; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px; flex-shrink: 0;" id="dailyLoginStatus">Completed</div>
-                </div>
-
-                <!-- Mine 10 Times Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">⛏️</div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Mine crystals</div>
-                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Mine 10 times (<span id="dailyMineCount">0</span>/10)</div>
-                        </div>
-                    </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="dailyMineBtn" onclick="claimDailyTask('mine')" disabled>+50 GP</button>
-                </div>
-
-                <!-- Boss Battle Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #9C27B0, #6A1B9A); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">⚔️</div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Battle cosmic overlord</div>
-                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Attack boss 3 times (<span id="dailyBossCount">0</span>/3)</div>
-                        </div>
-                    </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="dailyBossBtn" onclick="claimDailyTask('boss')" disabled>+75 GP</button>
-                </div>
-
-                <!-- Daily Combo Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #7209B7, #4A148C); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🔮</div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Code puzzle</div>
-                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Try the daily combo</div>
-                        </div>
-                    </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="dailyComboBtn" onclick="claimDailyTask('combo')" disabled>+30 GP</button>
-                </div>
-            </div>
-
-            <!-- One-Time Tasks Content (Hidden by default) -->
-            <div id="oneTimeTasksContent" style="display: none; position: relative; z-index: 10;">
-                <!-- First Planet Visit -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🚀</div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">First exploration</div>
-                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Visit any planet for mining</div>
-                        </div>
-                    </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="firstPlanetBtn" onclick="claimOneTimeTask('planet')" disabled>+20 GP</button>
-                </div>
-
-                <!-- First Purchase -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #4CAF50, #2E7D32); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">💰</div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">First upgrade</div>
-                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Buy any upgrade from shop</div>
-                        </div>
-                    </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="firstPurchaseBtn" onclick="claimOneTimeTask('purchase')" disabled>+40 GP</button>
-                </div>
-
-                <!-- Collect 100 Shards -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #00F5FF, #0091EA); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">💎</div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Crystal collector</div>
-                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Collect 100 shards (<span id="oneTimeShardCount">0</span>/100)</div>
-                        </div>
-                    </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="shards100Btn" onclick="claimOneTimeTask('shards100')" disabled>+80 GP</button>
-                </div>
-
-                <!-- Invite 5 Friends -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #E91E63, #AD1457); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">👥</div>
-                        <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Invite friends</div>
-                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Refer 5 friends to game (<span id="referralCount">0</span>/5)</div>
-                        </div>
-                    </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="invite5Btn" onclick="claimOneTimeTask('invite5')" disabled>+200 GP</button>
-                </div>
-            </div>
-
-            <div class="action-buttons" style="margin-top: 30px;">
-                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
-            </div>
-        </div>
-
-        <!-- Profile Screen (formerly Wallet) -->
+        <!-- Command Center (Profile) Screen -->
         <div class="screen" id="profileScreen">
             <div class="header">
                 <div class="logo">COMMAND CENTER</div>
@@ -1113,118 +295,32 @@
                 </div>
             </div>
 
-            <!-- Balance Section (Pinned at Top) -->
-            <div style="text-align: center; background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9)); border-radius: 25px; padding: 30px; margin: 20px 0; border: 1px solid rgba(255, 215, 0, 0.3); position: relative; overflow: hidden;">
-                <div style="color: rgba(255, 255, 255, 0.7); font-size: 16px; margin-bottom: 10px;">Your balance</div>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
-                    <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">🏆</div>
-                    <div style="font-size: 36px; font-weight: bold; color: white;" id="profileBalanceDisplay">0</div>
+            <!-- Balance Section -->
+            <div class="balance-section">
+                <div class="balance-label">Your balance</div>
+                <div class="balance-display">
+                    <div class="balance-icon">🏆</div>
+                    <div class="balance-amount" id="profileBalanceDisplay">0</div>
                 </div>
             </div>
 
-            <!-- Section Tabs -->
-            <div style="display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 5px; margin: 20px 0; position: relative; z-index: 15;">
-                <button style="flex: 1; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 10px 5px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer;" id="referralTab" onclick="switchProfileTab('referral')">
+            <!-- Profile Tabs -->
+            <div class="profile-tabs">
+                <button class="profile-tab active" id="referralTab" onclick="switchProfileTab('referral')">
                     Referral
                 </button>
-                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 10px 5px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer;" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">
+                <button class="profile-tab" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">
                     Leaderboard
                 </button>
-                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 10px 5px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer;" id="walletTab" onclick="switchProfileTab('wallet')">
+                <button class="profile-tab" id="walletTab" onclick="switchProfileTab('wallet')">
                     Wallet
                 </button>
             </div>
 
-            <!-- Referral Content -->
-            <div id="referralContent" style="position: relative; z-index: 10;">
-                <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(0, 255, 136, 0.3); position: relative; overflow: hidden;">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <h3 style="color: var(--success-green); font-size: 20px; margin-bottom: 8px;">Referral Program</h3>
-                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Invite friends and earn 25 GP per referral</p>
-                    </div>
-                    
-                    <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 15px; margin: 15px 0; text-align: center;">
-                        <div style="color: var(--success-green); font-size: 12px; font-weight: 600; margin-bottom: 8px;">Your Referral Code</div>
-                        <div style="font-family: monospace; font-weight: bold; font-size: 18px; color: white;" id="referralCode">Loading...</div>
-                    </div>
-                    
-                    <button style="width: 100%; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 15px; border-radius: 15px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 20px;" onclick="shareReferral()">
-                        📤 Share Referral Link
-                    </button>
+            <!-- Profile Content will be loaded dynamically -->
+            <div id="profileContent"></div>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 24px; font-weight: bold; color: white;" id="totalReferrals">0</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Total Referrals</div>
-                        </div>
-                        <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 24px; font-weight: bold; color: white;" id="referralEarnings">0</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">GP Earned</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Leaderboard Content (Hidden by default) -->
-            <div id="leaderboardContent" style="display: none; position: relative; z-index: 10;">
-                <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 53, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(255, 215, 0, 0.3); position: relative; overflow: hidden;">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <h3 style="color: var(--primary-gold); font-size: 20px; margin-bottom: 8px;">Top Collectors</h3>
-                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Compete with other players</p>
-                    </div>
-                    
-                    <div id="leaderboardEntries">
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 8px 0; background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.05)); border-radius: 15px; border-left: 4px solid var(--primary-gold); position: relative; overflow: hidden;">
-                            <div><span style="color: var(--primary-gold); font-size: 16px;">👑</span> Loading...</div>
-                            <div style="font-weight: 700; color: var(--primary-gold); font-size: 14px;">0 GP</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Wallet Content (Hidden by default) -->
-            <div id="walletContent" style="display: none; position: relative; z-index: 10;">
-                <div style="background: linear-gradient(135deg, rgba(114, 9, 183, 0.15), rgba(74, 20, 140, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(114, 9, 183, 0.3); position: relative; overflow: hidden;">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <h3 style="color: var(--accent-purple); font-size: 20px; margin-bottom: 8px;">TON Wallet</h3>
-                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Connect wallet for future airdrops</p>
-                    </div>
-                    
-                    <button style="width: 100%; background: linear-gradient(135deg, var(--accent-purple), #5A0F8C); color: white; border: none; padding: 15px; border-radius: 15px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 15px;" onclick="connectWallet()" id="connectWalletBtn">
-                        🔗 Connect Wallet
-                    </button>
-                    
-                    <div id="walletInfo" style="display: none; text-align: center;">
-                        <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 15px; margin: 15px 0;">
-                            <div style="color: var(--accent-purple); font-size: 12px; font-weight: 600; margin-bottom: 8px;">Connected Wallet</div>
-                            <div style="word-break: break-all; font-family: monospace; font-size: 13px; color: white;" id="connectedAddress"></div>
-                        </div>
-                        <button style="width: 100%; background: var(--danger-red); color: white; border: none; padding: 12px; border-radius: 15px; font-weight: bold; font-size: 14px; cursor: pointer;" onclick="disconnectWallet()">
-                            Disconnect Wallet
-                        </button>
-                    </div>
-                    
-                    <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; margin-top: 20px; text-align: center;">
-                        <div style="color: var(--accent-purple); font-size: 14px; font-weight: 600; margin-bottom: 12px;">Future Features</div>
-                        <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(114, 9, 183, 0.1); border-radius: 8px;">
-                                <span style="font-size: 16px;">🚀</span>
-                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">CX Token Airdrops</span>
-                            </div>
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(114, 9, 183, 0.1); border-radius: 8px;">
-                                <span style="font-size: 16px;">💰</span>
-                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">NFT Rewards</span>
-                            </div>
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(114, 9, 183, 0.1); border-radius: 8px;">
-                                <span style="font-size: 16px;">🎮</span>
-                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Exclusive Items</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="action-buttons" style="margin-top: 30px;">
+            <div class="profile-actions">
                 <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
             </div>
         </div>
@@ -1232,24 +328,24 @@
         <!-- Navigation Bar -->
         <div class="nav-bar">
             <button class="nav-btn active" onclick="showScreen('galaxyScreen')">
-                <div>🌌</div>
-                <div>Galaxy</div>
+                <div class="nav-icon">🌌</div>
+                <div class="nav-label">Galaxy</div>
             </button>
             <button class="nav-btn" onclick="showScreen('shopScreen')">
-                <div>🛒</div>
-                <div>Shop</div>
+                <div class="nav-icon">🛒</div>
+                <div class="nav-label">Shop</div>
             </button>
             <button class="nav-btn" onclick="showScreen('minigamesScreen')">
-                <div>🎮</div>
-                <div>Games</div>
+                <div class="nav-icon">🎮</div>
+                <div class="nav-label">Games</div>
             </button>
             <button class="nav-btn" onclick="showScreen('tasksScreen')">
-                <div>📋</div>
-                <div>Tasks</div>
+                <div class="nav-icon">📋</div>
+                <div class="nav-label">Tasks</div>
             </button>
             <button class="nav-btn" onclick="showScreen('profileScreen')">
-                <div>👤</div>
-                <div>Profile</div>
+                <div class="nav-icon">👤</div>
+                <div class="nav-label">Profile</div>
             </button>
         </div>
 
@@ -1257,16 +353,14 @@
         <div class="modal" id="adModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('adModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 18px;">🎬 Watch Ad</h2>
-                <p style="margin-bottom: 20px; font-size: 13px;">Watch this short video to get your reward!</p>
-                <div style="width: 250px; height: 150px; background: #333; border-radius: 15px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 48px;">
-                    📺
-                </div>
-                <div style="margin: 20px 0;">
-                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-bottom: 12px;">
-                        <div id="adProgress" style="width: 0%; height: 100%; background: var(--primary-gold); border-radius: 3px;"></div>
+                <h2 class="modal-title">🎬 Watch Ad</h2>
+                <p class="modal-text">Watch this short video to get your reward!</p>
+                <div class="ad-video">📺</div>
+                <div class="ad-progress-section">
+                    <div class="ad-progress-bar">
+                        <div id="adProgress" class="ad-progress-fill"></div>
                     </div>
-                    <div style="font-size: 13px;">Ad progress: <span id="adTime" style="color: var(--primary-gold);">0</span>/5 seconds</div>
+                    <div class="ad-time-text">Ad progress: <span id="adTime">0</span>/5 seconds</div>
                 </div>
                 <button class="action-btn" onclick="skipAd()" id="skipBtn" style="display: none;">✅ Claim Reward</button>
             </div>
@@ -1275,1106 +369,34 @@
         <div class="modal" id="rewardModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('rewardModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 18px;">🎉 Reward Earned!</h2>
-                <div style="font-size: 60px; margin: 20px 0;" id="rewardIcon">💎</div>
-                <div style="font-size: 22px; color: var(--primary-gold); font-weight: 700; margin-bottom: 15px;" id="rewardText">+25 GP</div>
-                <p style="margin-top: 20px; font-size: 13px;">Keep collecting to unlock more rewards!</p>
-                <button class="action-btn" onclick="closeModal('rewardModal')" style="margin-top: 20px;">Continue</button>
+                <h2 class="modal-title">🎉 Reward Earned!</h2>
+                <div class="reward-icon" id="rewardIcon">💎</div>
+                <div class="reward-text" id="rewardText">+25 GP</div>
+                <p class="modal-text">Keep collecting to unlock more rewards!</p>
+                <button class="action-btn" onclick="closeModal('rewardModal')">Continue</button>
             </div>
         </div>
 
         <div class="modal" id="upgradeModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('upgradeModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 18px;">🚀 Upgrade Complete!</h2>
-                <div style="font-size: 60px; margin: 20px 0;" id="upgradeIcon">⚡</div>
-                <div style="font-size: 18px; margin-bottom: 15px; font-weight: 600;" id="upgradeText">Speed boost activated!</div>
-                <p style="margin-top: 20px; font-size: 13px;">Your ship is now more powerful!</p>
-                <button class="action-btn" onclick="closeModal('upgradeModal')" style="margin-top: 20px;">Awesome!</button>
+                <h2 class="modal-title">🚀 Upgrade Complete!</h2>
+                <div class="upgrade-icon" id="upgradeIcon">⚡</div>
+                <div class="upgrade-text" id="upgradeText">Speed boost activated!</div>
+                <p class="modal-text">Your ship is now more powerful!</p>
+                <button class="action-btn" onclick="closeModal('upgradeModal')">Awesome!</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // Game State with logical balance
-        let gameState = {
-            energy: 100,
-            maxEnergy: 100,
-            shards: 0,
-            gp: 0,
-            currentPlanet: '',
-            bossHealth: 500,
-            maxBossHealth: 500,
-            playerDamage: 0,
-            upgrades: { speed: 0, damage: 0, energy: 0, multiplier: 0 },
-            adDamageBoost: 0,
-            gameTickets: 3,
-            lastTicketTime: Date.now(),
-            maxTickets: 10,
-            dailyTasks: { login: false, mine: false, boss: false, combo: false },
-            oneTimeTasks: { planet: false, purchase: false, shards100: false, invite5: false },
-            dailyTaskProgress: { mines: 0, bossBattles: 0, comboAttempts: 0 },
-            dailyCombo: { code: '', attempts: 3, completed: false, date: '' },
-            energyLastRegen: Date.now(),
-            referralCode: '',
-            totalReferrals: 0,
-            referralEarnings: 0,
-            lastDailyReset: ''
-        };
-
-        // Global variables
-        let tg = null;
-        let user = null;
-        let connector = null;
-        let currentComboIndex = 0;
-        let usingBackend = false;
-
-        // Updated backend API URLs with your correct URLs
-        const API_BASE_URL = 'https://cx-odyssey-backend.vercel.app/api';
-        const API_ENDPOINTS = {
-            loadProgress: `${API_BASE_URL}/loadProgress`,
-            saveProgress: `${API_BASE_URL}/saveProgress`,
-            leaderboard: `${API_BASE_URL}/leaderboard`,
-            saveWallet: `${API_BASE_URL}/saveWallet`
-        };
-
-        // Initialize game with proper loading sequence
-        function initGame() {
-            console.log('🚀 Initializing CX Odyssey...');
-            
-            updateLoadingProgress(0, "Generating starfield...");
-            generateStarfield();
-            
-            setTimeout(() => {
-                updateLoadingProgress(20, "Initializing systems...");
-                
-                // Check if we're in Telegram WebApp
-                try {
-                    if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
-                        updateLoadingProgress(40, "Connecting to Telegram...");
-                        
-                        tg = window.Telegram.WebApp;
-                        tg.expand();
-                        tg.ready();
-                        
-                        user = tg.initDataUnsafe?.user;
-                        
-                        if (user) {
-                            console.log('👤 User logged in:', user.first_name);
-                            usingBackend = true;
-                            
-                            if (user.photo_url) {
-                                document.getElementById('tgAvatar').src = user.photo_url;
-                            }
-                            
-                            let userName = user.first_name;
-                            if (user.last_name) userName += " " + user.last_name;
-                            document.getElementById('tgUserName').textContent = userName;
-                        }
-                    }
-                } catch (error) {
-                    console.log('🌐 Running in browser mode');
-                }
-                
-                updateLoadingProgress(60, "Loading game data...");
-                setTimeout(() => {
-                    loadGameData();
-                    updateLoadingProgress(80, "Initializing wallet...");
-                    setTimeout(() => {
-                        initTonConnect();
-                        updateLoadingProgress(100, "Ready to launch!");
-                        setTimeout(startGame, 500);
-                    }, 500);
-                }, 500);
-            }, 300);
-        }
-
-        // Backend API functions
-        async function loadGameDataFromBackend() {
-            if (!user || !usingBackend) {
-                loadGameDataFromLocalStorage();
-                return;
-            }
-
-            try {
-                const response = await fetch(`${API_ENDPOINTS.loadProgress}?telegramId=${user.id}`);
-                const data = await response.json();
-                
-                if (response.ok && !data.error) {
-                    // Merge backend data with current game state
-                    Object.assign(gameState, data);
-                    console.log('✅ Game data loaded from backend');
-                } else {
-                    console.warn('⚠️ Using local storage due to backend error:', data.error);
-                    loadGameDataFromLocalStorage();
-                }
-            } catch (error) {
-                console.error('❌ Backend load failed, using local storage:', error);
-                loadGameDataFromLocalStorage();
-            }
-        }
-
-        async function saveGameDataToBackend() {
-            if (!user || !usingBackend) {
-                saveGameDataToLocalStorage();
-                return;
-            }
-
-            try {
-                const saveData = {
-                    telegramId: user.id,
-                    username: user.first_name || 'Anonymous',
-                    gameState: gameState
-                };
-
-                const response = await fetch(API_ENDPOINTS.saveProgress, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(saveData)
-                });
-
-                const result = await response.json();
-                
-                if (response.ok && result.success) {
-                    console.log('✅ Game data saved to backend');
-                } else {
-                    console.warn('⚠️ Backend save failed, using local storage:', result.error);
-                    saveGameDataToLocalStorage();
-                }
-            } catch (error) {
-                console.error('❌ Backend save failed, using local storage:', error);
-                saveGameDataToLocalStorage();
-            }
-        }
-
-        function loadGameDataFromLocalStorage() {
-            try {
-                const saved = localStorage.getItem('cxOdysseySave');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    gameState = { ...gameState, ...data };
-                    
-                    // Regenerate energy based on time passed
-                    if (gameState.energyLastRegen) {
-                        const timePassed = Date.now() - gameState.energyLastRegen;
-                        const energyToAdd = Math.floor(timePassed / 30000); // 1 energy per 30 seconds
-                        gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + energyToAdd);
-                    }
-                    
-                    console.log('💾 Game data loaded from local storage');
-                }
-            } catch (error) {
-                console.log('⚠️ localStorage load failed');
-            }
-        }
-
-        function saveGameDataToLocalStorage() {
-            try {
-                gameState.energyLastRegen = Date.now();
-                localStorage.setItem('cxOdysseySave', JSON.stringify(gameState));
-            } catch (error) {
-                console.log('⚠️ localStorage save failed');
-            }
-        }
-
-        // Unified load/save functions
-        async function loadGameData() {
-            if (usingBackend) {
-                await loadGameDataFromBackend();
-            } else {
-                loadGameDataFromLocalStorage();
-            }
-        }
-
-        async function saveGameData() {
-            if (usingBackend) {
-                await saveGameDataToBackend();
-            } else {
-                saveGameDataToLocalStorage();
-            }
-        }
-
-        function updateLoadingProgress(percent, text) {
-            document.getElementById('loadingProgressBar').style.width = percent + '%';
-            document.getElementById('loadingText').textContent = text;
-        }
-
-        function startGame() {
-            console.log('🎮 Starting game...');
-            document.getElementById('loadingOverlay').classList.add('hide');
-            setTimeout(() => {
-                document.getElementById('loadingOverlay').style.display = 'none';
-            }, 500);
-            
-            generateDailyCombo();
-            generateReferralCode();
-            checkDailyReset();
-            updateUI();
-            loadLeaderboard();
-            showScreen('galaxyScreen');
-            showNotification(`🚀 Welcome to CX Odyssey${user ? ', ' + user.first_name : ''}!`);
-        }
-
-        // Daily reset system
-        function checkDailyReset() {
-            const today = new Date().toDateString();
-            if (gameState.lastDailyReset !== today) {
-                gameState.dailyTasks = { login: false, mine: false, boss: false, combo: false };
-                gameState.dailyTaskProgress = { mines: 0, bossBattles: 0, comboAttempts: 0 };
-                gameState.lastDailyReset = today;
-                
-                // Mark login as completed
-                gameState.dailyTasks.login = true;
-                gameState.gp += 25;
-                showNotification('🎁 Daily login reward: +25 GP!');
-            }
-            updateTaskUI();
-        }
-
-        // Generate referral code
-        function generateReferralCode() {
-            if (!gameState.referralCode) {
-                gameState.referralCode = 'CX' + Math.random().toString(36).substr(2, 8).toUpperCase();
-            }
-            document.getElementById('referralCode').textContent = gameState.referralCode;
-        }
-
-        // Generate daily combo code
-        function generateDailyCombo() {
-            const today = new Date().toDateString();
-            if (!gameState.dailyCombo.code || gameState.dailyCombo.date !== today) {
-                gameState.dailyCombo = {
-                    code: Math.floor(1000 + Math.random() * 9000).toString(),
-                    attempts: 3,
-                    completed: false,
-                    date: today
-                };
-            }
-            updateComboUI();
-        }
-
-        function updateComboUI() {
-            document.getElementById('comboAttempts').textContent = gameState.dailyCombo.attempts;
-        }
-
-        function inputComboDigit(digit) {
-            if (gameState.dailyCombo.completed || gameState.dailyCombo.attempts <= 0) return;
-            
-            const inputs = ['combo1', 'combo2', 'combo3', 'combo4'];
-            const currentInput = document.getElementById(inputs[currentComboIndex]);
-            
-            if (currentInput) {
-                currentInput.value = digit;
-                currentComboIndex = (currentComboIndex + 1) % 4;
-            }
-        }
-
-        function clearCombo() {
-            ['combo1', 'combo2', 'combo3', 'combo4'].forEach(id => {
-                document.getElementById(id).value = '';
-            });
-            currentComboIndex = 0;
-        }
-
-        function submitCombo() {
-            if (gameState.dailyCombo.completed || gameState.dailyCombo.attempts <= 0) {
-                showNotification('🔮 No attempts remaining!');
-                return;
-            }
-            
-            const guess = ['combo1', 'combo2', 'combo3', 'combo4']
-                .map(id => document.getElementById(id).value)
-                .join('');
-            
-            if (guess.length !== 4) {
-                showNotification('🔮 Please enter a complete 4-digit code!');
-                return;
-            }
-            
-            gameState.dailyCombo.attempts--;
-            gameState.dailyTaskProgress.comboAttempts++;
-            
-            if (!gameState.dailyTasks.combo) {
-                gameState.dailyTasks.combo = true;
-                gameState.gp += 30;
-                showNotification('✅ Daily combo task completed! +30 GP!');
-            }
-            
-            if (guess === gameState.dailyCombo.code) {
-                gameState.dailyCombo.completed = true;
-                gameState.gp += 100;
-                showNotification('🎉 Correct! You earned 100 GP!');
-                clearCombo();
-            } else {
-                if (gameState.dailyCombo.attempts > 0) {
-                    showNotification(`❌ Wrong code! ${gameState.dailyCombo.attempts} attempts remaining.`);
-                } else {
-                    showNotification(`❌ Game over! The code was ${gameState.dailyCombo.code}.`);
-                }
-                clearCombo();
-            }
-            
-            updateComboUI();
-            updateTaskUI();
-            updateUI();
-            saveGameData();
-        }
-
-        // Initialize TonConnect
-        function initTonConnect() {
-            try {
-                if (typeof TonConnectSDK !== 'undefined') {
-                    connector = new TonConnectSDK.TonConnect({
-                        manifestUrl: window.location.origin + '/tonconnect-manifest.json'
-                    });
-                    
-                    connector.onStatusChange(wallet => {
-                        if (wallet) {
-                            document.getElementById('connectWalletBtn').style.display = 'none';
-                            document.getElementById('walletInfo').style.display = 'block';
-                            document.getElementById('connectedAddress').textContent = shortenAddress(wallet.account.address);
-                        } else {
-                            document.getElementById('connectWalletBtn').style.display = 'block';
-                            document.getElementById('walletInfo').style.display = 'none';
-                        }
-                    });
-                }
-            } catch (error) {
-                console.log('⚠️ TonConnect initialization failed:', error);
-            }
-        }
-
-        // Generate starfield
-        function generateStarfield() {
-            const starfield = document.getElementById('starfield');
-            const starTypes = ['star-small', 'star-medium', 'star-large'];
-            
-            for (let i = 0; i < 80; i++) {
-                const star = document.createElement('div');
-                const type = starTypes[Math.floor(Math.random() * starTypes.length)];
-                star.className = `star ${type}`;
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 3 + 's';
-                starfield.appendChild(star);
-            }
-        }
-
-        // Screen management
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(screen => {
-                screen.classList.remove('active');
-            });
-            
-            setTimeout(() => {
-                document.getElementById(screenId).classList.add('active');
-            }, 100);
-
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            const navMap = {
-                'galaxyScreen': 0,
-                'shopScreen': 1,
-                'minigamesScreen': 2,
-                'tasksScreen': 3,
-                'profileScreen': 4
-            };
-            
-            if (navMap[screenId] !== undefined) {
-                document.querySelectorAll('.nav-btn')[navMap[screenId]].classList.add('active');
-            }
-
-            updateUI();
-            if (screenId === 'profileScreen') {
-                loadLeaderboard();
-            }
-        }
-
-        // Updated selectPlanet function
-        function selectPlanet(planetName, planetId) {
-            gameState.currentPlanet = planetName;
-            document.getElementById('currentPlanet').textContent = planetName;
-            document.getElementById('mineReward').textContent = Math.floor(planetId * 1.5 + 3);
-            
-            // Set the mining area background to show the full planet image
-            const miningArea = document.querySelector('.mining-area');
-            const planetImages = {
-                'Pyrion': 'Pyrion.png',
-                'Aqueos': 'Aqueous.png', 
-                'Voidex': 'Voldex.png',
-                'Chloros': 'Chloros.png',
-                'Aurelia': 'Aurelia.png',
-                'Crimson': 'Crimson.png'
-            };
-            
-            if (miningArea && planetImages[planetName]) {
-                miningArea.style.backgroundImage = `url('https://muntasi179.github.io/cx-odyssey/assets/${planetImages[planetName]}')`;
-            }
-            
-            if (!gameState.oneTimeTasks.planet) {
-                gameState.oneTimeTasks.planet = true;
-                gameState.gp += 20;
-                showNotification('🚀 First planet visited! +20 GP!');
-            }
-            
-            showScreen('miningScreen');
-            showNotification(`🌍 Landed on ${planetName}!`);
-            updateTaskUI();
-            saveGameData();
-        }
-
-        // Mining mechanics with logical rewards
-        function minePlanet() {
-            if (gameState.energy <= 0) {
-                showNotification('⚡ No energy! Wait for regeneration or watch an ad.');
-                return;
-            }
-
-            const planetName = document.getElementById('currentPlanet').textContent;
-            const planetMultiplier = getPlanetMultiplier(planetName);
-            const speedBonus = 1 + (gameState.upgrades.speed * 0.2);
-            const baseReward = 3 + Math.random() * 4;
-            const shardReward = Math.floor(baseReward * planetMultiplier * speedBonus);
-            const gpReward = Math.floor(shardReward * 0.5 * (1 + gameState.upgrades.multiplier * 0.5));
-
-            gameState.energy -= 2;
-            gameState.shards += shardReward;
-            gameState.gp += gpReward;
-            gameState.dailyTaskProgress.mines++;
-
-            showNotification(`💎 +${shardReward} Shards, +${gpReward} GP!`);
-            updateTaskUI();
-            updateUI();
-            saveGameData();
-        }
-
-        function getPlanetMultiplier(planetName) {
-            const multipliers = {
-                'Pyrion': 1.2, 'Aqueos': 1.0, 'Voidex': 1.6,
-                'Chloros': 1.1, 'Aurelia': 1.8, 'Crimson': 1.4
-            };
-            return multipliers[planetName] || 1.0;
-        }
-
-        // Battle system
-        function battleAliens() {
-            if (gameState.energy < 5) {
-                showNotification('⚡ Need at least 5 energy to battle!');
-                return;
-            }
-
-            gameState.energy -= 5;
-            const baseReward = 25 + Math.random() * 15;
-            const reward = Math.floor(baseReward * (1 + gameState.upgrades.multiplier * 0.5));
-            gameState.gp += reward;
-            
-            showNotification(`⚔️ Defeated aliens! +${reward} GP!`);
-            updateUI();
-            saveGameData();
-        }
-
-        // Boss raid system
-        function attackBoss() {
-            if (gameState.energy < 3) {
-                showNotification('⚡ Need at least 3 energy to attack!');
-                return;
-            }
-
-            gameState.energy -= 3;
-            const baseDamage = 8 + (gameState.upgrades.damage * 5);
-            const damage = baseDamage + Math.floor(Math.random() * 12);
-            const actualDamage = gameState.adDamageBoost > 0 ? damage * 2 : damage;
-            
-            gameState.bossHealth = Math.max(0, gameState.bossHealth - actualDamage);
-            gameState.playerDamage += actualDamage;
-            gameState.dailyTaskProgress.bossBattles++;
-            
-            if (gameState.adDamageBoost > 0) {
-                gameState.adDamageBoost--;
-            }
-
-            if (gameState.bossHealth <= 0) {
-                const reward = 150 + Math.floor(Math.random() * 100);
-                gameState.gp += reward;
-                gameState.bossHealth = gameState.maxBossHealth;
-                gameState.playerDamage = 0;
-                showNotification(`🐉 Boss defeated! +${reward} GP!`);
-            } else {
-                const gpReward = Math.floor(actualDamage * 1.5);
-                gameState.gp += gpReward;
-                showNotification(`⚔️ Hit for ${actualDamage} damage! +${gpReward} GP!`);
-            }
-
-            updateTaskUI();
-            updateUI();
-            saveGameData();
-        }
-
-        // Task system
-        function updateTaskUI() {
-            // Daily tasks
-            document.getElementById('dailyMineCount').textContent = gameState.dailyTaskProgress.mines;
-            document.getElementById('dailyBossCount').textContent = gameState.dailyTaskProgress.bossBattles;
-            
-            // One-time tasks
-            document.getElementById('oneTimeShardCount').textContent = gameState.shards;
-            document.getElementById('referralCount').textContent = gameState.totalReferrals;
-            
-            // Update daily task buttons
-            updateTaskButton('dailyMineBtn', gameState.dailyTaskProgress.mines >= 10 && !gameState.dailyTasks.mine);
-            updateTaskButton('dailyBossBtn', gameState.dailyTaskProgress.bossBattles >= 3 && !gameState.dailyTasks.boss);
-            updateTaskButton('dailyComboBtn', gameState.dailyTaskProgress.comboAttempts > 0 && !gameState.dailyTasks.combo);
-            
-            // Update one-time task buttons
-            updateTaskButton('firstPlanetBtn', gameState.oneTimeTasks.planet, true);
-            updateTaskButton('firstPurchaseBtn', gameState.oneTimeTasks.purchase, true);
-            updateTaskButton('shards100Btn', gameState.shards >= 100 && !gameState.oneTimeTasks.shards100);
-            updateTaskButton('invite5Btn', gameState.totalReferrals >= 5 && !gameState.oneTimeTasks.invite5);
-            
-            // Update login status
-            document.getElementById('dailyLoginStatus').textContent = gameState.dailyTasks.login ? 'Completed' : '+25 GP';
-            if (gameState.dailyTasks.login) {
-                document.getElementById('dailyLoginStatus').className = 'task-reward';
-                document.getElementById('dailyLoginStatus').style.background = 'var(--success-green)';
-            }
-        }
-
-        function updateTaskButton(btnId, condition, isCompleted = false) {
-            const btn = document.getElementById(btnId);
-            if (btn) {
-                if (isCompleted) {
-                    btn.disabled = true;
-                    btn.textContent = 'Completed';
-                    btn.style.background = 'var(--success-green)';
-                } else {
-                    btn.disabled = !condition;
-                }
-            }
-        }
-
-        function claimDailyTask(taskType) {
-            const rewards = { mine: 50, boss: 75, combo: 30 };
-            const requirements = {
-                mine: gameState.dailyTaskProgress.mines >= 10,
-                boss: gameState.dailyTaskProgress.bossBattles >= 3,
-                combo: gameState.dailyTaskProgress.comboAttempts > 0
-            };
-            
-            if (gameState.dailyTasks[taskType] || !requirements[taskType]) {
-                showNotification('❌ Task requirements not met or already completed!');
-                return;
-            }
-            
-            gameState.dailyTasks[taskType] = true;
-            gameState.gp += rewards[taskType];
-            
-            showNotification(`✅ Daily task completed! +${rewards[taskType]} GP!`);
-            updateTaskUI();
-            updateUI();
-            saveGameData();
-        }
-
-        function claimOneTimeTask(taskType) {
-            const rewards = { planet: 20, purchase: 40, shards100: 80, invite5: 200 };
-            const requirements = {
-                planet: true, // Already checked when visiting planet
-                purchase: true, // Already checked when making purchase
-                shards100: gameState.shards >= 100,
-                invite5: gameState.totalReferrals >= 5
-            };
-            
-            if (gameState.oneTimeTasks[taskType] || !requirements[taskType]) {
-                showNotification('❌ Task requirements not met or already completed!');
-                return;
-            }
-            
-            gameState.oneTimeTasks[taskType] = true;
-            gameState.gp += rewards[taskType];
-            
-            showNotification(`✅ One-time task completed! +${rewards[taskType]} GP!`);
-            updateTaskUI();
-            updateUI();
-            saveGameData();
-        }
-
-        // Shop system with logical costs
-        function buyUpgrade(upgradeType) {
-            const costs = {
-                speed: 50 * Math.pow(2, gameState.upgrades.speed),
-                damage: 75 * Math.pow(2, gameState.upgrades.damage),
-                energy: 100 * Math.pow(2, gameState.upgrades.energy),
-                multiplier: 200 * Math.pow(2, gameState.upgrades.multiplier)
-            };
-
-            const cost = costs[upgradeType];
-            if (gameState.gp < cost) {
-                showNotification('🏆 Not enough GP!');
-                return;
-            }
-
-            gameState.gp -= cost;
-            gameState.upgrades[upgradeType]++;
-            
-            if (upgradeType === 'energy') {
-                gameState.maxEnergy += 25;
-                gameState.energy = gameState.maxEnergy;
-            }
-            
-            if (!gameState.oneTimeTasks.purchase) {
-                gameState.oneTimeTasks.purchase = true;
-                gameState.gp += 40;
-                showNotification('🚀 First purchase completed! +40 GP bonus!');
-            }
-
-            updateShopCosts();
-            updateTaskUI();
-
-            const messages = {
-                speed: 'Mining speed increased!',
-                damage: 'Combat damage boosted!',
-                energy: 'Maximum energy increased!',
-                multiplier: 'GP multiplier activated!'
-            };
-
-            showRewardModal(messages[upgradeType], '⚡');
-            updateUI();
-            saveGameData();
-        }
-
-        function updateShopCosts() {
-            const costs = {
-                speed: 50 * Math.pow(2, gameState.upgrades.speed),
-                damage: 75 * Math.pow(2, gameState.upgrades.damage),
-                energy: 100 * Math.pow(2, gameState.upgrades.energy),
-                multiplier: 200 * Math.pow(2, gameState.upgrades.multiplier)
-            };
-
-            document.getElementById('speedCost').textContent = costs.speed + ' GP';
-            document.getElementById('damageCost').textContent = costs.damage + ' GP';
-            document.getElementById('energyCost').textContent = costs.energy + ' GP';
-            document.getElementById('multiplierCost').textContent = costs.multiplier + ' GP';
-        }
-
-        // Referral system
-        function shareReferral() {
-            const referralText = `🚀 Join me in CX Odyssey! Use my referral code: ${gameState.referralCode} and get bonus rewards!`;
-            const shareUrl = `https://t.me/share/url?url=https://t.me/Cx_odyssey_bot?start=${gameState.referralCode}&text=${encodeURIComponent(referralText)}`;
-            
-            if (tg && tg.openTelegramLink) {
-                tg.openTelegramLink(shareUrl);
-            } else if (navigator.share) {
-                navigator.share({
-                    title: 'CX Odyssey',
-                    text: referralText,
-                    url: `https://t.me/Cx_odyssey_bot?start=${gameState.referralCode}`
-                }).catch(() => {
-                    window.open(shareUrl, '_blank');
-                });
-            } else {
-                window.open(shareUrl, '_blank');
-            }
-            
-            showNotification('📤 Referral link shared! Invite friends to earn rewards!');
-        }
-
-        // Ad system
-        function watchAdForEnergy() {
-            showModal('adModal');
-            startAdTimer(() => {
-                gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 25);
-                closeModal('adModal');
-                showRewardModal('⚡ +25 Energy!', '⚡');
-                updateUI();
-                saveGameData();
-            });
-        }
-
-        function watchAdForDamage() {
-            showModal('adModal');
-            startAdTimer(() => {
-                gameState.adDamageBoost = 3;
-                closeModal('adModal');
-                showRewardModal('⚔️ 2x Damage for next 3 attacks!', '⚔️');
-                saveGameData();
-            });
-        }
-
-        function startAdTimer(callback) {
-            let timeLeft = 5;
-            const progressBar = document.getElementById('adProgress');
-            const timeDisplay = document.getElementById('adTime');
-            const skipBtn = document.getElementById('skipBtn');
-
-            skipBtn.style.display = 'none';
-            progressBar.style.width = '0%';
-
-            const timer = setInterval(() => {
-                timeLeft--;
-                const progress = ((5 - timeLeft) / 5) * 100;
-                progressBar.style.width = progress + '%';
-                timeDisplay.textContent = 5 - timeLeft;
-
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    skipBtn.style.display = 'block';
-                    skipBtn.onclick = callback;
-                }
-            }, 1000);
-        }
-
-        function skipAd() {
-            const skipBtn = document.getElementById('skipBtn');
-            if (skipBtn.onclick) {
-                skipBtn.onclick();
-            }
-        }
-
-        // Wallet functions
-        function connectWallet() {
-            if (!connector) {
-                showNotification('❌ Wallet connection not available.');
-                return;
-            }
-
-            try {
-                document.getElementById('connectWalletBtn').textContent = 'Connecting...';
-                document.getElementById('connectWalletBtn').disabled = true;
-
-                connector.getWallets()
-                    .then(wallets => {
-                        if (wallets && wallets.length > 0) {
-                            const wallet = wallets.find(w => w.name === 'Tonkeeper') || wallets[0];
-                            return connector.connect(wallet.connectionParameters);
-                        } else {
-                            throw new Error('No wallets available');
-                        }
-                    })
-                    .then(() => {
-                        showNotification('🔗 Wallet connected successfully!');
-                    })
-                    .catch(error => {
-                        console.error('Wallet connection error:', error);
-                        showNotification('❌ Please install Tonkeeper wallet.');
-                        resetWalletButton();
-                    });
-            } catch (error) {
-                showNotification('❌ Wallet connection failed.');
-                resetWalletButton();
-            }
-        }
-
-        function resetWalletButton() {
-            document.getElementById('connectWalletBtn').textContent = '🔗 Connect Wallet';
-            document.getElementById('connectWalletBtn').disabled = false;
-        }
-
-        function disconnectWallet() {
-            if (connector) {
-                try {
-                    connector.disconnect();
-                    showNotification('🔔 Wallet disconnected');
-                } catch (error) {
-                    showNotification('🔔 Wallet disconnected');
-                }
-            }
-        }
-
-        function shortenAddress(address) {
-            if (!address) return '';
-            return address.substring(0, 6) + '...' + address.substring(address.length - 4);
-        }
-
-        // Leaderboard system
-        function loadLeaderboard() {
-            const baseLeaders = [
-                { username: 'GalaxyMaster', baseGp: 2500 },
-                { username: 'StarHunter', baseGp: 1890 },
-                { username: 'CosmicRider', baseGp: 1450 },
-                { username: 'SpaceMiner', baseGp: 1200 },
-                { username: 'AsteroidKing', baseGp: 980 },
-                { username: 'QuantumExplorer', baseGp: 820 },
-                { username: 'NebulaCrusher', baseGp: 650 },
-                { username: 'VoidWalker', baseGp: 540 },
-                { username: 'StarDust', baseGp: 420 },
-                { username: 'CosmicMiner', baseGp: 350 }
-            ];
-
-            const currentLeaders = baseLeaders.map(leader => ({
-                ...leader,
-                gp: leader.baseGp + Math.floor(Math.random() * 200)
-            }));
-
-            if (gameState.gp > 100) {
-                const playerEntry = {
-                    username: user ? user.first_name : 'You',
-                    gp: gameState.gp,
-                    isPlayer: true
-                };
-                currentLeaders.push(playerEntry);
-                currentLeaders.sort((a, b) => b.gp - a.gp);
-            }
-
-            displayLeaderboard(currentLeaders.slice(0, 10));
-            
-            const playerRank = Math.max(1, currentLeaders.findIndex(p => p.isPlayer) + 1);
-            document.getElementById('userRank').textContent = playerRank <= 1000 ? playerRank : '999+';
-            document.getElementById('profileRank').textContent = playerRank <= 1000 ? playerRank : '999+';
-        }
-
-        function displayLeaderboard(leaders) {
-            const entriesContainer = document.getElementById('leaderboardEntries');
-            entriesContainer.innerHTML = '';
-            
-            leaders.forEach((entry, index) => {
-                const entryEl = document.createElement('div');
-                entryEl.className = 'task-item';
-                
-                if (entry.isPlayer) {
-                    entryEl.style.background = 'rgba(255, 215, 0, 0.2)';
-                    entryEl.style.borderLeft = '4px solid var(--secondary-orange)';
-                }
-                
-                let rankIcon = '';
-                if (index === 0) rankIcon = '<span style="color: #ffd700; font-size: 18px;">👑</span> ';
-                else if (index === 1) rankIcon = '<span style="color: #ff6b35; font-size: 16px;">🥈</span> ';
-                else if (index === 2) rankIcon = '<span style="color: #7209b7; font-size: 16px;">🥉</span> ';
-                else rankIcon = `<span style="color: #888; font-size: 12px;">${index + 1}.</span> `;
-                
-                entryEl.innerHTML = `
-                    <div style="font-size: 13px;">${rankIcon}${entry.username}${entry.isPlayer ? ' (You)' : ''}</div>
-                    <div style="color: var(--primary-gold); font-weight: 700; font-size: 12px;">${entry.gp.toLocaleString()} GP</div>
-                `;
-                
-                entriesContainer.appendChild(entryEl);
-            });
-        }
-
-        // Modal system
-        function showModal(modalId) {
-            document.getElementById(modalId).classList.add('active');
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
-        function showRewardModal(text, icon) {
-            document.getElementById('rewardText').textContent = text;
-            document.getElementById('rewardIcon').textContent = icon;
-            showModal('rewardModal');
-        }
-
-        // Notification system
-        function showNotification(text) {
-            document.querySelectorAll('.notification').forEach(n => n.remove());
-            
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = text;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                if (notification.parentNode) notification.remove();
-            }, 3200);
-        }
-
-        // Energy regeneration
-        function startEnergyRegeneration() {
-            setInterval(() => {
-                if (gameState.energy < gameState.maxEnergy) {
-                    gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + 1);
-                    updateUI();
-                    saveGameData();
-                }
-            }, 30000); // 1 energy every 30 seconds
-        }
-
-        // Task tab switching
-        function switchTaskTab(tab) {
-            const dailyTab = document.getElementById('dailyTasksTab');
-            const oneTimeTab = document.getElementById('oneTimeTasksTab');
-            const dailyContent = document.getElementById('dailyTasksContent');
-            const oneTimeContent = document.getElementById('oneTimeTasksContent');
-            
-            if (tab === 'daily') {
-                dailyTab.style.background = 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))';
-                dailyTab.style.color = '#000';
-                oneTimeTab.style.background = 'transparent';
-                oneTimeTab.style.color = 'rgba(255, 255, 255, 0.6)';
-                dailyContent.style.display = 'block';
-                oneTimeContent.style.display = 'none';
-            } else {
-                oneTimeTab.style.background = 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))';
-                oneTimeTab.style.color = '#000';
-                dailyTab.style.background = 'transparent';
-                dailyTab.style.color = 'rgba(255, 255, 255, 0.6)';
-                oneTimeContent.style.display = 'block';
-                dailyContent.style.display = 'none';
-            }
-        }
-
-        // Profile tab switching
-        function switchProfileTab(tab) {
-            const referralTab = document.getElementById('referralTab');
-            const leaderboardTab = document.getElementById('leaderboardTab');
-            const walletTab = document.getElementById('walletTab');
-            const referralContent = document.getElementById('referralContent');
-            const leaderboardContent = document.getElementById('leaderboardContent');
-            const walletContent = document.getElementById('walletContent');
-            
-            // Reset all tabs
-            [referralTab, leaderboardTab, walletTab].forEach(t => {
-                t.style.background = 'transparent';
-                t.style.color = 'rgba(255, 255, 255, 0.6)';
-            });
-            [referralContent, leaderboardContent, walletContent].forEach(c => {
-                c.style.display = 'none';
-            });
-            
-            // Activate selected tab
-            if (tab === 'referral') {
-                referralTab.style.background = 'linear-gradient(135deg, var(--success-green), #00CC70)';
-                referralTab.style.color = '#000';
-                referralContent.style.display = 'block';
-            } else if (tab === 'leaderboard') {
-                leaderboardTab.style.background = 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))';
-                leaderboardTab.style.color = '#000';
-                leaderboardContent.style.display = 'block';
-                loadLeaderboard();
-            } else if (tab === 'wallet') {
-                walletTab.style.background = 'linear-gradient(135deg, var(--accent-purple), #5A0F8C)';
-                walletTab.style.color = 'white';
-                walletContent.style.display = 'block';
-            }
-        }
-
-        // UI updates with balance displays
-        function updateUI() {
-            // Update tickets first
-            updateTickets();
-            
-            // Update all resource displays
-            const energyElements = document.querySelectorAll('#energy, #energyMining');
-            energyElements.forEach(el => {
-                if (el) el.textContent = gameState.energy;
-            });
-            
-            const shardElements = document.querySelectorAll('#shards, #shardsMining, #shardsShop');
-            shardElements.forEach(el => {
-                if (el) el.textContent = gameState.shards.toLocaleString();
-            });
-            
-            const gpElements = document.querySelectorAll('#gp, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpProfile');
-            gpElements.forEach(el => {
-                if (el) el.textContent = gameState.gp.toLocaleString();
-            });
-
-            // Update balance displays in pinned sections
-            const balanceElements = document.querySelectorAll('#taskBalanceDisplay, #profileBalanceDisplay');
-            balanceElements.forEach(el => {
-                if (el) el.textContent = gameState.gp.toLocaleString();
-            });
-
-            const ticketElements = document.querySelectorAll('#gameTickets');
-            ticketElements.forEach(el => {
-                if (el) el.textContent = gameState.gameTickets;
-            });
-
-            // Update energy bar
-            const energyPercent = (gameState.energy / gameState.maxEnergy) * 100;
-            const energyFill = document.getElementById('energyFill');
-            if (energyFill) {
-                energyFill.style.width = energyPercent + '%';
-            }
-            
-            const energyText = document.getElementById('energyText');
-            if (energyText) {
-                energyText.textContent = `${gameState.energy}/${gameState.maxEnergy}`;
-            }
-
-            // Update boss health
-            const bossPercent = (gameState.bossHealth / gameState.maxBossHealth) * 100;
-            const bossHealthFill = document.getElementById('bossHealthFill');
-            if (bossHealthFill) {
-                bossHealthFill.style.width = bossPercent + '%';
-            }
-            
-            const bossHealthText = document.getElementById('bossHealthText');
-            if (bossHealthText) {
-                bossHealthText.textContent = `${gameState.bossHealth}/${gameState.maxBossHealth}`;
-            }
-            
-            const playerDamageEl = document.getElementById('playerDamage');
-            if (playerDamageEl) {
-                playerDamageEl.textContent = gameState.playerDamage.toLocaleString();
-            }
-
-            // Update user level
-            const userLevel = Math.floor(gameState.gp / 100) + 1;
-            const userLevelEl = document.getElementById('tgUserLevel');
-            if (userLevelEl) {
-                userLevelEl.textContent = userLevel;
-            }
-
-            // Update referral stats
-            const totalReferralsEl = document.getElementById('totalReferrals');
-            const referralEarningsEl = document.getElementById('referralEarnings');
-            if (totalReferralsEl) totalReferralsEl.textContent = gameState.totalReferrals;
-            if (referralEarningsEl) referralEarningsEl.textContent = gameState.referralEarnings;
-
-            // Update wallet status mini display
-            const walletStatusMini = document.getElementById('walletStatusMini');
-            if (walletStatusMini) {
-                walletStatusMini.textContent = gameState.walletConnected ? 'Connected' : 'Not Connected';
-            }
-
-            updateShopCosts();
-            updateTaskUI();
-        }
-
-        function updateTickets() {
-            const now = Date.now();
-            const timePassed = now - gameState.lastTicketTime;
-            const ticketsToAdd = Math.floor(timePassed / 180000); // 1 ticket every 3 minutes
-            
-            if (ticketsToAdd > 0) {
-                gameState.gameTickets = Math.min(gameState.maxTickets, gameState.gameTickets + ticketsToAdd);
-                gameState.lastTicketTime = now;
-            }
-            
-            const nextTicketIn = 180000 - (now - gameState.lastTicketTime);
-            const minutesLeft = Math.ceil(nextTicketIn / 60000);
-            
-            const cooldownElement = document.getElementById('ticketCooldown');
-            if (cooldownElement && gameState.gameTickets < gameState.maxTickets) {
-                cooldownElement.textContent = `Next in ${minutesLeft}m`;
-            } else if (cooldownElement) {
-                cooldownElement.textContent = 'Max tickets';
-            }
-        }
-
-        // Auto-save
-        setInterval(() => {
-            saveGameData();
-        }, 30000);
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', initGame);
-        window.addEventListener('load', () => {
-            if (!gameState.energy) {
-                initGame();
-            }
-            startEnergyRegeneration();
-        });
-
-        // Cleanup
-        window.addEventListener('beforeunload', () => {
-            saveGameData();
-        });
-    </script>
+    <!-- Load JavaScript modules -->
+    <script src="js/gameState.js"></script>
+    <script src="js/backend.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/mining.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/minigames.js"></script>
+    <script src="js/main.js"></script>
 </body>
 </html>
