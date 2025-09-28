@@ -289,6 +289,7 @@
             padding: 15px 0;
         }
 
+        /* Updated planet styles to show just the world image */
         .planet {
             position: relative;
             aspect-ratio: 1;
@@ -305,12 +306,42 @@
             background-position: center;
             border: 3px solid rgba(255, 255, 255, 0.3);
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            /* Ensure the planet image fits properly */
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-color: transparent;
         }
 
-        .planet:hover {
-            transform: scale(1.05);
-            border-color: var(--primary-gold);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        /* Specific planet images - using your uploaded assets */
+        .planet-1 { 
+            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Pyrion.png');
+            background-size: 80% 80%;
+            background-color: #ff6b35;
+        }
+        .planet-2 { 
+            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Aqueous.png');
+            background-size: 80% 80%;
+            background-color: #00a8ff;
+        }
+        .planet-3 { 
+            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Voldex.png');
+            background-size: 80% 80%;
+            background-color: #7209b7;
+        }
+        .planet-4 { 
+            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Chloros.png');
+            background-size: 80% 80%;
+            background-color: #00b894;
+        }
+        .planet-5 { 
+            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Aurelia.png');
+            background-size: 80% 80%;
+            background-color: #fdcb6e;
+        }
+        .planet-6 { 
+            background-image: url('https://muntasi179.github.io/cx-odyssey/assets/Crimson.png');
+            background-size: 80% 80%;
+            background-color: #e84118;
         }
 
         .planet-overlay {
@@ -319,7 +350,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7); /* Darker overlay for better text visibility */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -327,20 +358,19 @@
             text-align: center;
             padding: 10px;
             border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .planet:hover .planet-overlay {
+            background: rgba(0, 0, 0, 0.4);
         }
 
         .planet-info {
             text-align: center;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
             z-index: 2;
+            position: relative;
         }
-
-        .planet-1 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/pyrion.png'); }
-        .planet-2 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/aqueos.png'); }
-        .planet-3 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/voidex.png'); }
-        .planet-4 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/chloros.png'); }
-        .planet-5 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/aurelia.png'); }
-        .planet-6 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/crimson.png'); }
 
         .mining-screen {
             display: flex;
@@ -350,6 +380,7 @@
             padding: 10px;
         }
 
+        /* Updated mining area with planet background */
         .mining-area {
             width: 260px;
             height: 260px;
@@ -361,10 +392,29 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border: 3px solid var(--primary-gold);
+            position: relative;
+            overflow: hidden;
+            background-size: cover !important;
+            background-position: center !important;
+            background-repeat: no-repeat !important;
         }
 
-        .mining-area:hover {
-            transform: scale(1.02);
+        /* Add overlay for mining area to make text readable */
+        .mining-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+        }
+
+        .mining-area > div {
+            position: relative;
+            z-index: 2;
+            text-align: center;
         }
 
         .energy-bar {
@@ -1279,7 +1329,7 @@
         let currentComboIndex = 0;
         let usingBackend = false;
 
-        // Backend API URLs
+        // Updated backend API URLs with your correct URLs
         const API_BASE_URL = 'https://cx-odyssey-backend.vercel.app/api';
         const API_ENDPOINTS = {
             loadProgress: `${API_BASE_URL}/loadProgress`,
@@ -1644,11 +1694,26 @@
             }
         }
 
-        // Planet selection
+        // Updated selectPlanet function
         function selectPlanet(planetName, planetId) {
             gameState.currentPlanet = planetName;
             document.getElementById('currentPlanet').textContent = planetName;
             document.getElementById('mineReward').textContent = Math.floor(planetId * 1.5 + 3);
+            
+            // Set the mining area background to show the full planet image
+            const miningArea = document.querySelector('.mining-area');
+            const planetImages = {
+                'Pyrion': 'Pyrion.png',
+                'Aqueos': 'Aqueous.png', 
+                'Voidex': 'Voldex.png',
+                'Chloros': 'Chloros.png',
+                'Aurelia': 'Aurelia.png',
+                'Crimson': 'Crimson.png'
+            };
+            
+            if (miningArea && planetImages[planetName]) {
+                miningArea.style.backgroundImage = `url('https://muntasi179.github.io/cx-odyssey/assets/${planetImages[planetName]}')`;
+            }
             
             if (!gameState.oneTimeTasks.planet) {
                 gameState.oneTimeTasks.planet = true;
