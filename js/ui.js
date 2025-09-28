@@ -4,7 +4,7 @@ class UIController {
         this.currentScreen = 'galaxyScreen';
         this.planetImages = {
             'pyrion': 'https://muntasi179.github.io/cx-odyssey/assets/bgpyrion.png',
-            'aqueos': 'https://muntasi179.github.io/cx-odyssey/assets/bgaqueos.png',
+            'aqueos': 'https://muntasi179.github.io/cx-odyssey/assets/bgaqueous.png',
             'voidex': 'https://muntasi179.github.io/cx-odyssey/assets/bgvoidex.png',
             'chloros': 'https://muntasi179.github.io/cx-odyssey/assets/bgchloros.png',
             'aurelia': 'https://muntasi179.github.io/cx-odyssey/assets/bgaurelia.png',
@@ -449,3 +449,4 @@ function closeModal(modalId) {
     window.uiController.closeModal(modalId);
 
 }
+
