@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CX Odyssey: Rise of the Collectors</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
@@ -15,8 +15,6 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
-            -webkit-touch-callout: none;
         }
 
         :root {
@@ -37,24 +35,23 @@
             color: #ffffff;
             overflow: hidden;
             height: 100vh;
-            position: fixed;
-            width: 100%;
+            position: relative;
             padding: 0;
             margin: 0;
-            touch-action: manipulation;
         }
 
         /* Telegram WebApp optimizations */
         @media (max-width: 450px) {
             body {
-                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+                padding: 0;
+                margin: 0;
                 overflow-y: auto;
                 height: 100vh;
             }
             
             .game-container {
                 min-height: 100vh;
-                padding-bottom: 70px;
+                padding-bottom: 80px;
             }
         }
 
@@ -127,28 +124,28 @@
 
         .loading-logo {
             font-family: 'Orbitron', monospace;
-            font-size: 38px;
+            font-size: 42px;
             font-weight: 900;
             background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             animation: logoFloat 3s ease-in-out infinite alternate;
         }
 
         @keyframes logoFloat {
             0% { transform: translateY(0px); }
-            100% { transform: translateY(-8px); }
+            100% { transform: translateY(-10px); }
         }
 
         .loading-spinner {
-            width: 45px;
-            height: 45px;
-            border: 4px solid rgba(255, 215, 0, 0.3);
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 215, 0, 0.3);
             border-radius: 50%;
             border-top-color: var(--primary-gold);
             animation: spin 1s ease-in-out infinite;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         @keyframes spin {
@@ -157,18 +154,18 @@
         }
 
         .loading-text {
-            font-size: 14px;
+            font-size: 16px;
             color: var(--primary-gold);
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .loading-progress {
-            width: 250px;
-            height: 3px;
+            width: 280px;
+            height: 4px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 2px;
             overflow: hidden;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .loading-progress-bar {
@@ -184,9 +181,9 @@
             height: 100%;
             z-index: 10;
             display: none;
-            padding: 12px;
+            padding: 15px;
             overflow-y: auto;
-            padding-bottom: 70px;
+            padding-bottom: 90px;
         }
 
         .screen.active {
@@ -198,16 +195,16 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 12px;
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border-radius: 15px;
-            margin-bottom: 12px;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+            border-radius: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 0 25px rgba(255, 215, 0, 0.2);
         }
 
         .logo {
             font-family: 'Orbitron', monospace;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 900;
             background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange));
             -webkit-background-clip: text;
@@ -216,7 +213,7 @@
 
         .resources {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
         }
@@ -224,11 +221,11 @@
         .resource {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-size: 11px;
+            padding: 8px 12px;
+            border-radius: 25px;
+            font-size: 12px;
             font-weight: 600;
         }
 
@@ -238,21 +235,20 @@
             left: 0;
             right: 0;
             display: flex;
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.98), rgba(26, 26, 46, 0.98));
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(26, 26, 46, 0.95));
             z-index: 50;
-            padding: 4px 0;
-            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 5px 0;
         }
 
         .nav-btn {
             flex: 1;
-            padding: 8px 3px;
+            padding: 10px 4px;
             text-align: center;
             background: transparent;
             color: rgba(255, 255, 255, 0.6);
             border: none;
             cursor: pointer;
-            font-size: 8px;
+            font-size: 9px;
             font-weight: 600;
             transition: all 0.3s ease;
         }
@@ -262,35 +258,35 @@
         }
 
         .nav-btn div:first-child {
-            font-size: 14px;
-            margin-bottom: 2px;
+            font-size: 16px;
+            margin-bottom: 3px;
         }
 
         .tg-user-info {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 12px;
+            gap: 12px;
+            padding: 15px 20px;
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 53, 0.1));
-            border-radius: 15px;
-            margin-bottom: 15px;
+            border-radius: 20px;
+            margin-bottom: 20px;
             border: 1px solid rgba(255, 215, 0, 0.3);
         }
 
         .tg-avatar {
-            width: 45px;
-            height: 45px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            border: 2px solid var(--primary-gold);
-            box-shadow: 0 0 12px rgba(255, 215, 0, 0.3);
+            border: 3px solid var(--primary-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
         }
 
         .galaxy-map {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
             flex: 1;
-            padding: 12px 0;
+            padding: 15px 0;
         }
 
         .planet {
@@ -303,44 +299,68 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
 
         .planet:hover {
-            transform: scale(1.03);
+            transform: scale(1.05);
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
         }
 
-        .planet-1 { background: radial-gradient(circle at 30% 30%, #FF6B35, #D84315, #8B2500); }
-        .planet-2 { background: radial-gradient(circle at 30% 30%, #2196F3, #1565C0, #0D47A1); }
-        .planet-3 { background: radial-gradient(circle at 30% 30%, #9C27B0, #6A1B9A, #4A148C); }
-        .planet-4 { background: radial-gradient(circle at 30% 30%, #4CAF50, #2E7D32, #1B5E20); }
-        .planet-5 { background: radial-gradient(circle at 30% 30%, #FFC107, #F57F17, #E65100); }
-        .planet-6 { background: radial-gradient(circle at 30% 30%, #E91E63, #AD1457, #880E4F); }
+        .planet-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10px;
+            border-radius: 50%;
+        }
 
         .planet-info {
             text-align: center;
             text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            z-index: 2;
         }
+
+        .planet-1 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/pyrion.png'); }
+        .planet-2 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/aqueos.png'); }
+        .planet-3 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/voidex.png'); }
+        .planet-4 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/chloros.png'); }
+        .planet-5 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/aurelia.png'); }
+        .planet-6 { background-image: url('https://muntasi179.github.io/cx-odyssey/assets/crimson.png'); }
 
         .mining-screen {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
-            padding: 8px;
+            gap: 20px;
+            padding: 10px;
         }
 
         .mining-area {
-            width: 200px;
-            height: 200px;
-            border-radius: 20px;
+            width: 260px;
+            height: 260px;
+            border-radius: 25px;
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            border: 2px solid var(--primary-gold);
+            border: 3px solid var(--primary-gold);
         }
 
         .mining-area:hover {
@@ -349,10 +369,10 @@
 
         .energy-bar {
             width: 100%;
-            max-width: 280px;
-            height: 18px;
+            max-width: 300px;
+            height: 20px;
             background: rgba(0, 0, 0, 0.6);
-            border-radius: 10px;
+            border-radius: 12px;
             overflow: hidden;
         }
 
@@ -364,27 +384,27 @@
 
         .action-buttons {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .action-btn {
-            padding: 10px 16px;
+            padding: 12px 20px;
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
             border: 2px solid var(--primary-gold);
-            border-radius: 20px;
+            border-radius: 25px;
             color: var(--primary-gold);
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 600;
-            min-width: 100px;
+            min-width: 120px;
         }
 
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
         }
 
         .action-btn:disabled {
@@ -400,15 +420,15 @@
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.98), rgba(22, 33, 62, 0.98));
             border: 2px solid var(--primary-gold);
             color: var(--primary-gold);
-            padding: 15px 25px;
-            border-radius: 12px;
+            padding: 20px 30px;
+            border-radius: 15px;
             z-index: 1001;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             text-align: center;
-            min-width: 200px;
-            max-width: 300px;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.3);
+            min-width: 220px;
+            max-width: 320px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(255, 215, 0, 0.3);
             animation: notificationPop 3s ease-in-out;
         }
 
@@ -421,30 +441,30 @@
         }
 
         .boss-image {
-            width: 160px;
-            height: 160px;
+            width: 200px;
+            height: 200px;
             background: radial-gradient(circle, var(--accent-purple), #4a148c);
-            border-radius: 20px;
-            margin: 15px auto;
+            border-radius: 25px;
+            margin: 20px auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 55px;
+            font-size: 70px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .boss-image:hover {
-            transform: scale(1.03);
+            transform: scale(1.05);
         }
 
         .boss-health {
             width: 100%;
-            height: 25px;
+            height: 30px;
             background: rgba(255, 0, 0, 0.3);
-            border-radius: 12px;
+            border-radius: 15px;
             overflow: hidden;
-            margin: 15px 0;
+            margin: 20px 0;
         }
 
         .boss-health-fill {
@@ -455,53 +475,53 @@
 
         .tasks-section, .leaderboard, .shop-grid, .minigame-area {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 15px;
-            padding: 15px;
-            margin: 10px 0;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 12px 0;
         }
 
         .task-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 12px;
-            margin: 6px 0;
+            padding: 12px 15px;
+            margin: 8px 0;
             background: rgba(255, 215, 0, 0.1);
-            border-radius: 10px;
+            border-radius: 12px;
             border-left: 3px solid var(--primary-gold);
         }
 
         .task-reward {
             background: var(--success-green);
             color: #000;
-            padding: 5px 10px;
-            border-radius: 12px;
+            padding: 6px 12px;
+            border-radius: 15px;
             font-weight: bold;
-            font-size: 10px;
+            font-size: 11px;
         }
 
         .task-button {
             background: var(--primary-gold);
             color: #000;
-            padding: 5px 10px;
-            border-radius: 12px;
+            padding: 6px 12px;
+            border-radius: 15px;
             border: none;
             font-weight: bold;
             cursor: pointer;
-            font-size: 10px;
+            font-size: 11px;
         }
 
         .shop-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 12px;
-            padding: 10px 0;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            padding: 12px 0;
         }
 
         .shop-item {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 15px;
-            padding: 12px;
+            border-radius: 20px;
+            padding: 15px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -509,7 +529,7 @@
         }
 
         .shop-item:hover {
-            transform: translateY(-3px);
+            transform: translateY(-5px);
             border-color: var(--primary-gold);
         }
 
@@ -532,25 +552,25 @@
 
         .modal-content {
             background: linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95));
-            border-radius: 20px;
-            padding: 25px;
+            border-radius: 25px;
+            padding: 30px;
             text-align: center;
-            max-width: 90%;
+            max-width: 85%;
             position: relative;
             border: 2px solid var(--primary-gold);
-            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
         }
 
         .close-btn {
             position: absolute;
-            top: 10px;
-            right: 12px;
+            top: 12px;
+            right: 15px;
             background: var(--danger-red);
             border: none;
             color: white;
-            font-size: 18px;
-            width: 30px;
-            height: 30px;
+            font-size: 20px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
             cursor: pointer;
         }
@@ -558,9 +578,9 @@
         /* Daily Combo in Mini-games section */
         .daily-combo-game {
             background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.1));
-            border-radius: 15px;
-            padding: 15px;
-            margin: 12px 0;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
             text-align: center;
             border: 2px solid var(--primary-gold);
         }
@@ -568,18 +588,18 @@
         .combo-input {
             display: flex;
             justify-content: center;
-            gap: 6px;
-            margin: 12px 0;
+            gap: 8px;
+            margin: 15px 0;
         }
 
         .combo-digit {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             background: rgba(255, 215, 0, 0.1);
             border: 2px solid var(--primary-gold);
-            border-radius: 6px;
+            border-radius: 8px;
             color: var(--primary-gold);
-            font-size: 18px;
+            font-size: 20px;
             font-weight: bold;
             text-align: center;
             outline: none;
@@ -588,19 +608,19 @@
         .combo-keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            max-width: 160px;
-            margin: 0 auto 12px;
+            gap: 8px;
+            max-width: 180px;
+            margin: 0 auto 15px;
         }
 
         .combo-key {
-            padding: 10px;
+            padding: 12px;
             background: rgba(255, 215, 0, 0.2);
             border: 1px solid var(--primary-gold);
-            border-radius: 6px;
+            border-radius: 8px;
             color: var(--primary-gold);
             cursor: pointer;
-            font-size: 14px;
+            font-size: 16px;
             font-weight: bold;
             transition: all 0.2s;
         }
@@ -612,102 +632,48 @@
         /* Referral system styles */
         .referral-section {
             background: linear-gradient(135deg, var(--success-green), rgba(0, 255, 136, 0.8));
-            border-radius: 15px;
-            padding: 15px;
-            margin: 12px 0;
+            border-radius: 20px;
+            padding: 20px;
+            margin: 15px 0;
             color: #000;
             text-align: center;
         }
 
         .referral-code {
             background: rgba(0, 0, 0, 0.2);
-            padding: 8px 12px;
-            border-radius: 8px;
+            padding: 10px 15px;
+            border-radius: 10px;
             font-family: monospace;
             font-weight: bold;
-            margin: 8px 0;
+            margin: 10px 0;
             word-break: break-all;
         }
 
         .referral-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 12px;
+            gap: 15px;
+            margin-top: 15px;
         }
 
         .stat-box {
             background: rgba(0, 0, 0, 0.2);
-            padding: 12px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 10px;
             text-align: center;
-        }
-
-        /* Balance display fixes */
-        .balance-display {
-            text-align: center;
-            background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
-            border-radius: 20px;
-            padding: 20px;
-            margin: 15px 0;
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .balance-display .balance-label {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .balance-display .balance-amount {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .balance-display .balance-icon {
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .balance-display .balance-value {
-            font-size: 28px;
-            font-weight: bold;
-            color: white;
         }
 
         /* Mobile responsiveness for Telegram */
         @media (max-width: 400px) {
-            .header { padding: 10px; }
-            .logo { font-size: 16px; }
-            .mining-area { width: 180px; height: 180px; }
-            .boss-image { width: 140px; height: 140px; font-size: 45px; }
-            .nav-btn { padding: 6px 2px; font-size: 7px; }
-            .nav-btn div:first-child { font-size: 12px; }
-            .combo-digit { width: 35px; height: 35px; font-size: 16px; }
-            .resources { gap: 6px; }
-            .resource { padding: 5px 8px; font-size: 10px; }
-            .tg-user-info { padding: 10px; }
-            .tg-avatar { width: 40px; height: 40px; }
-            .galaxy-map { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .planet { font-size: 12px; }
-            .balance-display { padding: 15px; }
-            .balance-display .balance-value { font-size: 24px; }
-        }
-
-        @media (max-width: 350px) {
-            .galaxy-map { grid-template-columns: 1fr; }
-            .shop-grid { grid-template-columns: 1fr; }
+            .header { padding: 12px; }
+            .logo { font-size: 18px; }
+            .mining-area { width: 220px; height: 220px; }
+            .boss-image { width: 170px; height: 170px; font-size: 55px; }
+            .nav-btn { padding: 8px 3px; font-size: 8px; }
+            .nav-btn div:first-child { font-size: 14px; }
+            .combo-digit { width: 40px; height: 40px; font-size: 18px; }
+            .resources { gap: 8px; }
+            .resource { padding: 6px 10px; font-size: 11px; }
         }
     </style>
 </head>
@@ -738,46 +704,52 @@
             <div class="tg-user-info" id="tgUserInfo">
                 <img class="tg-avatar" id="tgAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23FFD700'/%3E%3Ctext x='50' y='65' text-anchor='middle' font-size='40' fill='%23000'%3E👤%3C/text%3E%3C/svg%3E">
                 <div>
-                    <div id="tgUserName" style="font-weight: 700; font-size: 14px;">Explorer</div>
-                    <div style="font-size: 11px; opacity: 0.8;">Level <span id="tgUserLevel">1</span> • Rank #<span id="userRank">999</span></div>
+                    <div id="tgUserName" style="font-weight: 700; font-size: 16px;">Explorer</div>
+                    <div style="font-size: 12px; opacity: 0.8;">Level <span id="tgUserLevel">1</span> • Rank #<span id="userRank">999</span></div>
                 </div>
             </div>
 
             <div class="galaxy-map">
                 <div class="planet planet-1" onclick="selectPlanet('Pyrion', 1)">
+                    <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 2px;">🔥 Pyrion</div>
-                        <div style="font-size: 9px;">Fire World</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🔥 Pyrion</div>
+                        <div style="font-size: 10px;">Fire World</div>
                     </div>
                 </div>
                 <div class="planet planet-2" onclick="selectPlanet('Aqueos', 2)">
+                    <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 2px;">🌊 Aqueos</div>
-                        <div style="font-size: 9px;">Ocean World</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🌊 Aqueos</div>
+                        <div style="font-size: 10px;">Ocean World</div>
                     </div>
                 </div>
                 <div class="planet planet-3" onclick="selectPlanet('Voidex', 3)">
+                    <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 2px;">🌌 Voidex</div>
-                        <div style="font-size: 9px;">Dark Matter</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🌌 Voidex</div>
+                        <div style="font-size: 10px;">Dark Matter</div>
                     </div>
                 </div>
-                <div class="planet planet-4" onclick="selectPlanet('Verdant', 4)">
+                <div class="planet planet-4" onclick="selectPlanet('Chloros', 4)">
+                    <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 2px;">🌿 Verdant</div>
-                        <div style="font-size: 9px;">Bio World</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">🌿 Chloros</div>
+                        <div style="font-size: 10px;">Bio World</div>
                     </div>
                 </div>
                 <div class="planet planet-5" onclick="selectPlanet('Aurelia', 5)">
+                    <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 2px;">✨ Aurelia</div>
-                        <div style="font-size: 9px;">Gold Planet</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">✨ Aurelia</div>
+                        <div style="font-size: 10px;">Gold Planet</div>
                     </div>
                 </div>
                 <div class="planet planet-6" onclick="selectPlanet('Crimson', 6)">
+                    <div class="planet-overlay"></div>
                     <div class="planet-info">
-                        <div style="font-size: 14px; font-weight: 800; margin-bottom: 2px;">⚔️ Crimson</div>
-                        <div style="font-size: 9px;">War Zone</div>
+                        <div style="font-size: 16px; font-weight: 800; margin-bottom: 3px;">⚔️ Crimson</div>
+                        <div style="font-size: 10px;">War Zone</div>
                     </div>
                 </div>
             </div>
@@ -800,14 +772,14 @@
             <div class="mining-screen">
                 <div class="mining-area" onclick="minePlanet()">
                     <div style="text-align: center;">
-                        <div style="font-size: 24px; margin-bottom: 10px;">⛏️</div>
-                        <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">TAP TO MINE</div>
-                        <div style="font-size: 11px; opacity: 0.9;">+<span id="mineReward">5</span> Shards</div>
+                        <div style="font-size: 28px; margin-bottom: 12px;">⛏️</div>
+                        <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">TAP TO MINE</div>
+                        <div style="font-size: 12px; opacity: 0.9;">+<span id="mineReward">5</span> Shards</div>
                     </div>
                 </div>
 
-                <div style="width: 100%; max-width: 280px;">
-                    <div style="margin-bottom: 10px; font-size: 13px; font-weight: 600;">Energy: <span id="energyText">100/100</span></div>
+                <div style="width: 100%; max-width: 300px;">
+                    <div style="margin-bottom: 12px; font-size: 14px; font-weight: 600;">Energy: <span id="energyText">100/100</span></div>
                     <div class="energy-bar">
                         <div class="energy-fill" id="energyFill" style="width: 100%"></div>
                     </div>
@@ -816,6 +788,7 @@
                 <div class="action-buttons">
                     <button class="action-btn" onclick="watchAdForEnergy()" id="adBtn">📺 Ad (+25 Energy)</button>
                     <button class="action-btn" onclick="battleAliens()">⚔️ Battle (+30 GP)</button>
+                    <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
                 </div>
             </div>
         </div>
@@ -831,12 +804,12 @@
             </div>
 
             <div style="text-align: center;">
-                <h2 style="color: var(--primary-gold); margin-bottom: 15px; font-size: 18px;">🐉 COSMIC OVERLORD</h2>
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 20px;">🐉 COSMIC OVERLORD</h2>
                 
                 <div class="boss-image" onclick="attackBoss()">👹</div>
 
                 <div>
-                    <div style="margin-bottom: 10px; font-size: 14px; font-weight: 600;">Boss Health: <span id="bossHealthText">500/500</span></div>
+                    <div style="margin-bottom: 12px; font-size: 16px; font-weight: 600;">Boss Health: <span id="bossHealthText">500/500</span></div>
                     <div class="boss-health">
                         <div class="boss-health-fill" id="bossHealthFill" style="width: 100%"></div>
                     </div>
@@ -845,9 +818,10 @@
                 <div class="action-buttons">
                     <button class="action-btn" onclick="attackBoss()">⚔️ ATTACK!</button>
                     <button class="action-btn" onclick="watchAdForDamage()">📺 Ad (2x Damage)</button>
+                    <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
                 </div>
 
-                <div style="margin-top: 15px; font-size: 13px; background: rgba(255, 215, 0, 0.1); padding: 10px; border-radius: 10px;">
+                <div style="margin-top: 20px; font-size: 14px; background: rgba(255, 215, 0, 0.1); padding: 12px; border-radius: 12px;">
                     Your Damage: <span id="playerDamage" style="color: var(--primary-gold); font-weight: 700;">0</span>
                 </div>
             </div>
@@ -865,29 +839,33 @@
 
             <div class="shop-grid">
                 <div class="shop-item" onclick="buyUpgrade('speed')">
-                    <div style="font-size: 35px; margin-bottom: 8px;">🚀</div>
-                    <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">Speed Boost</div>
-                    <div style="color: var(--primary-gold); font-size: 12px; font-weight: 600;" id="speedCost">50 GP</div>
-                    <div style="font-size: 9px; opacity: 0.8; margin-top: 3px;">+20% Mining Speed</div>
+                    <div style="font-size: 40px; margin-bottom: 10px;">🚀</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Speed Boost</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="speedCost">50 GP</div>
+                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+20% Mining Speed</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('damage')">
-                    <div style="font-size: 35px; margin-bottom: 8px;">⚔️</div>
-                    <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">Damage Boost</div>
-                    <div style="color: var(--primary-gold); font-size: 12px; font-weight: 600;" id="damageCost">75 GP</div>
-                    <div style="font-size: 9px; opacity: 0.8; margin-top: 3px;">+30% Battle Damage</div>
+                    <div style="font-size: 40px; margin-bottom: 10px;">⚔️</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Damage Boost</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="damageCost">75 GP</div>
+                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+30% Battle Damage</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('energy')">
-                    <div style="font-size: 35px; margin-bottom: 8px;">⚡</div>
-                    <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">Energy Tank</div>
-                    <div style="color: var(--primary-gold); font-size: 12px; font-weight: 600;" id="energyCost">100 GP</div>
-                    <div style="font-size: 9px; opacity: 0.8; margin-top: 3px;">+25 Max Energy</div>
+                    <div style="font-size: 40px; margin-bottom: 10px;">⚡</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">Energy Tank</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="energyCost">100 GP</div>
+                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+25 Max Energy</div>
                 </div>
                 <div class="shop-item" onclick="buyUpgrade('multiplier')">
-                    <div style="font-size: 35px; margin-bottom: 8px;">💰</div>
-                    <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">GP Multiplier</div>
-                    <div style="color: var(--primary-gold); font-size: 12px; font-weight: 600;" id="multiplierCost">200 GP</div>
-                    <div style="font-size: 9px; opacity: 0.8; margin-top: 3px;">+50% GP Gain</div>
+                    <div style="font-size: 40px; margin-bottom: 10px;">💰</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">GP Multiplier</div>
+                    <div style="color: var(--primary-gold); font-size: 14px; font-weight: 600;" id="multiplierCost">200 GP</div>
+                    <div style="font-size: 10px; opacity: 0.8; margin-top: 4px;">+50% GP Gain</div>
                 </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
             </div>
         </div>
 
@@ -899,14 +877,14 @@
                     <div class="resource">🏆 <span id="gpMinigames">0</span></div>
                     <div class="resource">
                         🎫 <span id="gameTickets">3</span>
-                        <div style="font-size: 8px; opacity: 0.8;" id="ticketCooldown"></div>
+                        <div style="font-size: 9px; opacity: 0.8;" id="ticketCooldown"></div>
                     </div>
                 </div>
             </div>
 
             <div class="daily-combo-game">
-                <h3 style="color: var(--primary-gold); margin-bottom: 12px; font-size: 16px;">🔮 Daily Combo Code</h3>
-                <p style="margin-bottom: 10px; opacity: 0.9; font-size: 12px;">Guess today's secret code!</p>
+                <h3 style="color: var(--primary-gold); margin-bottom: 15px; font-size: 18px;">🔮 Daily Combo Code</h3>
+                <p style="margin-bottom: 12px; opacity: 0.9; font-size: 13px;">Guess today's secret code!</p>
                 <div class="combo-input">
                     <input type="text" class="combo-digit" maxlength="1" id="combo1">
                     <input type="text" class="combo-digit" maxlength="1" id="combo2">
@@ -927,13 +905,17 @@
                     <button class="combo-key" onclick="inputComboDigit('0')">0</button>
                     <button class="combo-key" onclick="submitCombo()" style="background: var(--success-green); color: #000;">Submit</button>
                 </div>
-                <p style="font-size: 11px; opacity: 0.8;">Attempts: <span id="comboAttempts">3</span>/3 | Reward: 100 GP</p>
+                <p style="font-size: 12px; opacity: 0.8;">Attempts: <span id="comboAttempts">3</span>/3 | Reward: 100 GP</p>
             </div>
 
             <div class="minigame-area" id="minigameArea">
-                <h3 style="color: var(--primary-gold); font-size: 18px; margin-bottom: 10px;">Coming Soon!</h3>
-                <p style="font-size: 13px; opacity: 0.9;">Mini-games are being developed...</p>
-                <p style="font-size: 11px; opacity: 0.7; margin-top: 6px;">Use tickets to play the daily combo above!</p>
+                <h3 style="color: var(--primary-gold); font-size: 20px; margin-bottom: 12px;">Coming Soon!</h3>
+                <p style="font-size: 14px; opacity: 0.9;">Mini-games are being developed...</p>
+                <p style="font-size: 12px; opacity: 0.7; margin-top: 8px;">Use tickets to play the daily combo above!</p>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
             </div>
         </div>
 
@@ -947,20 +929,20 @@
             </div>
 
             <!-- Balance Section (Pinned at Top) -->
-            <div class="balance-display">
-                <div class="balance-label">Your balance</div>
-                <div class="balance-amount">
-                    <div class="balance-icon">🏆</div>
-                    <div class="balance-value" id="taskBalanceDisplay">0</div>
+            <div style="text-align: center; background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9)); border-radius: 25px; padding: 30px; margin: 20px 0; border: 1px solid rgba(255, 215, 0, 0.3); position: relative; overflow: hidden;">
+                <div style="color: rgba(255, 255, 255, 0.7); font-size: 16px; margin-bottom: 10px;">Your balance</div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
+                    <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">🏆</div>
+                    <div style="font-size: 36px; font-weight: bold; color: white;" id="taskBalanceDisplay">0</div>
                 </div>
             </div>
 
             <!-- Task Tabs -->
-            <div style="display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 4px; margin: 15px 0; position: relative; z-index: 15;">
-                <button style="flex: 1; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); color: #000; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;" id="dailyTasksTab" onclick="switchTaskTab('daily')">
+            <div style="display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 5px; margin: 20px 0; position: relative; z-index: 15;">
+                <button style="flex: 1; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); color: #000; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer;" id="dailyTasksTab" onclick="switchTaskTab('daily')">
                     Daily Tasks
                 </button>
-                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer;" id="oneTimeTasksTab" onclick="switchTaskTab('onetime')">
+                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer;" id="oneTimeTasksTab" onclick="switchTaskTab('onetime')">
                     Main Tasks
                 </button>
             </div>
@@ -968,103 +950,107 @@
             <!-- Daily Tasks Content -->
             <div id="dailyTasksContent" style="position: relative; z-index: 10;">
                 <!-- Daily Login Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 15px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 45px; height: 45px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">📅</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">📅</div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 14px; color: white; margin-bottom: 3px;">Daily reward</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Log in daily</div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Daily reward</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Log in daily</div>
                         </div>
                     </div>
-                    <div style="background: var(--success-green); color: #000; padding: 6px 12px; border-radius: 15px; font-weight: bold; font-size: 11px; flex-shrink: 0;" id="dailyLoginStatus">Completed</div>
+                    <div style="background: var(--success-green); color: #000; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 12px; flex-shrink: 0;" id="dailyLoginStatus">Completed</div>
                 </div>
 
                 <!-- Mine 10 Times Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 15px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">⛏️</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">⛏️</div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 14px; color: white; margin-bottom: 3px;">Mine crystals</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Mine 10 times (<span id="dailyMineCount">0</span>/10)</div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Mine crystals</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Mine 10 times (<span id="dailyMineCount">0</span>/10)</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; font-size: 11px; flex-shrink: 0;" id="dailyMineBtn" onclick="claimDailyTask('mine')" disabled>+50 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="dailyMineBtn" onclick="claimDailyTask('mine')" disabled>+50 GP</button>
                 </div>
 
                 <!-- Boss Battle Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 15px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #9C27B0, #6A1B9A); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">⚔️</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #9C27B0, #6A1B9A); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">⚔️</div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 14px; color: white; margin-bottom: 3px;">Battle cosmic overlord</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Attack boss 3 times (<span id="dailyBossCount">0</span>/3)</div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Battle cosmic overlord</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Attack boss 3 times (<span id="dailyBossCount">0</span>/3)</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; font-size: 11px; flex-shrink: 0;" id="dailyBossBtn" onclick="claimDailyTask('boss')" disabled>+75 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="dailyBossBtn" onclick="claimDailyTask('boss')" disabled>+75 GP</button>
                 </div>
 
                 <!-- Daily Combo Task -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 15px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #7209B7, #4A148C); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">🔮</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 215, 0, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #7209B7, #4A148C); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🔮</div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 14px; color: white; margin-bottom: 3px;">Code puzzle</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Try the daily combo</div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Code puzzle</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Try the daily combo</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; font-size: 11px; flex-shrink: 0;" id="dailyComboBtn" onclick="claimDailyTask('combo')" disabled>+30 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="dailyComboBtn" onclick="claimDailyTask('combo')" disabled>+30 GP</button>
                 </div>
             </div>
 
             <!-- One-Time Tasks Content (Hidden by default) -->
             <div id="oneTimeTasksContent" style="display: none; position: relative; z-index: 10;">
                 <!-- First Planet Visit -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 15px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">🚀</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">🚀</div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 14px; color: white; margin-bottom: 3px;">First exploration</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Visit any planet for mining</div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">First exploration</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Visit any planet for mining</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; font-size: 11px; flex-shrink: 0;" id="firstPlanetBtn" onclick="claimOneTimeTask('planet')" disabled>+20 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="firstPlanetBtn" onclick="claimOneTimeTask('planet')" disabled>+20 GP</button>
                 </div>
 
                 <!-- First Purchase -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 15px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #4CAF50, #2E7D32); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">💰</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #4CAF50, #2E7D32); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">💰</div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 14px; color: white; margin-bottom: 3px;">First upgrade</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Buy any upgrade from shop</div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">First upgrade</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Buy any upgrade from shop</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; font-size: 11px; flex-shrink: 0;" id="firstPurchaseBtn" onclick="claimOneTimeTask('purchase')" disabled>+40 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="firstPurchaseBtn" onclick="claimOneTimeTask('purchase')" disabled>+40 GP</button>
                 </div>
 
                 <!-- Collect 100 Shards -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 15px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #00F5FF, #0091EA); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">💎</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #00F5FF, #0091EA); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">💎</div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 14px; color: white; margin-bottom: 3px;">Crystal collector</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Collect 100 shards (<span id="oneTimeShardCount">0</span>/100)</div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Crystal collector</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Collect 100 shards (<span id="oneTimeShardCount">0</span>/100)</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; font-size: 11px; flex-shrink: 0;" id="shards100Btn" onclick="claimOneTimeTask('shards100')" disabled>+80 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="shards100Btn" onclick="claimOneTimeTask('shards100')" disabled>+80 GP</button>
                 </div>
 
                 <!-- Invite 5 Friends -->
-                <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 15px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <div style="width: 45px; height: 45px; background: linear-gradient(135deg, #E91E63, #AD1457); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0;">👥</div>
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 20px; margin: 12px 0; background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8)); border-radius: 20px; border: 1px solid rgba(255, 107, 53, 0.2); position: relative; overflow: hidden;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="width: 50px; height: 50px; background: linear-gradient(135deg, #E91E63, #AD1457); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0;">👥</div>
                         <div style="flex: 1; min-width: 0;">
-                            <div style="font-weight: bold; font-size: 14px; color: white; margin-bottom: 3px;">Invite friends</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Refer 5 friends to game (<span id="referralCount">0</span>/5)</div>
+                            <div style="font-weight: bold; font-size: 16px; color: white; margin-bottom: 4px;">Invite friends</div>
+                            <div style="font-size: 13px; color: rgba(255, 255, 255, 0.7);">Refer 5 friends to game (<span id="referralCount">0</span>/5)</div>
                         </div>
                     </div>
-                    <button style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; font-size: 11px; flex-shrink: 0;" id="invite5Btn" onclick="claimOneTimeTask('invite5')" disabled>+200 GP</button>
+                    <button style="background: var(--primary-gold); color: #000; padding: 8px 16px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 12px; flex-shrink: 0;" id="invite5Btn" onclick="claimOneTimeTask('invite5')" disabled>+200 GP</button>
                 </div>
+            </div>
+
+            <div class="action-buttons" style="margin-top: 30px;">
+                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
             </div>
         </div>
 
@@ -1078,52 +1064,52 @@
             </div>
 
             <!-- Balance Section (Pinned at Top) -->
-            <div class="balance-display">
-                <div class="balance-label">Your balance</div>
-                <div class="balance-amount">
-                    <div class="balance-icon">🏆</div>
-                    <div class="balance-value" id="profileBalanceDisplay">0</div>
+            <div style="text-align: center; background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9)); border-radius: 25px; padding: 30px; margin: 20px 0; border: 1px solid rgba(255, 215, 0, 0.3); position: relative; overflow: hidden;">
+                <div style="color: rgba(255, 255, 255, 0.7); font-size: 16px; margin-bottom: 10px;">Your balance</div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px;">
+                    <div style="width: 35px; height: 35px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px;">🏆</div>
+                    <div style="font-size: 36px; font-weight: bold; color: white;" id="profileBalanceDisplay">0</div>
                 </div>
             </div>
 
             <!-- Section Tabs -->
-            <div style="display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 4px; margin: 15px 0; position: relative; z-index: 15;">
-                <button style="flex: 1; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 8px 4px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;" id="referralTab" onclick="switchProfileTab('referral')">
+            <div style="display: flex; background: rgba(0, 0, 0, 0.3); border-radius: 15px; padding: 5px; margin: 20px 0; position: relative; z-index: 15;">
+                <button style="flex: 1; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 10px 5px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer;" id="referralTab" onclick="switchProfileTab('referral')">
                     Referral
                 </button>
-                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 8px 4px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">
+                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 10px 5px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer;" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">
                     Leaderboard
                 </button>
-                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 8px 4px; border-radius: 8px; font-weight: bold; font-size: 11px; cursor: pointer;" id="walletTab" onclick="switchProfileTab('wallet')">
+                <button style="flex: 1; background: transparent; color: rgba(255, 255, 255, 0.6); border: none; padding: 10px 5px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer;" id="walletTab" onclick="switchProfileTab('wallet')">
                     Wallet
                 </button>
             </div>
 
             <!-- Referral Content -->
             <div id="referralContent" style="position: relative; z-index: 10;">
-                <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05)); border-radius: 20px; padding: 20px; margin: 15px 0; border: 1px solid rgba(0, 255, 136, 0.3); position: relative; overflow: hidden;">
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <h3 style="color: var(--success-green); font-size: 18px; margin-bottom: 6px;">Referral Program</h3>
-                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 13px;">Invite friends and earn 25 GP per referral</p>
+                <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(0, 255, 136, 0.3); position: relative; overflow: hidden;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3 style="color: var(--success-green); font-size: 20px; margin-bottom: 8px;">Referral Program</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Invite friends and earn 25 GP per referral</p>
                     </div>
                     
-                    <div style="background: rgba(0, 0, 0, 0.3); padding: 12px; border-radius: 12px; margin: 12px 0; text-align: center;">
-                        <div style="color: var(--success-green); font-size: 11px; font-weight: 600; margin-bottom: 6px;">Your Referral Code</div>
-                        <div style="font-family: monospace; font-weight: bold; font-size: 16px; color: white;" id="referralCode">Loading...</div>
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 15px; margin: 15px 0; text-align: center;">
+                        <div style="color: var(--success-green); font-size: 12px; font-weight: 600; margin-bottom: 8px;">Your Referral Code</div>
+                        <div style="font-family: monospace; font-weight: bold; font-size: 18px; color: white;" id="referralCode">Loading...</div>
                     </div>
                     
-                    <button style="width: 100%; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer; margin-bottom: 15px;" onclick="shareReferral()">
+                    <button style="width: 100%; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 15px; border-radius: 15px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 20px;" onclick="shareReferral()">
                         📤 Share Referral Link
                     </button>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                        <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px; text-align: center;">
-                            <div style="font-size: 20px; font-weight: bold; color: white;" id="totalReferrals">0</div>
-                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.8);">Total Referrals</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: white;" id="totalReferrals">0</div>
+                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Total Referrals</div>
                         </div>
-                        <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px; text-align: center;">
-                            <div style="font-size: 20px; font-weight: bold; color: white;" id="referralEarnings">0</div>
-                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.8);">GP Earned</div>
+                        <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: white;" id="referralEarnings">0</div>
+                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">GP Earned</div>
                         </div>
                     </div>
                 </div>
@@ -1131,16 +1117,16 @@
 
             <!-- Leaderboard Content (Hidden by default) -->
             <div id="leaderboardContent" style="display: none; position: relative; z-index: 10;">
-                <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 53, 0.05)); border-radius: 20px; padding: 20px; margin: 15px 0; border: 1px solid rgba(255, 215, 0, 0.3); position: relative; overflow: hidden;">
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <h3 style="color: var(--primary-gold); font-size: 18px; margin-bottom: 6px;">Top Collectors</h3>
-                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 13px;">Compete with other players</p>
+                <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 53, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(255, 215, 0, 0.3); position: relative; overflow: hidden;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3 style="color: var(--primary-gold); font-size: 20px; margin-bottom: 8px;">Top Collectors</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Compete with other players</p>
                     </div>
                     
                     <div id="leaderboardEntries">
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; margin: 6px 0; background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.05)); border-radius: 12px; border-left: 4px solid var(--primary-gold); position: relative; overflow: hidden;">
-                            <div><span style="color: var(--primary-gold); font-size: 14px;">👑</span> Loading...</div>
-                            <div style="font-weight: 700; color: var(--primary-gold); font-size: 12px;">0 GP</div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; margin: 8px 0; background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.05)); border-radius: 15px; border-left: 4px solid var(--primary-gold); position: relative; overflow: hidden;">
+                            <div><span style="color: var(--primary-gold); font-size: 16px;">👑</span> Loading...</div>
+                            <div style="font-weight: 700; color: var(--primary-gold); font-size: 14px;">0 GP</div>
                         </div>
                     </div>
                 </div>
@@ -1148,44 +1134,48 @@
 
             <!-- Wallet Content (Hidden by default) -->
             <div id="walletContent" style="display: none; position: relative; z-index: 10;">
-                <div style="background: linear-gradient(135deg, rgba(114, 9, 183, 0.15), rgba(74, 20, 140, 0.05)); border-radius: 20px; padding: 20px; margin: 15px 0; border: 1px solid rgba(114, 9, 183, 0.3); position: relative; overflow: hidden;">
-                    <div style="text-align: center; margin-bottom: 15px;">
-                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 6px;">TON Wallet</h3>
-                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 13px;">Connect wallet for future airdrops</p>
+                <div style="background: linear-gradient(135deg, rgba(114, 9, 183, 0.15), rgba(74, 20, 140, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(114, 9, 183, 0.3); position: relative; overflow: hidden;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h3 style="color: var(--accent-purple); font-size: 20px; margin-bottom: 8px;">TON Wallet</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Connect wallet for future airdrops</p>
                     </div>
                     
-                    <button style="width: 100%; background: linear-gradient(135deg, var(--accent-purple), #5A0F8C); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer; margin-bottom: 12px;" onclick="connectWallet()" id="connectWalletBtn">
+                    <button style="width: 100%; background: linear-gradient(135deg, var(--accent-purple), #5A0F8C); color: white; border: none; padding: 15px; border-radius: 15px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 15px;" onclick="connectWallet()" id="connectWalletBtn">
                         🔗 Connect Wallet
                     </button>
                     
                     <div id="walletInfo" style="display: none; text-align: center;">
-                        <div style="background: rgba(0, 0, 0, 0.3); padding: 12px; border-radius: 12px; margin: 12px 0;">
-                            <div style="color: var(--accent-purple); font-size: 11px; font-weight: 600; margin-bottom: 6px;">Connected Wallet</div>
-                            <div style="word-break: break-all; font-family: monospace; font-size: 12px; color: white;" id="connectedAddress"></div>
+                        <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 15px; margin: 15px 0;">
+                            <div style="color: var(--accent-purple); font-size: 12px; font-weight: 600; margin-bottom: 8px;">Connected Wallet</div>
+                            <div style="word-break: break-all; font-family: monospace; font-size: 13px; color: white;" id="connectedAddress"></div>
                         </div>
-                        <button style="width: 100%; background: var(--danger-red); color: white; border: none; padding: 10px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer;" onclick="disconnectWallet()">
+                        <button style="width: 100%; background: var(--danger-red); color: white; border: none; padding: 12px; border-radius: 15px; font-weight: bold; font-size: 14px; cursor: pointer;" onclick="disconnectWallet()">
                             Disconnect Wallet
                         </button>
                     </div>
                     
-                    <div style="background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center;">
-                        <div style="color: var(--accent-purple); font-size: 13px; font-weight: 600; margin-bottom: 10px;">Future Features</div>
-                        <div style="display: grid; grid-template-columns: 1fr; gap: 6px;">
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px; background: rgba(114, 9, 183, 0.1); border-radius: 6px;">
-                                <span style="font-size: 14px;">🚀</span>
-                                <span style="font-size: 11px; color: rgba(255, 255, 255, 0.9);">CX Token Airdrops</span>
+                    <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; margin-top: 20px; text-align: center;">
+                        <div style="color: var(--accent-purple); font-size: 14px; font-weight: 600; margin-bottom: 12px;">Future Features</div>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(114, 9, 183, 0.1); border-radius: 8px;">
+                                <span style="font-size: 16px;">🚀</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">CX Token Airdrops</span>
                             </div>
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px; background: rgba(114, 9, 183, 0.1); border-radius: 6px;">
-                                <span style="font-size: 14px;">💰</span>
-                                <span style="font-size: 11px; color: rgba(255, 255, 255, 0.9);">NFT Rewards</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(114, 9, 183, 0.1); border-radius: 8px;">
+                                <span style="font-size: 16px;">💰</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">NFT Rewards</span>
                             </div>
-                            <div style="display: flex; align-items: center; justify-content: center; gap: 6px; padding: 6px; background: rgba(114, 9, 183, 0.1); border-radius: 6px;">
-                                <span style="font-size: 14px;">🎮</span>
-                                <span style="font-size: 11px; color: rgba(255, 255, 255, 0.9);">Exclusive Items</span>
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(114, 9, 183, 0.1); border-radius: 8px;">
+                                <span style="font-size: 16px;">🎮</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Exclusive Items</span>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="action-buttons" style="margin-top: 30px;">
+                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
             </div>
         </div>
 
@@ -1217,16 +1207,16 @@
         <div class="modal" id="adModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('adModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 15px; font-size: 16px;">🎬 Watch Ad</h2>
-                <p style="margin-bottom: 15px; font-size: 12px;">Watch this short video to get your reward!</p>
-                <div style="width: 220px; height: 130px; background: #333; border-radius: 12px; margin: 15px auto; display: flex; align-items: center; justify-content: center; font-size: 40px;">
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 18px;">🎬 Watch Ad</h2>
+                <p style="margin-bottom: 20px; font-size: 13px;">Watch this short video to get your reward!</p>
+                <div style="width: 250px; height: 150px; background: #333; border-radius: 15px; margin: 20px auto; display: flex; align-items: center; justify-content: center; font-size: 48px;">
                     📺
                 </div>
-                <div style="margin: 15px 0;">
-                    <div style="width: 100%; height: 5px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-bottom: 10px;">
+                <div style="margin: 20px 0;">
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-bottom: 12px;">
                         <div id="adProgress" style="width: 0%; height: 100%; background: var(--primary-gold); border-radius: 3px;"></div>
                     </div>
-                    <div style="font-size: 12px;">Ad progress: <span id="adTime" style="color: var(--primary-gold);">0</span>/5 seconds</div>
+                    <div style="font-size: 13px;">Ad progress: <span id="adTime" style="color: var(--primary-gold);">0</span>/5 seconds</div>
                 </div>
                 <button class="action-btn" onclick="skipAd()" id="skipBtn" style="display: none;">✅ Claim Reward</button>
             </div>
@@ -1235,22 +1225,22 @@
         <div class="modal" id="rewardModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('rewardModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 15px; font-size: 16px;">🎉 Reward Earned!</h2>
-                <div style="font-size: 50px; margin: 15px 0;" id="rewardIcon">💎</div>
-                <div style="font-size: 20px; color: var(--primary-gold); font-weight: 700; margin-bottom: 12px;" id="rewardText">+25 GP</div>
-                <p style="margin-top: 15px; font-size: 12px;">Keep collecting to unlock more rewards!</p>
-                <button class="action-btn" onclick="closeModal('rewardModal')" style="margin-top: 15px;">Continue</button>
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 18px;">🎉 Reward Earned!</h2>
+                <div style="font-size: 60px; margin: 20px 0;" id="rewardIcon">💎</div>
+                <div style="font-size: 22px; color: var(--primary-gold); font-weight: 700; margin-bottom: 15px;" id="rewardText">+25 GP</div>
+                <p style="margin-top: 20px; font-size: 13px;">Keep collecting to unlock more rewards!</p>
+                <button class="action-btn" onclick="closeModal('rewardModal')" style="margin-top: 20px;">Continue</button>
             </div>
         </div>
 
         <div class="modal" id="upgradeModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('upgradeModal')">&times;</button>
-                <h2 style="color: var(--primary-gold); margin-bottom: 15px; font-size: 16px;">🚀 Upgrade Complete!</h2>
-                <div style="font-size: 50px; margin: 15px 0;" id="upgradeIcon">⚡</div>
-                <div style="font-size: 16px; margin-bottom: 12px; font-weight: 600;" id="upgradeText">Speed boost activated!</div>
-                <p style="margin-top: 15px; font-size: 12px;">Your ship is now more powerful!</p>
-                <button class="action-btn" onclick="closeModal('upgradeModal')" style="margin-top: 15px;">Awesome!</button>
+                <h2 style="color: var(--primary-gold); margin-bottom: 20px; font-size: 18px;">🚀 Upgrade Complete!</h2>
+                <div style="font-size: 60px; margin: 20px 0;" id="upgradeIcon">⚡</div>
+                <div style="font-size: 18px; margin-bottom: 15px; font-weight: 600;" id="upgradeText">Speed boost activated!</div>
+                <p style="margin-top: 20px; font-size: 13px;">Your ship is now more powerful!</p>
+                <button class="action-btn" onclick="closeModal('upgradeModal')" style="margin-top: 20px;">Awesome!</button>
             </div>
         </div>
     </div>
@@ -1261,7 +1251,7 @@
             energy: 100,
             maxEnergy: 100,
             shards: 0,
-            gp: 4505, // Starting with your current balance
+            gp: 0,
             currentPlanet: '',
             bossHealth: 500,
             maxBossHealth: 500,
@@ -1279,28 +1269,33 @@
             referralCode: '',
             totalReferrals: 0,
             referralEarnings: 0,
-            lastDailyReset: '',
-            telegramUserId: null,
-            username: 'Explorer'
+            lastDailyReset: ''
         };
-
-        // API Configuration - Updated to use your actual backend
-        const API_BASE_URL = 'https://cx-odyssey-backend.vercel.app/api';
 
         // Global variables
         let tg = null;
         let user = null;
         let connector = null;
         let currentComboIndex = 0;
+        let usingBackend = false;
+
+        // Backend API URLs
+        const API_BASE_URL = 'https://cx-odyssey-backend.vercel.app/api';
+        const API_ENDPOINTS = {
+            loadProgress: `${API_BASE_URL}/loadProgress`,
+            saveProgress: `${API_BASE_URL}/saveProgress`,
+            leaderboard: `${API_BASE_URL}/leaderboard`,
+            saveWallet: `${API_BASE_URL}/saveWallet`
+        };
 
         // Initialize game with proper loading sequence
-        async function initGame() {
+        function initGame() {
             console.log('🚀 Initializing CX Odyssey...');
             
             updateLoadingProgress(0, "Generating starfield...");
             generateStarfield();
             
-            setTimeout(async () => {
+            setTimeout(() => {
                 updateLoadingProgress(20, "Initializing systems...");
                 
                 // Check if we're in Telegram WebApp
@@ -1316,152 +1311,108 @@
                         
                         if (user) {
                             console.log('👤 User logged in:', user.first_name);
-                            gameState.telegramUserId = user.id;
-                            gameState.username = user.first_name + (user.last_name ? " " + user.last_name : "");
+                            usingBackend = true;
                             
                             if (user.photo_url) {
                                 document.getElementById('tgAvatar').src = user.photo_url;
                             }
                             
-                            document.getElementById('tgUserName').textContent = gameState.username;
-                            
-                            // Load game data from backend
-                            updateLoadingProgress(60, "Loading game data...");
-                            await loadGameDataFromBackend();
+                            let userName = user.first_name;
+                            if (user.last_name) userName += " " + user.last_name;
+                            document.getElementById('tgUserName').textContent = userName;
                         }
                     }
                 } catch (error) {
                     console.log('🌐 Running in browser mode');
                 }
                 
-                updateLoadingProgress(80, "Initializing wallet...");
+                updateLoadingProgress(60, "Loading game data...");
                 setTimeout(() => {
-                    initTonConnect();
-                    updateLoadingProgress(100, "Ready to launch!");
-                    setTimeout(startGame, 500);
+                    loadGameData();
+                    updateLoadingProgress(80, "Initializing wallet...");
+                    setTimeout(() => {
+                        initTonConnect();
+                        updateLoadingProgress(100, "Ready to launch!");
+                        setTimeout(startGame, 500);
+                    }, 500);
                 }, 500);
             }, 300);
         }
 
-        // Backend integration functions
+        // Backend API functions
         async function loadGameDataFromBackend() {
-            if (!gameState.telegramUserId) {
-                console.log('No Telegram user ID, using local storage');
+            if (!user || !usingBackend) {
                 loadGameDataFromLocalStorage();
                 return;
             }
 
             try {
-                console.log('📡 Loading data from backend for user:', gameState.telegramUserId);
-                const response = await fetch(`${API_BASE_URL}/loadProgress?telegramId=${gameState.telegramUserId}`);
+                const response = await fetch(`${API_ENDPOINTS.loadProgress}?telegramId=${user.id}`);
+                const data = await response.json();
                 
-                if (response.ok) {
-                    const remoteState = await response.json();
-                    console.log('✅ Backend response:', remoteState);
-                    
-                    if (!remoteState.error) {
-                        // Merge remote state with current game state, preserving your current GP
-                        const currentGP = gameState.gp; // Keep your current points
-                        gameState = { ...gameState, ...remoteState };
-                        gameState.gp = currentGP; // Ensure your points don't get overwritten
-                        console.log('✅ Game data loaded from backend');
-                    } else {
-                        throw new Error(remoteState.error);
-                    }
+                if (response.ok && !data.error) {
+                    // Merge backend data with current game state
+                    Object.assign(gameState, data);
+                    console.log('✅ Game data loaded from backend');
                 } else {
-                    throw new Error('Failed to load from backend');
+                    console.warn('⚠️ Using local storage due to backend error:', data.error);
+                    loadGameDataFromLocalStorage();
                 }
             } catch (error) {
-                console.error('❌ Failed to load from backend:', error);
-                console.log('🔄 Falling back to local storage');
+                console.error('❌ Backend load failed, using local storage:', error);
                 loadGameDataFromLocalStorage();
             }
         }
 
         async function saveGameDataToBackend() {
-            if (!gameState.telegramUserId) {
+            if (!user || !usingBackend) {
                 saveGameDataToLocalStorage();
                 return;
             }
 
             try {
-                console.log('💾 Saving data to backend for user:', gameState.telegramUserId);
-                const response = await fetch(`${API_BASE_URL}/saveProgress`, {
+                const saveData = {
+                    telegramId: user.id,
+                    username: user.first_name || 'Anonymous',
+                    gameState: gameState
+                };
+
+                const response = await fetch(API_ENDPOINTS.saveProgress, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        telegramId: gameState.telegramUserId,
-                        username: gameState.username,
-                        gameState: gameState
-                    })
+                    body: JSON.stringify(saveData)
                 });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('✅ Game data saved to backend:', result);
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    console.log('✅ Game data saved to backend');
                 } else {
-                    throw new Error('Failed to save to backend');
+                    console.warn('⚠️ Backend save failed, using local storage:', result.error);
+                    saveGameDataToLocalStorage();
                 }
             } catch (error) {
-                console.error('❌ Failed to save to backend:', error);
+                console.error('❌ Backend save failed, using local storage:', error);
                 saveGameDataToLocalStorage();
             }
         }
 
-        async function loadLeaderboardFromBackend() {
-            try {
-                const telegramId = gameState.telegramUserId || '';
-                console.log('📊 Loading leaderboard from backend...');
-                const response = await fetch(`${API_BASE_URL}/leaderboard?telegramId=${telegramId}&limit=10`);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('✅ Leaderboard data:', data);
-                    return data;
-                } else {
-                    throw new Error('Failed to load leaderboard');
-                }
-            } catch (error) {
-                console.error('❌ Failed to load leaderboard:', error);
-                return null;
-            }
-        }
-
-        async function saveWalletToBackend(walletAddress) {
-            if (!gameState.telegramUserId) return;
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/saveWallet`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        telegram_id: gameState.telegramUserId,
-                        wallet_address: walletAddress
-                    })
-                });
-
-                if (response.ok) {
-                    console.log('✅ Wallet saved to backend');
-                }
-            } catch (error) {
-                console.error('❌ Failed to save wallet:', error);
-            }
-        }
-
-        // Local storage fallback
         function loadGameDataFromLocalStorage() {
             try {
                 const saved = localStorage.getItem('cxOdysseySave');
                 if (saved) {
                     const data = JSON.parse(saved);
-                    // Preserve current GP when loading from local storage
-                    const currentGP = gameState.gp;
                     gameState = { ...gameState, ...data };
-                    gameState.gp = currentGP;
+                    
+                    // Regenerate energy based on time passed
+                    if (gameState.energyLastRegen) {
+                        const timePassed = Date.now() - gameState.energyLastRegen;
+                        const energyToAdd = Math.floor(timePassed / 30000); // 1 energy per 30 seconds
+                        gameState.energy = Math.min(gameState.maxEnergy, gameState.energy + energyToAdd);
+                    }
+                    
                     console.log('💾 Game data loaded from local storage');
                 }
             } catch (error) {
@@ -1473,9 +1424,25 @@
             try {
                 gameState.energyLastRegen = Date.now();
                 localStorage.setItem('cxOdysseySave', JSON.stringify(gameState));
-                console.log('💾 Game data saved to local storage');
             } catch (error) {
                 console.log('⚠️ localStorage save failed');
+            }
+        }
+
+        // Unified load/save functions
+        async function loadGameData() {
+            if (usingBackend) {
+                await loadGameDataFromBackend();
+            } else {
+                loadGameDataFromLocalStorage();
+            }
+        }
+
+        async function saveGameData() {
+            if (usingBackend) {
+                await saveGameDataToBackend();
+            } else {
+                saveGameDataToLocalStorage();
             }
         }
 
@@ -1498,10 +1465,6 @@
             loadLeaderboard();
             showScreen('galaxyScreen');
             showNotification(`🚀 Welcome to CX Odyssey${user ? ', ' + user.first_name : ''}!`);
-            
-            // Start background processes
-            startEnergyRegeneration();
-            startAutoSave();
         }
 
         // Daily reset system
@@ -1516,7 +1479,6 @@
                 gameState.dailyTasks.login = true;
                 gameState.gp += 25;
                 showNotification('🎁 Daily login reward: +25 GP!');
-                saveGameData();
             }
             updateTaskUI();
         }
@@ -1615,7 +1577,7 @@
             try {
                 if (typeof TonConnectSDK !== 'undefined') {
                     connector = new TonConnectSDK.TonConnect({
-                        manifestUrl: 'https://muntasi179.github.io/cx-odyssey/tonconnect-manifest.json'
+                        manifestUrl: window.location.origin + '/tonconnect-manifest.json'
                     });
                     
                     connector.onStatusChange(wallet => {
@@ -1623,7 +1585,6 @@
                             document.getElementById('connectWalletBtn').style.display = 'none';
                             document.getElementById('walletInfo').style.display = 'block';
                             document.getElementById('connectedAddress').textContent = shortenAddress(wallet.account.address);
-                            saveWalletToBackend(wallet.account.address);
                         } else {
                             document.getElementById('connectWalletBtn').style.display = 'block';
                             document.getElementById('walletInfo').style.display = 'none';
@@ -1729,7 +1690,7 @@
         function getPlanetMultiplier(planetName) {
             const multipliers = {
                 'Pyrion': 1.2, 'Aqueos': 1.0, 'Voidex': 1.6,
-                'Verdant': 1.1, 'Aurelia': 1.8, 'Crimson': 1.4
+                'Chloros': 1.1, 'Aurelia': 1.8, 'Crimson': 1.4
             };
             return multipliers[planetName] || 1.0;
         }
@@ -2062,60 +2023,46 @@
             return address.substring(0, 6) + '...' + address.substring(address.length - 4);
         }
 
-        // Leaderboard system - FIXED to use real backend data
-        async function loadLeaderboard() {
-            try {
-                const backendData = await loadLeaderboardFromBackend();
-                
-                if (backendData && backendData.topPlayers && backendData.topPlayers.length > 0) {
-                    // Use REAL backend data
-                    console.log('📊 Using real leaderboard data from backend');
-                    displayLeaderboard(backendData.topPlayers);
-                    
-                    const playerRank = backendData.userRank || 999;
-                    document.getElementById('userRank').textContent = playerRank <= 1000 ? playerRank : '999+';
-                    document.getElementById('profileRank').textContent = playerRank <= 1000 ? playerRank : '999+';
-                } else {
-                    // Fallback to showing only current user if no backend data
-                    console.log('📊 No backend data, showing current user only');
-                    const currentUserEntry = {
-                        username: gameState.username,
-                        gp: gameState.gp,
-                        isPlayer: true
-                    };
-                    
-                    displayLeaderboard([currentUserEntry]);
-                    
-                    document.getElementById('userRank').textContent = '1';
-                    document.getElementById('profileRank').textContent = '1';
-                }
-            } catch (error) {
-                console.error('Error loading leaderboard:', error);
-                // Show current user as fallback
-                const currentUserEntry = {
-                    username: gameState.username,
+        // Leaderboard system
+        function loadLeaderboard() {
+            const baseLeaders = [
+                { username: 'GalaxyMaster', baseGp: 2500 },
+                { username: 'StarHunter', baseGp: 1890 },
+                { username: 'CosmicRider', baseGp: 1450 },
+                { username: 'SpaceMiner', baseGp: 1200 },
+                { username: 'AsteroidKing', baseGp: 980 },
+                { username: 'QuantumExplorer', baseGp: 820 },
+                { username: 'NebulaCrusher', baseGp: 650 },
+                { username: 'VoidWalker', baseGp: 540 },
+                { username: 'StarDust', baseGp: 420 },
+                { username: 'CosmicMiner', baseGp: 350 }
+            ];
+
+            const currentLeaders = baseLeaders.map(leader => ({
+                ...leader,
+                gp: leader.baseGp + Math.floor(Math.random() * 200)
+            }));
+
+            if (gameState.gp > 100) {
+                const playerEntry = {
+                    username: user ? user.first_name : 'You',
                     gp: gameState.gp,
                     isPlayer: true
                 };
-                
-                displayLeaderboard([currentUserEntry]);
-                document.getElementById('userRank').textContent = '1';
-                document.getElementById('profileRank').textContent = '1';
+                currentLeaders.push(playerEntry);
+                currentLeaders.sort((a, b) => b.gp - a.gp);
             }
+
+            displayLeaderboard(currentLeaders.slice(0, 10));
+            
+            const playerRank = Math.max(1, currentLeaders.findIndex(p => p.isPlayer) + 1);
+            document.getElementById('userRank').textContent = playerRank <= 1000 ? playerRank : '999+';
+            document.getElementById('profileRank').textContent = playerRank <= 1000 ? playerRank : '999+';
         }
 
         function displayLeaderboard(leaders) {
             const entriesContainer = document.getElementById('leaderboardEntries');
             entriesContainer.innerHTML = '';
-            
-            if (leaders.length === 0) {
-                entriesContainer.innerHTML = `
-                    <div style="text-align: center; padding: 20px; color: rgba(255,255,255,0.7);">
-                        No players yet. Be the first to top the leaderboard!
-                    </div>
-                `;
-                return;
-            }
             
             leaders.forEach((entry, index) => {
                 const entryEl = document.createElement('div');
@@ -2127,14 +2074,14 @@
                 }
                 
                 let rankIcon = '';
-                if (index === 0) rankIcon = '<span style="color: #ffd700; font-size: 16px;">👑</span> ';
-                else if (index === 1) rankIcon = '<span style="color: #ff6b35; font-size: 14px;">🥈</span> ';
-                else if (index === 2) rankIcon = '<span style="color: #7209b7; font-size: 14px;">🥉</span> ';
-                else rankIcon = `<span style="color: #888; font-size: 11px;">${index + 1}.</span> `;
+                if (index === 0) rankIcon = '<span style="color: #ffd700; font-size: 18px;">👑</span> ';
+                else if (index === 1) rankIcon = '<span style="color: #ff6b35; font-size: 16px;">🥈</span> ';
+                else if (index === 2) rankIcon = '<span style="color: #7209b7; font-size: 16px;">🥉</span> ';
+                else rankIcon = `<span style="color: #888; font-size: 12px;">${index + 1}.</span> `;
                 
                 entryEl.innerHTML = `
-                    <div style="font-size: 12px;">${rankIcon}${entry.username}${entry.isPlayer ? ' (You)' : ''}</div>
-                    <div style="color: var(--primary-gold); font-weight: 700; font-size: 11px;">${entry.gp.toLocaleString()} GP</div>
+                    <div style="font-size: 13px;">${rankIcon}${entry.username}${entry.isPlayer ? ' (You)' : ''}</div>
+                    <div style="color: var(--primary-gold); font-weight: 700; font-size: 12px;">${entry.gp.toLocaleString()} GP</div>
                 `;
                 
                 entriesContainer.appendChild(entryEl);
@@ -2179,19 +2126,6 @@
                     saveGameData();
                 }
             }, 30000); // 1 energy every 30 seconds
-        }
-
-        // Auto-save function
-        function startAutoSave() {
-            setInterval(() => {
-                saveGameData();
-            }, 30000); // Auto-save every 30 seconds
-        }
-
-        // Combined save function
-        function saveGameData() {
-            saveGameDataToBackend();
-            saveGameDataToLocalStorage();
         }
 
         // Task tab switching
@@ -2269,14 +2203,16 @@
                 if (el) el.textContent = gameState.shards.toLocaleString();
             });
             
-            const gpElements = document.querySelectorAll('#gp, #gpBoss, #gpShop, #gpMinigames');
+            const gpElements = document.querySelectorAll('#gp, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpProfile');
             gpElements.forEach(el => {
                 if (el) el.textContent = gameState.gp.toLocaleString();
             });
 
-            // Update balance displays in pinned sections - FIXED
-            document.getElementById('taskBalanceDisplay').textContent = gameState.gp.toLocaleString();
-            document.getElementById('profileBalanceDisplay').textContent = gameState.gp.toLocaleString();
+            // Update balance displays in pinned sections
+            const balanceElements = document.querySelectorAll('#taskBalanceDisplay, #profileBalanceDisplay');
+            balanceElements.forEach(el => {
+                if (el) el.textContent = gameState.gp.toLocaleString();
+            });
 
             const ticketElements = document.querySelectorAll('#gameTickets');
             ticketElements.forEach(el => {
@@ -2325,6 +2261,12 @@
             if (totalReferralsEl) totalReferralsEl.textContent = gameState.totalReferrals;
             if (referralEarningsEl) referralEarningsEl.textContent = gameState.referralEarnings;
 
+            // Update wallet status mini display
+            const walletStatusMini = document.getElementById('walletStatusMini');
+            if (walletStatusMini) {
+                walletStatusMini.textContent = gameState.walletConnected ? 'Connected' : 'Not Connected';
+            }
+
             updateShopCosts();
             updateTaskUI();
         }
@@ -2350,8 +2292,19 @@
             }
         }
 
+        // Auto-save
+        setInterval(() => {
+            saveGameData();
+        }, 30000);
+
         // Initialize
         document.addEventListener('DOMContentLoaded', initGame);
+        window.addEventListener('load', () => {
+            if (!gameState.energy) {
+                initGame();
+            }
+            startEnergyRegeneration();
+        });
 
         // Cleanup
         window.addEventListener('beforeunload', () => {
