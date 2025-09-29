@@ -286,6 +286,18 @@ class GameInitializer {
 
         // Initialize screen-specific data
         this.loadInitialScreenData();
+        
+        // Force render content for all screens on startup
+        setTimeout(() => {
+            if (window.TasksManager) {
+                console.log('Rendering Tasks content...');
+                window.TasksManager.renderContent();
+            }
+            if (window.ProfileManager) {
+                console.log('Rendering Profile content...');
+                window.ProfileManager.renderContent();
+            }
+        }, 100);
     }
 
     loadInitialScreenData() {
