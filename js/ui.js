@@ -85,8 +85,10 @@ class UIController {
         // Update UI for current screen
         this.updateUIElements(window.gameState?.get());
         
-        // Load screen-specific data
-        this.loadScreenData(screenId);
+        // Load screen-specific data with delay to ensure containers are ready
+        setTimeout(() => {
+            this.loadScreenData(screenId);
+        }, 150);
     }
 
     // Update navigation bar
@@ -113,16 +115,24 @@ class UIController {
 
     // Load screen-specific data
     loadScreenData(screenId) {
+        console.log('Loading screen data for:', screenId);
+        
         switch (screenId) {
             case 'profileScreen':
                 if (window.ProfileManager) {
+                    console.log('Rendering profile content...');
                     window.ProfileManager.renderContent();
+                } else {
+                    console.warn('ProfileManager not available');
                 }
                 this.loadLeaderboard();
                 break;
             case 'tasksScreen':
                 if (window.TasksManager) {
+                    console.log('Rendering tasks content...');
                     window.TasksManager.renderContent();
+                } else {
+                    console.warn('TasksManager not available');
                 }
                 break;
         }
