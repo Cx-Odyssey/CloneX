@@ -4,11 +4,11 @@ class UIController {
         this.currentScreen = 'galaxyScreen';
         this.planetImages = {
             'pyrion': 'https://muntasi179.github.io/cx-odyssey/assets/bgpyrion.png',
-            'aqueos': 'https://muntasi179.github.io/cx-odyssey/assets/bgaqueous.png',
-            'voidex': 'https://muntasi179.github.io/cx-odyssey/assets/bgvoidex.png',
-            'chloros': 'https://muntasi179.github.io/cx-odyssey/assets/bgchloros.png',
-            'aurelia': 'https://muntasi179.github.io/cx-odyssey/assets/bgaurelia.png',
-            'crimson': 'https://muntasi179.github.io/cx-odyssey/assets/bgcrimson.png'
+            'aqueos': 'https://muntasi179.github.io/cx-odyssey/assets/aqueos.png',
+            'voidex': 'https://muntasi179.github.io/cx-odyssey/assets/voidex.png',
+            'chloros': 'https://muntasi179.github.io/cx-odyssey/assets/chloros.png',
+            'aurelia': 'https://muntasi179.github.io/cx-odyssey/assets/aurelia.png',
+            'crimson': 'https://muntasi179.github.io/cx-odyssey/assets/crimson.png'
         };
         
         this.init();
@@ -362,22 +362,57 @@ class UIController {
         if (!window.backendManager) return;
 
         try {
+            // Show loading state
+            const entriesContainer = document.getElementById('leaderboardEntries');
+            if (entriesContainer) {
+                entriesContainer.innerHTML = `
+                    <div class="task-item" style="justify-content: center;">
+                        <div style="color: var(--primary-gold); font-size: 14px;">Loading leaderboard...</div>
+                    </div>
+                `;
+            }
+
             const result = await window.backendManager.loadLeaderboard();
-            if (result.success && result.data) {
+            
+            if (result.success && result.data && result.data.topPlayers) {
                 this.displayLeaderboard(result.data.topPlayers);
                 
-                // Update user rank
+                // Update user rank with backend data
                 const userRankEls = document.querySelectorAll('#userRank, #profileRank');
                 userRankEls.forEach(el => {
                     if (el) {
                         el.dataset.updating = 'true';
-                        el.textContent = result.data.userRank <= 1000 ? result.data.userRank : '999+';
+                        const rank = result.data.userRank || 999;
+                        el.textContent = rank <= 1000 ? rank : '999+';
                         setTimeout(() => delete el.dataset.updating, 100);
                     }
                 });
+                
+                console.log('✅ Leaderboard loaded successfully from backend');
+            } else {
+                // Show error message if backend fails
+                if (entriesContainer) {
+                    entriesContainer.innerHTML = `
+                        <div class="task-item" style="flex-direction: column; text-align: center; padding: 30px;">
+                            <div style="font-size: 40px; margin-bottom: 10px;">📊</div>
+                            <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px; margin-bottom: 8px;">Leaderboard temporarily unavailable</div>
+                            <div style="color: rgba(255, 255, 255, 0.6); font-size: 12px;">Check back soon!</div>
+                        </div>
+                    `;
+                }
+                console.warn('⚠️ Leaderboard data not available');
             }
         } catch (error) {
             console.error('Failed to load leaderboard:', error);
+            const entriesContainer = document.getElementById('leaderboardEntries');
+            if (entriesContainer) {
+                entriesContainer.innerHTML = `
+                    <div class="task-item" style="flex-direction: column; text-align: center; padding: 30px;">
+                        <div style="font-size: 40px; margin-bottom: 10px;">❌</div>
+                        <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Failed to load leaderboard</div>
+                    </div>
+                `;
+            }
         }
     }
 
@@ -447,6 +482,4 @@ function showModal(modalId) {
 
 function closeModal(modalId) {
     window.uiController.closeModal(modalId);
-
 }
-
