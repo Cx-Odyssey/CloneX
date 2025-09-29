@@ -206,29 +206,87 @@ class ProfileManager {
     getReferralHTML() {
         return `
             <div id="referralContent">
-                <div class="referral-section">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <h3 style="color: var(--success-green); font-size: 20px; margin-bottom: 8px;">Referral Program</h3>
-                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Invite friends and earn 25 GP per referral</p>
+                <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(0, 255, 136, 0.3);">
+                    
+                    <!-- Referral Stats Cards -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
+                        <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0, 255, 136, 0.2);">
+                            <div style="font-size: 32px; font-weight: bold; color: var(--success-green);" id="totalReferralsDisplay">0</div>
+                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); margin-top: 5px;">Friends</div>
+                        </div>
+                        <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0, 255, 136, 0.2);">
+                            <div style="font-size: 32px; font-weight: bold; color: var(--primary-gold);" id="referralEarningsDisplay">0</div>
+                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); margin-top: 5px;">GP Earned</div>
+                        </div>
+                    </div>
+
+                    <!-- Invite Section -->
+                    <div style="text-align: center; margin: 25px 0;">
+                        <h3 style="color: var(--success-green); font-size: 22px; margin-bottom: 10px;">Invite Friends</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px; line-height: 1.5;">Share CX Odyssey with friends<br>and earn <strong style="color: var(--primary-gold);">25 GP</strong> for each referral!</p>
                     </div>
                     
-                    <div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 15px; margin: 15px 0; text-align: center;">
-                        <div style="color: var(--success-green); font-size: 12px; font-weight: 600; margin-bottom: 8px;">Your Referral Code</div>
-                        <div style="font-family: monospace; font-weight: bold; font-size: 18px; color: white;" id="referralCodeDisplay">Loading...</div>
-                    </div>
-                    
-                    <button style="width: 100%; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 15px; border-radius: 15px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 20px;" onclick="shareReferral()">
-                        📤 Share Referral Link
+                    <!-- Large Invite Button -->
+                    <button style="width: 100%; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);" onclick="shareReferral()">
+                        <span style="font-size: 20px;">📤</span>
+                        <span>Invite Friends</span>
                     </button>
 
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 24px; font-weight: bold; color: white;" id="totalReferralsDisplay">0</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">Total Referrals</div>
+                    <!-- Referral Code Section -->
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 18px; border-radius: 15px; margin: 15px 0; border: 1px solid rgba(0, 255, 136, 0.2);">
+                        <div style="color: rgba(255, 255, 255, 0.7); font-size: 12px; font-weight: 600; margin-bottom: 10px; text-align: center;">Your Referral Code</div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.4); padding: 12px 15px; border-radius: 10px;">
+                            <div style="font-family: 'Courier New', monospace; font-weight: bold; font-size: 18px; color: var(--success-green);" id="referralCodeDisplay">Loading...</div>
+                            <button style="background: var(--success-green); color: #000; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;" onclick="copyReferralCode()">Copy</button>
                         </div>
-                        <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 24px; font-weight: bold; color: white;" id="referralEarningsDisplay">0</div>
-                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8);">GP Earned</div>
+                    </div>
+
+                    <!-- Referral Tasks -->
+                    <div style="margin-top: 25px;">
+                        <div style="color: white; font-size: 16px; font-weight: 600; margin-bottom: 12px; padding-left: 5px;">📋 Referral Rewards</div>
+                        
+                        <div class="task-item" style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(0, 255, 136, 0.2); margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--success-green), #00CC70); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">👥</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 14px; font-weight: 600; color: white;">Invite 1 Friend</div>
+                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Reward: 25 GP</div>
+                                </div>
+                            </div>
+                            <div style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">+25 GP</div>
+                        </div>
+
+                        <div class="task-item" style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(0, 255, 136, 0.2); margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🎁</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 14px; font-weight: 600; color: white;">Invite 5 Friends</div>
+                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Bonus: 200 GP</div>
+                                </div>
+                            </div>
+                            <div style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">+200 GP</div>
+                        </div>
+
+                        <div class="task-item" style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(0, 255, 136, 0.2);">
+                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-purple), #9C27B0); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">👑</div>
+                                <div style="flex: 1;">
+                                    <div style="font-size: 14px; font-weight: 600; color: white;">Invite 10 Friends</div>
+                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Premium Bonus: 500 GP</div>
+                                </div>
+                            </div>
+                            <div style="background: var(--accent-purple); color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">+500 GP</div>
+                        </div>
+                    </div>
+
+                    <!-- How it Works -->
+                    <div style="margin-top: 20px; background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px; border: 1px solid rgba(0, 255, 136, 0.1);">
+                        <div style="color: var(--success-green); font-size: 13px; font-weight: 600; margin-bottom: 10px;">💡 How it Works</div>
+                        <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
+                            1. Share your referral link or code<br>
+                            2. Your friend joins using your link<br>
+                            3. You both earn 25 GP instantly!<br>
+                            4. Complete tasks for bonus rewards
                         </div>
                     </div>
                 </div>
@@ -482,8 +540,9 @@ function shareReferral() {
     const gameState = window.gameState?.get();
     if (!gameState) return;
 
-    const referralText = `🚀 Join me in CX Odyssey! Use my referral code: ${gameState.referralCode} and get bonus rewards!`;
-    const shareUrl = `https://t.me/share/url?url=https://t.me/Cx_odyssey_bot?start=${gameState.referralCode}&text=${encodeURIComponent(referralText)}`;
+    const referralText = `🚀 Join me in CX Odyssey and explore the galaxy! Use my referral code: ${gameState.referralCode} to get bonus rewards!`;
+    const botUsername = 'Cx_odyssey_bot'; // Replace with your actual bot username
+    const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=${gameState.referralCode}&text=${encodeURIComponent(referralText)}`;
     
     const gameInit = window.gameInitializer;
     if (gameInit?.tg && gameInit.tg.openTelegramLink) {
@@ -492,7 +551,7 @@ function shareReferral() {
         navigator.share({
             title: 'CX Odyssey',
             text: referralText,
-            url: `https://t.me/Cx_odyssey_bot?start=${gameState.referralCode}`
+            url: `https://t.me/${botUsername}?start=${gameState.referralCode}`
         }).catch(() => {
             window.open(shareUrl, '_blank');
         });
@@ -501,8 +560,54 @@ function shareReferral() {
     }
     
     if (window.uiController) {
-        window.uiController.showNotification('📤 Referral link shared! Invite friends to earn rewards!');
+        window.uiController.showNotification('📤 Share with friends to earn rewards!');
     }
+}
+
+function copyReferralCode() {
+    const gameState = window.gameState?.get();
+    if (!gameState) return;
+
+    const code = gameState.referralCode;
+    
+    // Try modern clipboard API first
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(code).then(() => {
+            if (window.uiController) {
+                window.uiController.showNotification('✅ Referral code copied!');
+            }
+        }).catch(() => {
+            // Fallback to old method
+            fallbackCopyTextToClipboard(code);
+        });
+    } else {
+        fallbackCopyTextToClipboard(code);
+    }
+}
+
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        const successful = document.execCommand('copy');
+        if (successful && window.uiController) {
+            window.uiController.showNotification('✅ Referral code copied!');
+        }
+    } catch (err) {
+        console.error('Fallback: Could not copy text', err);
+        if (window.uiController) {
+            window.uiController.showNotification('❌ Copy failed. Code: ' + text);
+        }
+    }
+    
+    document.body.removeChild(textArea);
 }
 
 // Global instances
