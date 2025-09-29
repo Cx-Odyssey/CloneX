@@ -6,7 +6,12 @@ class TasksManager {
 
     renderContent() {
         const container = document.getElementById('taskContent');
-        if (!container) return;
+        if (!container) {
+            console.error('taskContent container not found!');
+            return;
+        }
+
+        console.log('Rendering tasks, current tab:', this.currentTab);
 
         if (this.currentTab === 'daily') {
             container.innerHTML = this.getDailyTasksHTML();
@@ -15,6 +20,7 @@ class TasksManager {
         }
 
         this.updateTaskStates();
+        console.log('Tasks rendered successfully');
     }
 
     getDailyTasksHTML() {
@@ -185,7 +191,12 @@ class ProfileManager {
 
     renderContent() {
         const container = document.getElementById('profileContent');
-        if (!container) return;
+        if (!container) {
+            console.error('profileContent container not found!');
+            return;
+        }
+
+        console.log('Rendering profile, current tab:', this.currentTab);
 
         switch (this.currentTab) {
             case 'referral':
@@ -201,6 +212,7 @@ class ProfileManager {
         }
 
         this.updateProfileData();
+        console.log('Profile rendered successfully');
     }
 
     getReferralHTML() {
