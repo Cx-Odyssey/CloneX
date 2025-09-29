@@ -239,51 +239,71 @@ class BackendManager {
     async initialize(user = null) {
         this.user = user;
         
+        // Force backend mode for Telegram users
         if (user && user.id) {
-            console.log('🔍 Checking backend availability...');
-            this.backendAvailable = await this.api.checkHealth();
-            this.usingBackend = this.backendAvailable;
+            console.log('🔍 Telegram user detected, forcing backend mode');
+            this.usingBackend = true;
+            this.backendAvailable = true;
             
-            if (this.backendAvailable) {
-                console.log('✅ Backend is available');
-            } else {
-                console.log('⚠️ Backend unavailable, using localStorage');
+            // Test backend connection
+            try {
+                const testResult = await this.api.checkHealth();
+                if (!testResult) {
+                    console.warn('⚠️ Backend health check failed, but continuing...');
+                }
+            } catch (error) {
+                console.warn('⚠️ Backend test failed:', error);
             }
+            
+            console.log('✅ Backend mode enabled for Telegram');
         } else {
-            console.log('📱 Running in browser mode, using localStorage');
+            console.log('📱 Browser mode - using localStorage only');
             this.usingBackend = false;
         }
     }
 
     async loadProgress() {
         if (this.usingBackend && this.user?.id) {
+            console.log('📡 Loading from backend for Telegram user:', this.user.id);
             const result = await this.api.loadProgress(this.user.id);
             if (result.success) {
+                console.log('✅ Backend load successful');
                 return result;
             } else {
-                console.warn('⚠️ Backend load failed, falling back to localStorage');
-                return this.localStorage.loadProgress();
+                console.error('❌ Backend load failed:', result.error);
+                // For Telegram users, don't fallback to localStorage
+                // Return empty state instead
+                return {
+                    success: true,
+                    data: null,
+                    isNewPlayer: true
+                };
             }
         } else {
+            // Browser mode - use localStorage
+            console.log('💾 Loading from localStorage (browser mode)');
             return this.localStorage.loadProgress();
         }
     }
 
     async saveProgress(gameState) {
-        // Always save to localStorage first
-        const localResult = this.localStorage.saveProgress(gameState);
-        
         if (this.usingBackend && this.user?.id) {
+            console.log('📡 Saving to backend for Telegram user:', this.user.id);
             const username = this.user.first_name || 'Anonymous';
             const backendResult = await this.api.saveProgress(this.user.id, username, gameState);
             
-            if (!backendResult.success) {
-                console.warn('⚠️ Backend save failed, but localStorage save succeeded');
+            if (backendResult.success) {
+                console.log('✅ Backend save successful');
+                return backendResult;
+            } else {
+                console.error('❌ Backend save failed:', backendResult.error);
+                // Don't save to localStorage for Telegram users
+                return backendResult;
             }
-            
-            return backendResult.success ? backendResult : localResult;
         } else {
-            return localResult;
+            // Browser mode - use localStorage
+            console.log('💾 Saving to localStorage (browser mode)');
+            return this.localStorage.saveProgress(gameState);
         }
     }
 
