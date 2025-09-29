@@ -272,6 +272,11 @@ class GameInitializer {
             }, 500);
         }
 
+        // Check for referral code
+        if (window.checkReferralCode) {
+            window.checkReferralCode();
+        }
+
         // Show welcome notification
         const userName = this.user?.first_name || 'Explorer';
         if (window.uiController) {
