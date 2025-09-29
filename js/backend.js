@@ -134,6 +134,25 @@ class BackendAPI {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    // Process referral
+    async processReferral(newUserTelegramId, newUserUsername, referrerCode) {
+        if (!newUserTelegramId || !referrerCode) {
+            console.error('Missing referral data');
+            return { success: false, error: 'Missing required data' };
+        }
+
+        const payload = {
+            newUserTelegramId: newUserTelegramId,
+            newUserUsername: newUserUsername || 'Anonymous',
+            referrerCode: referrerCode
+        };
+
+        return await this.fetchWithRetry(`${this.baseURL}/processReferral`, {
+            method: 'POST',
+            body: JSON.stringify(payload)
+        });
+    }
+
     // Check if backend is available
     async checkHealth() {
         try {
