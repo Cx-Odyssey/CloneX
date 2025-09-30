@@ -4,6 +4,7 @@ class GameInitializer {
         this.tg = null;
         this.user = null;
         this.connector = null;
+        this.referralCode = null;
         this.loadingSteps = [
             'Generating starfield...',
             'Connecting to Telegram...',
@@ -37,12 +38,15 @@ class GameInitializer {
             await this.loadGameData();
             await this.delay(500);
 
-            // Step 5: Initialize systems
+            // Step 5: Process referral if present
+            await this.processReferral();
+
+            // Step 6: Initialize systems
             this.updateLoadingProgress(80, this.loadingSteps[4]);
             this.initializeGameSystems();
             await this.delay(300);
 
-            // Step 6: Complete initialization
+            // Step 7: Complete initialization
             this.updateLoadingProgress(100, this.loadingSteps[5]);
             await this.delay(500);
 
@@ -71,6 +75,13 @@ class GameInitializer {
                 this.tg.ready();
                 
                 this.user = this.tg.initDataUnsafe?.user;
+                
+                // Extract referral code from start parameter
+                const startParam = this.tg.initDataUnsafe?.start_param;
+                if (startParam) {
+                    this.referralCode = startParam;
+                    console.log('📎 Referral code detected:', this.referralCode);
+                }
                 
                 if (this.user) {
                     console.log('👤 User logged in:', this.user.first_name);
@@ -137,6 +148,59 @@ class GameInitializer {
             if (!loaded) {
                 console.log('📊 Starting with default game state');
             }
+        }
+    }
+
+    async processReferral() {
+        if (!this.referralCode || !this.user) {
+            console.log('ℹ️ No referral to process');
+            return;
+        }
+
+        try {
+            console.log('🎁 Processing referral from code:', this.referralCode);
+            
+            const gameState = window.gameState?.get();
+            
+            // Check if user is new or hasn't processed this referral before
+            if (gameState && gameState.gp === 0 && gameState.referralCode !== this.referralCode) {
+                
+                // Call backend to process referral
+                const response = await fetch('https://cx-odyssey-backend.vercel.app/api/processReferral', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        newUserTelegramId: this.user.id,
+                        newUserUsername: this.user.first_name || 'Anonymous',
+                        referrerCode: this.referralCode
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Award bonus to new user
+                    window.gameState?.update({
+                        gp: 25 // New user gets 25 GP
+                    });
+                    
+                    console.log('✅ Referral processed successfully');
+                    
+                    // Show welcome notification with referral bonus
+                    setTimeout(() => {
+                        if (window.uiController) {
+                            window.uiController.showNotification('🎁 Welcome! You earned 25 GP from referral!');
+                        }
+                    }, 2000);
+                } else {
+                    console.log('ℹ️ Referral not processed:', result.message);
+                }
+            }
+        } catch (error) {
+            console.warn('⚠️ Failed to process referral:', error);
+            // Don't block game initialization if referral fails
         }
     }
 
@@ -252,12 +316,10 @@ class GameInitializer {
     setupErrorHandling() {
         window.addEventListener('error', (event) => {
             console.error('Game error:', event.error);
-            // Could implement error reporting here
         });
 
         window.addEventListener('unhandledrejection', (event) => {
             console.error('Unhandled promise rejection:', event.reason);
-            // Could implement error reporting here
         });
     }
 
