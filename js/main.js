@@ -272,11 +272,6 @@ class GameInitializer {
             }, 500);
         }
 
-        // Check for referral code
-        if (window.checkReferralCode) {
-            window.checkReferralCode();
-        }
-
         // Show welcome notification
         const userName = this.user?.first_name || 'Explorer';
         if (window.uiController) {
@@ -286,18 +281,6 @@ class GameInitializer {
 
         // Initialize screen-specific data
         this.loadInitialScreenData();
-        
-        // Force render content for all screens on startup
-        setTimeout(() => {
-            if (window.TasksManager) {
-                console.log('Rendering Tasks content...');
-                window.TasksManager.renderContent();
-            }
-            if (window.ProfileManager) {
-                console.log('Rendering Profile content...');
-                window.ProfileManager.renderContent();
-            }
-        }, 100);
     }
 
     loadInitialScreenData() {
