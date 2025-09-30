@@ -4,11 +4,11 @@ class UIController {
         this.currentScreen = 'galaxyScreen';
         this.planetImages = {
             'pyrion': 'https://muntasi179.github.io/cx-odyssey/assets/bgpyrion.png',
-            'aqueos': 'https://muntasi179.github.io/cx-odyssey/assets/aqueos.png',
-            'voidex': 'https://muntasi179.github.io/cx-odyssey/assets/voidex.png',
-            'chloros': 'https://muntasi179.github.io/cx-odyssey/assets/chloros.png',
-            'aurelia': 'https://muntasi179.github.io/cx-odyssey/assets/aurelia.png',
-            'crimson': 'https://muntasi179.github.io/cx-odyssey/assets/crimson.png'
+            'aqueos': 'https://muntasi179.github.io/cx-odyssey/assets/bgaqueous.png',
+            'voidex': 'https://muntasi179.github.io/cx-odyssey/assets/bgvoidex.png',
+            'chloros': 'https://muntasi179.github.io/cx-odyssey/assets/bgchloros.png',
+            'aurelia': 'https://muntasi179.github.io/cx-odyssey/assets/bgaurelia.png',
+            'crimson': 'https://muntasi179.github.io/cx-odyssey/assets/bgcrimson.png'
         };
         
         this.init();
@@ -85,10 +85,8 @@ class UIController {
         // Update UI for current screen
         this.updateUIElements(window.gameState?.get());
         
-        // Load screen-specific data with delay to ensure containers are ready
-        setTimeout(() => {
-            this.loadScreenData(screenId);
-        }, 150);
+        // Load screen-specific data
+        this.loadScreenData(screenId);
     }
 
     // Update navigation bar
@@ -115,25 +113,12 @@ class UIController {
 
     // Load screen-specific data
     loadScreenData(screenId) {
-        console.log('Loading screen data for:', screenId);
-        
         switch (screenId) {
             case 'profileScreen':
-                if (window.ProfileManager) {
-                    console.log('Rendering profile content...');
-                    window.ProfileManager.renderContent();
-                } else {
-                    console.warn('ProfileManager not available');
-                }
                 this.loadLeaderboard();
                 break;
             case 'tasksScreen':
-                if (window.TasksManager) {
-                    console.log('Rendering tasks content...');
-                    window.TasksManager.renderContent();
-                } else {
-                    console.warn('TasksManager not available');
-                }
+                this.renderTaskContent();
                 break;
         }
     }
