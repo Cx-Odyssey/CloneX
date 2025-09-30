@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     // Find referrer by code
     const { data: referrer, error: referrerError } = await supabase
       .from('players')
-      .select('telegram_id, referral_code, total_referrals, referral_earnings')
+      .select('telegram_id, referral_code, total_referrals, referral_earnings, gp')
       .eq('referral_code', referrerCode)
       .single();
 
@@ -53,26 +53,30 @@ export default async function handler(req, res) {
       });
     }
 
-    // Award bonus to referrer
+    // Calculate bonuses
     const referrerBonus = 25;
     const newTotalReferrals = (referrer.total_referrals || 0) + 1;
     const newReferralEarnings = (referrer.referral_earnings || 0) + referrerBonus;
 
     // Calculate milestone bonuses
     const milestones = {
-      1: 25,    // First friend
-      5: 225,   // 5 friends (250 total - 25 already given)
-      10: 500,  // 10 friends (750 total)
-      25: 1250, // 25 friends (2000 total)
-      50: 3000, // 50 friends (5000 total)
-      100: 10000 // 100 friends (15000 total)
+      1: 0,      // First friend - just base 25 GP
+      3: 75,     // 3 friends - extra 75 GP (100 total)
+      5: 125,    // 5 friends - extra 125 GP (250 total)
+      10: 475,   // 10 friends - extra 475 GP (750 total)
+      25: 1225,  // 25 friends - extra 1225 GP (2000 total)
+      50: 2975,  // 50 friends - extra 2975 GP (5000 total)
+      100: 9975  // 100 friends - extra 9975 GP (15000 total)
     };
 
-    let milestoneBonus = 0;
-    if (milestones[newTotalReferrals]) {
-      milestoneBonus = milestones[newTotalReferrals];
+    let milestoneBonus = milestones[newTotalReferrals] || 0;
+    
+    if (milestoneBonus > 0) {
       console.log(`🎉 Milestone reached: ${newTotalReferrals} friends! Bonus: ${milestoneBonus} GP`);
     }
+
+    // Calculate new GP total (FIXED: proper addition instead of RPC)
+    const newGP = (referrer.gp || 0) + referrerBonus + milestoneBonus;
 
     // Update referrer's stats and GP
     const { error: updateError } = await supabase
@@ -80,7 +84,7 @@ export default async function handler(req, res) {
       .update({
         total_referrals: newTotalReferrals,
         referral_earnings: newReferralEarnings,
-        gp: supabase.rpc('increment', { x: referrerBonus + milestoneBonus }),
+        gp: newGP,
         updated_at: new Date().toISOString()
       })
       .eq('telegram_id', referrer.telegram_id);
@@ -95,6 +99,7 @@ export default async function handler(req, res) {
       telegram_id: parseInt(newUserTelegramId),
       username: newUserUsername || 'Anonymous',
       gp: 25, // Bonus for joining via referral
+      referred_by: referrerCode, // Track who referred them
       referral_code: 'CX' + Math.random().toString(36).substr(2, 8).toUpperCase(),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString()
@@ -112,6 +117,7 @@ export default async function handler(req, res) {
 
     console.log('✅ Referral processed successfully');
     console.log(`Referrer ${referrer.telegram_id} now has ${newTotalReferrals} referrals`);
+    console.log(`Referrer GP increased by ${referrerBonus + milestoneBonus} (new total: ${newGP})`);
     console.log('=== REFERRAL PROCESSING END ===');
 
     return res.status(200).json({
@@ -123,7 +129,8 @@ export default async function handler(req, res) {
       newUserBonus: 25,
       referrerStats: {
         totalReferrals: newTotalReferrals,
-        totalEarnings: newReferralEarnings
+        totalEarnings: newReferralEarnings,
+        newGP: newGP
       }
     });
 
@@ -131,7 +138,8 @@ export default async function handler(req, res) {
     console.error('Referral processing error:', error);
     return res.status(500).json({
       error: 'Server error',
-      message: error.message
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }
