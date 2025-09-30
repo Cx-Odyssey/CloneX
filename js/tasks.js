@@ -200,36 +200,72 @@ class ProfileManager {
                 break;
         }
 
-        this.updateProfileData();
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+            this.updateProfileData();
+        }, 100);
     }
 
     getReferralHTML() {
+        const gameState = window.gameState?.get();
+        const totalReferrals = gameState?.totalReferrals || 0;
+        const referralEarnings = gameState?.referralEarnings || 0;
+        
+        // Calculate next milestone
+        const milestones = [1, 3, 5, 10, 25, 50, 100];
+        const nextMilestone = milestones.find(m => m > totalReferrals) || 100;
+        const progress = totalReferrals >= 100 ? 100 : Math.min(100, (totalReferrals / nextMilestone) * 100);
+        
+        // Calculate milestone rewards
+        const getMilestoneReward = (count) => {
+            if (count === 1) return 25;
+            if (count === 3) return 100;
+            if (count === 5) return 250;
+            if (count === 10) return 750;
+            if (count === 25) return 2000;
+            if (count === 50) return 5000;
+            if (count === 100) return 15000;
+            return 0;
+        };
+        
         return `
             <div id="referralContent">
                 <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(0, 255, 136, 0.3);">
                     
+                    <!-- Progress to Next Milestone -->
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid rgba(0, 255, 136, 0.2);">
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <div style="font-size: 14px; color: rgba(255, 255, 255, 0.7); margin-bottom: 5px;">Next Milestone</div>
+                            <div style="font-size: 24px; font-weight: bold; color: var(--success-green);">${totalReferrals}/${nextMilestone} Friends</div>
+                            <div style="font-size: 12px; color: var(--primary-gold); margin-top: 5px;">+${getMilestoneReward(nextMilestone)} GP Bonus!</div>
+                        </div>
+                        <div style="width: 100%; height: 12px; background: rgba(0, 0, 0, 0.4); border-radius: 6px; overflow: hidden;">
+                            <div style="height: 100%; background: linear-gradient(90deg, var(--success-green), #00CC70); width: ${progress}%; transition: width 0.5s ease;"></div>
+                        </div>
+                    </div>
+
                     <!-- Referral Stats Cards -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
                         <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0, 255, 136, 0.2);">
-                            <div style="font-size: 32px; font-weight: bold; color: var(--success-green);" id="totalReferralsDisplay">0</div>
+                            <div style="font-size: 32px; font-weight: bold; color: var(--success-green);" id="totalReferralsDisplay">${totalReferrals}</div>
                             <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); margin-top: 5px;">Friends</div>
                         </div>
                         <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0, 255, 136, 0.2);">
-                            <div style="font-size: 32px; font-weight: bold; color: var(--primary-gold);" id="referralEarningsDisplay">0</div>
+                            <div style="font-size: 32px; font-weight: bold; color: var(--primary-gold);" id="referralEarningsDisplay">${referralEarnings}</div>
                             <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); margin-top: 5px;">GP Earned</div>
                         </div>
                     </div>
 
                     <!-- Invite Section -->
                     <div style="text-align: center; margin: 25px 0;">
-                        <h3 style="color: var(--success-green); font-size: 22px; margin-bottom: 10px;">Invite Friends</h3>
-                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px; line-height: 1.5;">Share CX Odyssey with friends<br>and earn <strong style="color: var(--primary-gold);">25 GP</strong> for each referral!</p>
+                        <h3 style="color: var(--success-green); font-size: 22px; margin-bottom: 10px;">Invite Friends & Earn</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px; line-height: 1.5;">Each friend you invite earns you both rewards!<br>Unlock <strong style="color: var(--primary-gold);">massive bonuses</strong> at milestones!</p>
                     </div>
                     
                     <!-- Large Invite Button -->
                     <button style="width: 100%; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);" onclick="shareReferral()">
                         <span style="font-size: 20px;">📤</span>
-                        <span>Invite Friends</span>
+                        <span>Invite Friends Now</span>
                     </button>
 
                     <!-- Referral Code Section -->
@@ -241,57 +277,58 @@ class ProfileManager {
                         </div>
                     </div>
 
-                    <!-- Referral Tasks -->
+                    <!-- Enhanced Milestone Rewards -->
                     <div style="margin-top: 25px;">
-                        <div style="color: white; font-size: 16px; font-weight: 600; margin-bottom: 12px; padding-left: 5px;">📋 Referral Rewards</div>
+                        <div style="color: white; font-size: 16px; font-weight: 600; margin-bottom: 12px; padding-left: 5px;">🎁 Milestone Rewards</div>
                         
-                        <div class="task-item" style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(0, 255, 136, 0.2); margin-bottom: 10px;">
-                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--success-green), #00CC70); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">👥</div>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 14px; font-weight: 600; color: white;">Invite 1 Friend</div>
-                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Reward: 25 GP</div>
-                                </div>
-                            </div>
-                            <div style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">+25 GP</div>
-                        </div>
-
-                        <div class="task-item" style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(0, 255, 136, 0.2); margin-bottom: 10px;">
-                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🎁</div>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 14px; font-weight: 600; color: white;">Invite 5 Friends</div>
-                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Bonus: 200 GP</div>
-                                </div>
-                            </div>
-                            <div style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">+200 GP</div>
-                        </div>
-
-                        <div class="task-item" style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(0, 255, 136, 0.2);">
-                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
-                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-purple), #9C27B0); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">👑</div>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 14px; font-weight: 600; color: white;">Invite 10 Friends</div>
-                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Premium Bonus: 500 GP</div>
-                                </div>
-                            </div>
-                            <div style="background: var(--accent-purple); color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">+500 GP</div>
-                        </div>
+                        ${this.getMilestoneRewardsHTML(totalReferrals)}
                     </div>
 
                     <!-- How it Works -->
                     <div style="margin-top: 20px; background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px; border: 1px solid rgba(0, 255, 136, 0.1);">
-                        <div style="color: var(--success-green); font-size: 13px; font-weight: 600; margin-bottom: 10px;">💡 How it Works</div>
+                        <div style="color: var(--success-green); font-size: 13px; font-weight: 600; margin-bottom: 10px;">💡 How Referrals Work</div>
                         <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
-                            1. Share your referral link or code<br>
-                            2. Your friend joins using your link<br>
-                            3. You both earn 25 GP instantly!<br>
-                            4. Complete tasks for bonus rewards
+                            1️⃣ Share your referral link with friends<br>
+                            2️⃣ Your friend joins using your link<br>
+                            3️⃣ You both get <strong style="color: var(--primary-gold);">25 GP</strong> instantly!<br>
+                            4️⃣ Unlock huge milestone bonuses as you invite more!
                         </div>
                     </div>
                 </div>
             </div>
         `;
+    }
+
+    getMilestoneRewardsHTML(currentReferrals) {
+        const milestones = [
+            { count: 1, reward: 25, emoji: '👥', title: 'First Friend', color: 'var(--success-green)' },
+            { count: 3, reward: 100, emoji: '🎯', title: '3 Friends Squad', color: 'var(--neon-blue)' },
+            { count: 5, reward: 250, emoji: '🎁', title: '5 Friends Team', color: 'var(--primary-gold)' },
+            { count: 10, reward: 750, emoji: '💎', title: '10 Friends Crew', color: 'var(--accent-purple)' },
+            { count: 25, reward: 2000, emoji: '👑', title: '25 Friends Elite', color: 'var(--secondary-orange)' },
+            { count: 50, reward: 5000, emoji: '🏆', title: '50 Friends Legend', color: '#FF073A' },
+            { count: 100, reward: 15000, emoji: '⭐', title: '100 Friends Master', color: '#FFD700' }
+        ];
+
+        return milestones.map(m => {
+            const isCompleted = currentReferrals >= m.count;
+            const isCurrent = !isCompleted && (milestones.find(x => !isCompleted && x.count > currentReferrals)?.count === m.count || m.count === milestones[milestones.length - 1].count);
+            
+            return `
+                <div class="task-item" style="background: ${isCompleted ? 'rgba(0, 255, 136, 0.1)' : 'rgba(0, 0, 0, 0.2)'}; border: 1px solid ${isCompleted ? 'var(--success-green)' : isCurrent ? m.color : 'rgba(0, 255, 136, 0.2)'}; margin-bottom: 10px; ${isCurrent ? 'box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);' : ''}">
+                    <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, ${m.color}, ${m.color}88); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">${m.emoji}</div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 14px; font-weight: 600; color: white;">${m.title}</div>
+                            <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">${m.count} friends • ${m.reward.toLocaleString()} GP</div>
+                        </div>
+                    </div>
+                    <div style="background: ${isCompleted ? 'var(--success-green)' : m.color}; color: ${isCompleted ? '#000' : '#fff'}; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">
+                        ${isCompleted ? '✓ Done' : '+' + m.reward.toLocaleString() + ' GP'}
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     getLeaderboardHTML() {
@@ -464,7 +501,6 @@ class MinigamesManager {
             return;
         }
         
-        // Update attempts and progress
         gameState.update({
             dailyCombo: {
                 ...state.dailyCombo,
@@ -476,7 +512,6 @@ class MinigamesManager {
             }
         });
         
-        // Check if first combo attempt (for task)
         if (!state.dailyTasks.combo) {
             gameState.update({
                 dailyTasks: {
@@ -494,7 +529,6 @@ class MinigamesManager {
         const newState = gameState.get();
         
         if (guess === newState.dailyCombo.code) {
-            // Correct guess
             gameState.update({
                 dailyCombo: {
                     ...newState.dailyCombo,
@@ -508,7 +542,6 @@ class MinigamesManager {
             }
             this.clearCombo();
         } else {
-            // Wrong guess
             if (newState.dailyCombo.attempts > 0) {
                 if (window.uiController) {
                     window.uiController.showNotification(`❌ Wrong code! ${newState.dailyCombo.attempts} attempts remaining.`);
@@ -535,23 +568,30 @@ class MinigamesManager {
     }
 }
 
-// Referral System
+// Referral System Functions
 function shareReferral() {
     const gameState = window.gameState?.get();
     if (!gameState) return;
 
-    const referralText = `🚀 Join me in CX Odyssey and explore the galaxy! Use my referral code: ${gameState.referralCode} to get bonus rewards!`;
-    const botUsername = 'Cx_odyssey_bot'; // Replace with your actual bot username
-    const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=${gameState.referralCode}&text=${encodeURIComponent(referralText)}`;
+    const referralText = `🚀 Join me in CX Odyssey and explore the galaxy! 
+
+🎁 Use my referral code: ${gameState.referralCode}
+⚡ We both get 25 GP instantly!
+💎 Plus unlock massive milestone bonuses!
+
+Start your space adventure now!`;
+    
+    const botUsername = 'Cx_odyssey_bot';
+    const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}/app?startapp=${gameState.referralCode}&text=${encodeURIComponent(referralText)}`;
     
     const gameInit = window.gameInitializer;
     if (gameInit?.tg && gameInit.tg.openTelegramLink) {
         gameInit.tg.openTelegramLink(shareUrl);
     } else if (navigator.share) {
         navigator.share({
-            title: 'CX Odyssey',
+            title: 'CX Odyssey - Join Me!',
             text: referralText,
-            url: `https://t.me/${botUsername}?start=${gameState.referralCode}`
+            url: `https://t.me/${botUsername}/app?startapp=${gameState.referralCode}`
         }).catch(() => {
             window.open(shareUrl, '_blank');
         });
@@ -560,7 +600,7 @@ function shareReferral() {
     }
     
     if (window.uiController) {
-        window.uiController.showNotification('📤 Share with friends to earn rewards!');
+        window.uiController.showNotification('📤 Share with friends to earn massive rewards!');
     }
 }
 
@@ -570,14 +610,12 @@ function copyReferralCode() {
 
     const code = gameState.referralCode;
     
-    // Try modern clipboard API first
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(code).then(() => {
             if (window.uiController) {
                 window.uiController.showNotification('✅ Referral code copied!');
             }
         }).catch(() => {
-            // Fallback to old method
             fallbackCopyTextToClipboard(code);
         });
     } else {
@@ -610,18 +648,18 @@ function fallbackCopyTextToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
-// Global instances
+// Initialize global instances immediately
 window.TasksManager = new TasksManager();
 window.ProfileManager = new ProfileManager();
 window.MinigamesManager = new MinigamesManager();
 
 // Global functions for HTML onclick handlers
 function switchTaskTab(tab) {
-    window.TasksManager.switchTab(tab);
+    window.TasksManager?.switchTab(tab);
 }
 
 function switchProfileTab(tab) {
-    window.ProfileManager.switchTab(tab);
+    window.ProfileManager?.switchTab(tab);
 }
 
 function claimDailyTask(taskType) {
@@ -639,13 +677,13 @@ function claimOneTimeTask(taskType) {
 }
 
 function inputComboDigit(digit) {
-    window.MinigamesManager.inputComboDigit(digit);
+    window.MinigamesManager?.inputComboDigit(digit);
 }
 
 function clearCombo() {
-    window.MinigamesManager.clearCombo();
+    window.MinigamesManager?.clearCombo();
 }
 
 function submitCombo() {
-    window.MinigamesManager.submitCombo();
+    window.MinigamesManager?.submitCombo();
 }
