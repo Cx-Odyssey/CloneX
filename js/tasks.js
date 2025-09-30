@@ -6,12 +6,7 @@ class TasksManager {
 
     renderContent() {
         const container = document.getElementById('taskContent');
-        if (!container) {
-            console.error('taskContent container not found!');
-            return;
-        }
-
-        console.log('Rendering tasks, current tab:', this.currentTab);
+        if (!container) return;
 
         if (this.currentTab === 'daily') {
             container.innerHTML = this.getDailyTasksHTML();
@@ -20,7 +15,6 @@ class TasksManager {
         }
 
         this.updateTaskStates();
-        console.log('Tasks rendered successfully');
     }
 
     getDailyTasksHTML() {
@@ -191,12 +185,7 @@ class ProfileManager {
 
     renderContent() {
         const container = document.getElementById('profileContent');
-        if (!container) {
-            console.error('profileContent container not found!');
-            return;
-        }
-
-        console.log('Rendering profile, current tab:', this.currentTab);
+        if (!container) return;
 
         switch (this.currentTab) {
             case 'referral':
@@ -212,195 +201,87 @@ class ProfileManager {
         }
 
         this.updateProfileData();
-        console.log('Profile rendered successfully');
     }
 
     getReferralHTML() {
-        const gameState = window.gameState?.get();
-        const referrals = gameState?.totalReferrals || 0;
-        const earnings = gameState?.referralEarnings || 0;
-        
-        // Calculate progress to next milestone
-        const milestones = [1, 5, 10, 25, 50, 100];
-        let nextMilestone = milestones.find(m => m > referrals) || 100;
-        let progress = referrals >= 100 ? 100 : (referrals / nextMilestone) * 100;
-        
         return `
             <div id="referralContent">
                 <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 136, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(0, 255, 136, 0.3);">
                     
-                    <!-- Progress to Next Reward -->
-                    <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1)); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 2px solid var(--primary-gold);">
-                        <div style="text-align: center; margin-bottom: 12px;">
-                            <div style="font-size: 14px; color: var(--primary-gold); font-weight: 600;">🎯 Progress to ${nextMilestone} Friends</div>
-                            <div style="font-size: 24px; font-weight: bold; color: white; margin: 8px 0;">${referrals} / ${nextMilestone}</div>
-                        </div>
-                        <div style="width: 100%; height: 8px; background: rgba(0, 0, 0, 0.3); border-radius: 4px; overflow: hidden;">
-                            <div style="height: 100%; background: linear-gradient(90deg, var(--success-green), var(--primary-gold)); width: ${progress}%; transition: width 0.3s ease;"></div>
-                        </div>
-                        <div style="text-align: center; margin-top: 8px; font-size: 12px; color: rgba(255, 255, 255, 0.8);">
-                            ${nextMilestone - referrals} more ${nextMilestone - referrals === 1 ? 'friend' : 'friends'} to unlock mega bonus!
-                        </div>
-                    </div>
-
                     <!-- Referral Stats Cards -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;">
                         <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0, 255, 136, 0.2);">
-                            <div style="font-size: 32px; font-weight: bold; color: var(--success-green);" id="totalReferralsDisplay">${referrals}</div>
-                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); margin-top: 5px;">Total Friends</div>
+                            <div style="font-size: 32px; font-weight: bold; color: var(--success-green);" id="totalReferralsDisplay">0</div>
+                            <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); margin-top: 5px;">Friends</div>
                         </div>
                         <div style="background: rgba(0, 0, 0, 0.3); padding: 20px; border-radius: 15px; text-align: center; border: 1px solid rgba(0, 255, 136, 0.2);">
-                            <div style="font-size: 32px; font-weight: bold; color: var(--primary-gold);" id="referralEarningsDisplay">${earnings}</div>
+                            <div style="font-size: 32px; font-weight: bold; color: var(--primary-gold);" id="referralEarningsDisplay">0</div>
                             <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); margin-top: 5px;">GP Earned</div>
                         </div>
                     </div>
 
                     <!-- Invite Section -->
                     <div style="text-align: center; margin: 25px 0;">
-                        <h3 style="color: var(--success-green); font-size: 22px; margin-bottom: 10px;">Invite Friends & Earn</h3>
-                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px; line-height: 1.5;">Share CX Odyssey with friends<br>Both of you get <strong style="color: var(--primary-gold);">25 GP</strong> instantly!</p>
+                        <h3 style="color: var(--success-green); font-size: 22px; margin-bottom: 10px;">Invite Friends</h3>
+                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px; line-height: 1.5;">Share CX Odyssey with friends<br>and earn <strong style="color: var(--primary-gold);">25 GP</strong> for each referral!</p>
                     </div>
                     
                     <!-- Large Invite Button -->
                     <button style="width: 100%; background: linear-gradient(135deg, var(--success-green), #00CC70); color: #000; border: none; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 16px; cursor: pointer; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);" onclick="shareReferral()">
                         <span style="font-size: 20px;">📤</span>
-                        <span>Invite Friends Now</span>
+                        <span>Invite Friends</span>
                     </button>
 
-                    <!-- Copy Link Button -->
-                    <button style="width: 100%; background: rgba(0, 255, 136, 0.2); color: var(--success-green); border: 2px solid var(--success-green); padding: 15px; border-radius: 15px; font-weight: bold; font-size: 14px; cursor: pointer; margin-bottom: 20px;" onclick="copyReferralLink()">
-                        🔗 Copy Invite Link
-                    </button>
+                    <!-- Referral Code Section -->
+                    <div style="background: rgba(0, 0, 0, 0.3); padding: 18px; border-radius: 15px; margin: 15px 0; border: 1px solid rgba(0, 255, 136, 0.2);">
+                        <div style="color: rgba(255, 255, 255, 0.7); font-size: 12px; font-weight: 600; margin-bottom: 10px; text-align: center;">Your Referral Code</div>
+                        <div style="display: flex; align-items: center; justify-content: space-between; background: rgba(0, 0, 0, 0.4); padding: 12px 15px; border-radius: 10px;">
+                            <div style="font-family: 'Courier New', monospace; font-weight: bold; font-size: 18px; color: var(--success-green);" id="referralCodeDisplay">Loading...</div>
+                            <button style="background: var(--success-green); color: #000; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer;" onclick="copyReferralCode()">Copy</button>
+                        </div>
+                    </div>
 
-                    <!-- Referral Milestones & Rewards -->
+                    <!-- Referral Tasks -->
                     <div style="margin-top: 25px;">
-                        <div style="color: white; font-size: 16px; font-weight: 600; margin-bottom: 15px; padding-left: 5px; display: flex; align-items: center; gap: 8px;">
-                            <span>🏆</span>
-                            <span>Milestone Rewards</span>
-                        </div>
+                        <div style="color: white; font-size: 16px; font-weight: 600; margin-bottom: 12px; padding-left: 5px;">📋 Referral Rewards</div>
                         
-                        <!-- 1 Friend -->
-                        <div class="task-item" style="background: ${referrals >= 1 ? 'rgba(0, 255, 136, 0.1)' : 'rgba(0, 0, 0, 0.2)'}; border: 1px solid ${referrals >= 1 ? 'var(--success-green)' : 'rgba(0, 255, 136, 0.2)'}; margin-bottom: 10px; position: relative; overflow: hidden;">
-                            ${referrals >= 1 ? '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1)); animation: shimmer 2s infinite;"></div>' : ''}
-                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; position: relative; z-index: 1;">
-                                <div style="width: 45px; height: 45px; background: linear-gradient(135deg, var(--success-green), #00CC70); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;">👥</div>
+                        <div class="task-item" style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(0, 255, 136, 0.2); margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--success-green), #00CC70); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">👥</div>
                                 <div style="flex: 1;">
-                                    <div style="font-size: 15px; font-weight: 600; color: white;">1 Friend</div>
-                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Instant reward for both players</div>
+                                    <div style="font-size: 14px; font-weight: 600; color: white;">Invite 1 Friend</div>
+                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Reward: 25 GP</div>
                                 </div>
                             </div>
-                            <div style="background: ${referrals >= 1 ? 'var(--success-green)' : 'var(--primary-gold)'}; color: #000; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: bold; position: relative; z-index: 1;">
-                                ${referrals >= 1 ? '✓ Claimed' : '+50 GP'}
-                            </div>
+                            <div style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">+25 GP</div>
                         </div>
 
-                        <!-- 5 Friends -->
-                        <div class="task-item" style="background: ${referrals >= 5 ? 'rgba(255, 215, 0, 0.1)' : 'rgba(0, 0, 0, 0.2)'}; border: 1px solid ${referrals >= 5 ? 'var(--primary-gold)' : 'rgba(255, 215, 0, 0.2)'}; margin-bottom: 10px; position: relative; overflow: hidden;">
-                            ${referrals >= 5 ? '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1)); animation: shimmer 2s infinite;"></div>' : ''}
-                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; position: relative; z-index: 1;">
-                                <div style="width: 45px; height: 45px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;">🎁</div>
+                        <div class="task-item" style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(0, 255, 136, 0.2); margin-bottom: 10px;">
+                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🎁</div>
                                 <div style="flex: 1;">
-                                    <div style="font-size: 15px; font-weight: 600; color: white;">5 Friends</div>
-                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Gold chest bonus unlock</div>
+                                    <div style="font-size: 14px; font-weight: 600; color: white;">Invite 5 Friends</div>
+                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Bonus: 200 GP</div>
                                 </div>
                             </div>
-                            <div style="background: ${referrals >= 5 ? 'var(--success-green)' : 'var(--primary-gold)'}; color: #000; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: bold; position: relative; z-index: 1;">
-                                ${referrals >= 5 ? '✓ Claimed' : '+250 GP'}
-                            </div>
+                            <div style="background: var(--primary-gold); color: #000; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">+200 GP</div>
                         </div>
 
-                        <!-- 10 Friends -->
-                        <div class="task-item" style="background: ${referrals >= 10 ? 'rgba(114, 9, 183, 0.1)' : 'rgba(0, 0, 0, 0.2)'}; border: 1px solid ${referrals >= 10 ? 'var(--accent-purple)' : 'rgba(114, 9, 183, 0.2)'}; margin-bottom: 10px; position: relative; overflow: hidden;">
-                            ${referrals >= 10 ? '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(114, 9, 183, 0.1)); animation: shimmer 2s infinite;"></div>' : ''}
-                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; position: relative; z-index: 1;">
-                                <div style="width: 45px; height: 45px; background: linear-gradient(135deg, var(--accent-purple), #9C27B0); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;">👑</div>
+                        <div class="task-item" style="background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(0, 255, 136, 0.2);">
+                            <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--accent-purple), #9C27B0); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">👑</div>
                                 <div style="flex: 1;">
-                                    <div style="font-size: 15px; font-weight: 600; color: white;">10 Friends</div>
-                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Premium status + special badge</div>
+                                    <div style="font-size: 14px; font-weight: 600; color: white;">Invite 10 Friends</div>
+                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Premium Bonus: 500 GP</div>
                                 </div>
                             </div>
-                            <div style="background: ${referrals >= 10 ? 'var(--success-green)' : 'var(--accent-purple)'}; color: ${referrals >= 10 ? '#000' : 'white'}; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: bold; position: relative; z-index: 1;">
-                                ${referrals >= 10 ? '✓ Claimed' : '+750 GP'}
-                            </div>
-                        </div>
-
-                        <!-- 25 Friends -->
-                        <div class="task-item" style="background: ${referrals >= 25 ? 'rgba(255, 107, 53, 0.1)' : 'rgba(0, 0, 0, 0.2)'}; border: 1px solid ${referrals >= 25 ? 'var(--secondary-orange)' : 'rgba(255, 107, 53, 0.2)'}; margin-bottom: 10px; position: relative; overflow: hidden;">
-                            ${referrals >= 25 ? '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1)); animation: shimmer 2s infinite;"></div>' : ''}
-                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; position: relative; z-index: 1;">
-                                <div style="width: 45px; height: 45px; background: linear-gradient(135deg, var(--secondary-orange), #D84315); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;">💎</div>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 15px; font-weight: 600; color: white;">25 Friends</div>
-                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Elite status + exclusive perks</div>
-                                </div>
-                            </div>
-                            <div style="background: ${referrals >= 25 ? 'var(--success-green)' : 'var(--secondary-orange)'}; color: ${referrals >= 25 ? '#000' : 'white'}; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: bold; position: relative; z-index: 1;">
-                                ${referrals >= 25 ? '✓ Claimed' : '+2,000 GP'}
-                            </div>
-                        </div>
-
-                        <!-- 50 Friends -->
-                        <div class="task-item" style="background: ${referrals >= 50 ? 'rgba(0, 245, 255, 0.1)' : 'rgba(0, 0, 0, 0.2)'}; border: 1px solid ${referrals >= 50 ? 'var(--neon-blue)' : 'rgba(0, 245, 255, 0.2)'}; margin-bottom: 10px; position: relative; overflow: hidden;">
-                            ${referrals >= 50 ? '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(90deg, transparent, rgba(0, 245, 255, 0.1)); animation: shimmer 2s infinite;"></div>' : ''}
-                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; position: relative; z-index: 1;">
-                                <div style="width: 45px; height: 45px; background: linear-gradient(135deg, var(--neon-blue), #0091EA); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px;">🌟</div>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 15px; font-weight: 600; color: white;">50 Friends</div>
-                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Legend status + rare rewards</div>
-                                </div>
-                            </div>
-                            <div style="background: ${referrals >= 50 ? 'var(--success-green)' : 'var(--neon-blue)'}; color: #000; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: bold; position: relative; z-index: 1;">
-                                ${referrals >= 50 ? '✓ Claimed' : '+5,000 GP'}
-                            </div>
-                        </div>
-
-                        <!-- 100 Friends - Ultimate -->
-                        <div class="task-item" style="background: ${referrals >= 100 ? 'rgba(255, 215, 0, 0.2)' : 'rgba(0, 0, 0, 0.2)'}; border: 2px solid ${referrals >= 100 ? 'var(--primary-gold)' : 'rgba(255, 215, 0, 0.3)'}; position: relative; overflow: hidden;">
-                            ${referrals >= 100 ? '<div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.2), transparent); animation: shimmer 2s infinite;"></div>' : ''}
-                            <div style="display: flex; align-items: center; gap: 12px; flex: 1; position: relative; z-index: 1;">
-                                <div style="width: 45px; height: 45px; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange), var(--accent-purple)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);">🏆</div>
-                                <div style="flex: 1;">
-                                    <div style="font-size: 15px; font-weight: 600; color: var(--primary-gold);">100 Friends</div>
-                                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.7);">Ultimate champion + VIP access</div>
-                                </div>
-                            </div>
-                            <div style="background: ${referrals >= 100 ? 'var(--success-green)' : 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))'}; color: ${referrals >= 100 ? '#000' : '#000'}; padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: bold; position: relative; z-index: 1; box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);">
-                                ${referrals >= 100 ? '✓ Claimed' : '+15,000 GP'}
-                            </div>
+                            <div style="background: var(--accent-purple); color: white; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: bold;">+500 GP</div>
                         </div>
                     </div>
 
                     <!-- How it Works -->
                     <div style="margin-top: 20px; background: rgba(0, 0, 0, 0.2); padding: 15px; border-radius: 12px; border: 1px solid rgba(0, 255, 136, 0.1);">
                         <div style="color: var(--success-green); font-size: 13px; font-weight: 600; margin-bottom: 10px;">💡 How it Works</div>
-                        <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
-                            1. Share your invite link with friends<br>
-                            2. They join CX Odyssey using your link<br>
-                            3. <strong style="color: var(--primary-gold);">Both get 25 GP instantly!</strong><br>
-                            4. Reach milestones for massive bonus rewards<br>
-                            5. Unlock exclusive badges and status
-                        </div>
-                    </div>
-
-                    <!-- Leaderboard Teaser -->
-                    <div style="margin-top: 15px; background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.05)); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 215, 0, 0.2); text-align: center;">
-                        <div style="font-size: 13px; color: var(--primary-gold); font-weight: 600; margin-bottom: 8px;">🔥 Top Referrers This Month</div>
-                        <div style="font-size: 11px; color: rgba(255, 255, 255, 0.7); line-height: 1.4;">
-                            Top 10 referrers get <strong style="color: var(--primary-gold);">exclusive legendary skins</strong><br>
-                            + permanent 2x GP multiplier!
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <style>
-                @keyframes shimmer {
-                    0% { transform: translateX(-100%); }
-                    100% { transform: translateX(100%); }
-                }
-            </style>
-        `;
-    }px;">💡 How it Works</div>
                         <div style="font-size: 12px; color: rgba(255, 255, 255, 0.8); line-height: 1.6;">
                             1. Share your referral link or code<br>
                             2. Your friend joins using your link<br>
@@ -654,68 +535,32 @@ class MinigamesManager {
     }
 }
 
-// Referral System Functions
+// Referral System
 function shareReferral() {
     const gameState = window.gameState?.get();
     if (!gameState) return;
 
-    const referralText = `🚀 Join me in CX Odyssey and explore the galaxy!\n\n🎁 Use my referral link and we both get 25 GP!\n\n💎 Unlock exclusive rewards together!`;
-    const botUsername = 'Cx_odyssey_bot';
-    const appName = 'app';
-    const startParam = gameState.referralCode;
-    
-    // Correct Telegram Mini App share URL format
-    const miniAppUrl = `https://t.me/${botUsername}/${appName}?startapp=${startParam}`;
-    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(miniAppUrl)}&text=${encodeURIComponent(referralText)}`;
+    const referralText = `🚀 Join me in CX Odyssey and explore the galaxy! Use my referral code: ${gameState.referralCode} to get bonus rewards!`;
+    const botUsername = 'Cx_odyssey_bot'; // Replace with your actual bot username
+    const shareUrl = `https://t.me/share/url?url=https://t.me/${botUsername}?start=${gameState.referralCode}&text=${encodeURIComponent(referralText)}`;
     
     const gameInit = window.gameInitializer;
-    
-    // Priority 1: Use Telegram WebApp API
     if (gameInit?.tg && gameInit.tg.openTelegramLink) {
         gameInit.tg.openTelegramLink(shareUrl);
-    } 
-    // Priority 2: Use Web Share API
-    else if (navigator.share) {
+    } else if (navigator.share) {
         navigator.share({
-            title: 'CX Odyssey - Space Adventure Game',
+            title: 'CX Odyssey',
             text: referralText,
-            url: miniAppUrl
-        }).catch((error) => {
-            console.log('Share failed:', error);
-            // Fallback to opening share URL
+            url: `https://t.me/${botUsername}?start=${gameState.referralCode}`
+        }).catch(() => {
             window.open(shareUrl, '_blank');
         });
-    } 
-    // Priority 3: Direct link
-    else {
+    } else {
         window.open(shareUrl, '_blank');
     }
     
     if (window.uiController) {
-        window.uiController.showNotification('📤 Share with friends to earn rewards together!');
-    }
-}
-
-function copyReferralLink() {
-    const gameState = window.gameState?.get();
-    if (!gameState) return;
-
-    const botUsername = 'Cx_odyssey_bot';
-    const appName = 'app';
-    const startParam = gameState.referralCode;
-    const miniAppUrl = `https://t.me/${botUsername}/${appName}?startapp=${startParam}`;
-    
-    // Try modern clipboard API first
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(miniAppUrl).then(() => {
-            if (window.uiController) {
-                window.uiController.showNotification('🔗 Invite link copied to clipboard!');
-            }
-        }).catch(() => {
-            fallbackCopyTextToClipboard(miniAppUrl);
-        });
-    } else {
-        fallbackCopyTextToClipboard(miniAppUrl);
+        window.uiController.showNotification('📤 Share with friends to earn rewards!');
     }
 }
 
@@ -732,6 +577,7 @@ function copyReferralCode() {
                 window.uiController.showNotification('✅ Referral code copied!');
             }
         }).catch(() => {
+            // Fallback to old method
             fallbackCopyTextToClipboard(code);
         });
     } else {
@@ -752,80 +598,16 @@ function fallbackCopyTextToClipboard(text) {
     try {
         const successful = document.execCommand('copy');
         if (successful && window.uiController) {
-            window.uiController.showNotification('✅ Copied to clipboard!');
-        } else {
-            // Show the text to user if copy failed
-            if (window.uiController) {
-                window.uiController.showNotification('Link: ' + text);
-            }
+            window.uiController.showNotification('✅ Referral code copied!');
         }
     } catch (err) {
-        console.error('Could not copy text:', err);
+        console.error('Fallback: Could not copy text', err);
         if (window.uiController) {
-            window.uiController.showNotification('❌ Copy failed. Link: ' + text);
+            window.uiController.showNotification('❌ Copy failed. Code: ' + text);
         }
     }
     
     document.body.removeChild(textArea);
-}
-
-// Check for referral on app start
-async function checkReferralCode() {
-    const gameInit = window.gameInitializer;
-    if (!gameInit?.tg) return;
-    
-    try {
-        // Get start parameter from Telegram
-        const startParam = gameInit.tg.initDataUnsafe?.start_param;
-        
-        if (startParam && startParam.startsWith('CX')) {
-            const gameState = window.gameState;
-            if (!gameState) return;
-            
-            const currentCode = gameState.getValue('referralCode');
-            const user = gameInit.user;
-            
-            // Don't process if it's their own code
-            if (startParam !== currentCode && user && user.id) {
-                console.log('🎁 Processing referral code:', startParam);
-                
-                // Call backend to process referral
-                if (window.backendManager && window.backendManager.api) {
-                    const result = await window.backendManager.api.processReferral(
-                        user.id,
-                        user.first_name || 'Anonymous',
-                        startParam
-                    );
-                    
-                    if (result.success && result.data) {
-                        // Award bonus to new user
-                        gameState.addValue('gp', result.data.newUserBonus || 25);
-                        
-                        if (window.uiController) {
-                            window.uiController.showNotification(
-                                `🎁 Welcome! You received ${result.data.newUserBonus || 25} GP bonus!`
-                            );
-                            
-                            // Show milestone achievement if referrer reached one
-                            if (result.data.milestoneBonus > 0) {
-                                setTimeout(() => {
-                                    window.uiController.showNotification(
-                                        `🎉 Your referrer unlocked a milestone bonus!`
-                                    );
-                                }, 3000);
-                            }
-                        }
-                        
-                        console.log('✅ Referral processed successfully');
-                    } else {
-                        console.log('⚠️ Referral processing skipped:', result.error);
-                    }
-                }
-            }
-        }
-    } catch (error) {
-        console.log('Referral check error:', error);
-    }
 }
 
 // Global instances
