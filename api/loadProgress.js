@@ -87,7 +87,7 @@ export default async function handler(req, res) {
       referralCode: data.referral_code || generateReferralCode(),
       totalReferrals: safeParseInt(data.total_referrals, 0),
       referralEarnings: safeParseInt(data.referral_earnings, 0),
-      lastDailyReset: data.last_daily_reset || new Date().toISOString().split('T')[0], // ISO format
+      lastDailyReset: data.last_daily_reset || new Date().toDateString(),
       isNewPlayer: false
     };
 
