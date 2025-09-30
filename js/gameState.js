@@ -1,8 +1,6 @@
 // Game State Management
 class GameState {
     constructor() {
-        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-        
         this.data = {
             energy: 100,
             maxEnergy: 100,
@@ -25,7 +23,7 @@ class GameState {
             referralCode: '',
             totalReferrals: 0,
             referralEarnings: 0,
-            lastDailyReset: today, // Use ISO date format
+            lastDailyReset: '',
             walletConnected: false,
             walletAddress: ''
         };
@@ -128,18 +126,8 @@ class GameState {
 
     // Daily reset check
     checkDailyReset() {
-        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-        const lastReset = this.data.lastDailyReset;
-        
-        console.log('🔍 Daily Reset Check:', {
-            today,
-            lastReset,
-            needsReset: lastReset !== today
-        });
-        
-        if (lastReset !== today) {
-            console.log('✅ Performing daily reset');
-            
+        const today = new Date().toDateString();
+        if (this.data.lastDailyReset !== today) {
             this.update({
                 dailyTasks: { login: true, mine: false, boss: false, combo: false }, // Auto-complete login
                 dailyTaskProgress: { mines: 0, bossBattles: 0, comboAttempts: 0 },
@@ -153,19 +141,14 @@ class GameState {
             }
             
             return true; // Indicates reset occurred
-        } else {
-            console.log('⏭️ Already received daily login bonus today');
-            return false;
         }
+        return false;
     }
 
     // Generate daily combo code
     generateDailyCombo() {
-        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-        
+        const today = new Date().toDateString();
         if (!this.data.dailyCombo.code || this.data.dailyCombo.date !== today) {
-            console.log('🎲 Generating new daily combo for', today);
-            
             this.update({
                 dailyCombo: {
                     code: Math.floor(1000 + Math.random() * 9000).toString(),
@@ -174,8 +157,6 @@ class GameState {
                     date: today
                 }
             });
-        } else {
-            console.log('⏭️ Daily combo already generated for today');
         }
     }
 
