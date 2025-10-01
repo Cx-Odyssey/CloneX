@@ -116,9 +116,6 @@ class UIController {
         switch (screenId) {
             case 'profileScreen':
                 this.loadLeaderboard();
-                if (window.ProfileManager) {
-                    window.ProfileManager.renderContent();
-                }
                 break;
             case 'tasksScreen':
                 this.renderTaskContent();
@@ -307,7 +304,7 @@ class UIController {
         this.showModal('rewardModal');
     }
 
-    // Planet selection with achievement tracking
+    // Planet selection - UPDATED WITH ACHIEVEMENT TRACKING
     selectPlanet(planetName, planetId) {
         const gameState = window.gameState;
         if (!gameState) return;
