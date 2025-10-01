@@ -286,7 +286,7 @@
             </div>
         </div>
 
-        <!-- Command Center (Profile) Screen -->
+        <!-- Command Center (Profile) Screen - UPDATED WITH 4 TABS -->
         <div class="screen" id="profileScreen">
             <div class="header">
                 <div class="logo">COMMAND CENTER</div>
@@ -304,15 +304,18 @@
                 </div>
             </div>
 
-            <!-- Profile Tabs -->
-            <div class="profile-tabs">
-                <button class="profile-tab active" id="referralTab" onclick="switchProfileTab('referral')">
+            <!-- Profile Tabs - NOW WITH 4 TABS -->
+            <div class="profile-tabs" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
+                <button class="profile-tab active" id="referralTab" onclick="switchProfileTab('referral')" style="font-size: 11px; padding: 10px 8px;">
                     Referral
                 </button>
-                <button class="profile-tab" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">
+                <button class="profile-tab" id="achievementsTab" onclick="switchProfileTab('achievements')" style="font-size: 11px; padding: 10px 8px;">
+                    Achievements
+                </button>
+                <button class="profile-tab" id="leaderboardTab" onclick="switchProfileTab('leaderboard')" style="font-size: 11px; padding: 10px 8px;">
                     Leaderboard
                 </button>
-                <button class="profile-tab" id="walletTab" onclick="switchProfileTab('wallet')">
+                <button class="profile-tab" id="walletTab" onclick="switchProfileTab('wallet')" style="font-size: 11px; padding: 10px 8px;">
                     Wallet
                 </button>
             </div>
@@ -395,8 +398,6 @@
     <script src="js/ui.js"></script>
     <script src="js/mining.js"></script>
     <script src="js/tasks.js"></script>
-    <script src="js/profile.js"></script>
-    <script src="js/minigames.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
