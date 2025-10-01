@@ -1,4 +1,5 @@
-// Game State Management
+// gameState.js - Complete with Achievement Tracking
+
 class GameState {
     constructor() {
         this.data = {
@@ -25,54 +26,54 @@ class GameState {
             referralEarnings: 0,
             lastDailyReset: '',
             walletConnected: false,
-            walletAddress: ''
+            walletAddress: '',
+            
+            // Achievement tracking
+            planetsVisited: [],
+            planetMineCount: {},
+            totalMines: 0,
+            bossesDefeated: 0,
+            totalShardsCollected: 0,
+            totalGPEarned: 0,
+            unlockedAchievements: [],
+            dailyStreak: 1,
+            dailyTasksCompleted: 0
         };
         
         this.listeners = [];
         this.autoSaveInterval = null;
     }
 
-    // Get current state data
     get() {
         return { ...this.data };
     }
 
-    // Update state with new data
     update(newData) {
         const oldData = { ...this.data };
         this.data = { ...this.data, ...newData };
-        
-        // Notify listeners of changes
         this.notifyListeners(oldData, this.data);
-        
-        // Trigger auto-save
         this.scheduleSave();
     }
 
-    // Set entire state (used when loading)
     set(newData) {
         const oldData = { ...this.data };
         this.data = { ...this.data, ...newData };
         this.notifyListeners(oldData, this.data);
     }
 
-    // Get specific property
     getValue(key) {
         return this.data[key];
     }
 
-    // Set specific property
     setValue(key, value) {
         this.update({ [key]: value });
     }
 
-    // Add to a numeric property
     addValue(key, amount) {
         const currentValue = this.getValue(key) || 0;
         this.setValue(key, Math.max(0, currentValue + amount));
     }
 
-    // Subscribe to state changes
     subscribe(listener) {
         this.listeners.push(listener);
         return () => {
@@ -83,7 +84,6 @@ class GameState {
         };
     }
 
-    // Notify all listeners of state changes
     notifyListeners(oldState, newState) {
         this.listeners.forEach(listener => {
             try {
@@ -94,11 +94,10 @@ class GameState {
         });
     }
 
-    // Energy regeneration logic
     updateEnergyFromTime() {
         const now = Date.now();
         const timePassed = now - this.data.energyLastRegen;
-        const energyToAdd = Math.floor(timePassed / 30000); // 1 energy per 30 seconds
+        const energyToAdd = Math.floor(timePassed / 30000);
         
         if (energyToAdd > 0) {
             const newEnergy = Math.min(this.data.maxEnergy, this.data.energy + energyToAdd);
@@ -109,11 +108,10 @@ class GameState {
         }
     }
 
-    // Ticket regeneration logic
     updateTicketsFromTime() {
         const now = Date.now();
         const timePassed = now - this.data.lastTicketTime;
-        const ticketsToAdd = Math.floor(timePassed / 180000); // 1 ticket every 3 minutes
+        const ticketsToAdd = Math.floor(timePassed / 180000);
         
         if (ticketsToAdd > 0) {
             const newTickets = Math.min(this.data.maxTickets, this.data.gameTickets + ticketsToAdd);
@@ -124,34 +122,61 @@ class GameState {
         }
     }
 
-    // Daily reset check
     checkDailyReset() {
-        const today = new Date().toDateString();
+        const now = new Date();
+        const today = now.toISOString().split('T')[0];
+        
         if (this.data.lastDailyReset !== today) {
+            console.log('Daily reset triggered:', { old: this.data.lastDailyReset, new: today });
+            
+            // Check if all daily tasks were completed yesterday
+            const allTasksCompleted = this.data.dailyTasks.login && 
+                                      this.data.dailyTasks.mine && 
+                                      this.data.dailyTasks.boss && 
+                                      this.data.dailyTasks.combo;
+            
             this.update({
-                dailyTasks: { login: true, mine: false, boss: false, combo: false }, // Auto-complete login
-                dailyTaskProgress: { mines: 0, bossBattles: 0, comboAttempts: 0 },
+                dailyTasks: { 
+                    login: true,
+                    mine: false, 
+                    boss: false, 
+                    combo: false 
+                },
+                dailyTaskProgress: { 
+                    mines: 0, 
+                    bossBattles: 0, 
+                    comboAttempts: 0 
+                },
                 lastDailyReset: today,
-                gp: this.data.gp + 25 // Daily login bonus
+                gp: this.data.gp + 25,
+                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + 25,
+                dailyStreak: (this.data.dailyStreak || 0) + 1,
+                dailyTasksCompleted: allTasksCompleted ? (this.data.dailyTasksCompleted || 0) + 1 : (this.data.dailyTasksCompleted || 0)
             });
             
-            // Show notification
+            this.generateDailyCombo();
+            this.checkAchievements();
+            
             if (window.showNotification) {
-                window.showNotification('🎁 Daily login reward: +25 GP!');
+                window.showNotification(`🎁 Daily login reward: +25 GP! (Day ${this.data.dailyStreak})`);
             }
             
-            return true; // Indicates reset occurred
+            return true;
         }
+        
         return false;
     }
 
-    // Generate daily combo code
     generateDailyCombo() {
-        const today = new Date().toDateString();
+        const today = new Date().toISOString().split('T')[0];
+        
         if (!this.data.dailyCombo.code || this.data.dailyCombo.date !== today) {
+            const newCode = Math.floor(1000 + Math.random() * 9000).toString();
+            console.log('Generated new daily combo:', newCode, 'for date:', today);
+            
             this.update({
                 dailyCombo: {
-                    code: Math.floor(1000 + Math.random() * 9000).toString(),
+                    code: newCode,
                     attempts: 3,
                     completed: false,
                     date: today
@@ -160,7 +185,6 @@ class GameState {
         }
     }
 
-    // Generate referral code
     generateReferralCode() {
         if (!this.data.referralCode) {
             const code = 'CX' + Math.random().toString(36).substr(2, 8).toUpperCase();
@@ -168,7 +192,6 @@ class GameState {
         }
     }
 
-    // Planet multiplier helper
     getPlanetMultiplier(planetName) {
         const multipliers = {
             'Pyrion': 1.2,
@@ -181,7 +204,16 @@ class GameState {
         return multipliers[planetName] || 1.0;
     }
 
-    // Mining action
+    trackPlanetVisit(planetName) {
+        const visited = this.data.planetsVisited || [];
+        if (!visited.includes(planetName)) {
+            this.update({
+                planetsVisited: [...visited, planetName]
+            });
+            this.checkAchievements();
+        }
+    }
+
     mine() {
         if (this.data.energy <= 0) {
             if (window.showNotification) {
@@ -196,15 +228,25 @@ class GameState {
         const shardReward = Math.floor(baseReward * planetMultiplier * speedBonus);
         const gpReward = Math.floor(shardReward * 0.5 * (1 + this.data.upgrades.multiplier * 0.5));
 
+        // Track planet-specific mining
+        const planetMineCount = this.data.planetMineCount || {};
+        planetMineCount[this.data.currentPlanet] = (planetMineCount[this.data.currentPlanet] || 0) + 1;
+
         this.update({
             energy: this.data.energy - 2,
             shards: this.data.shards + shardReward,
             gp: this.data.gp + gpReward,
+            totalMines: (this.data.totalMines || 0) + 1,
+            totalShardsCollected: (this.data.totalShardsCollected || 0) + shardReward,
+            totalGPEarned: (this.data.totalGPEarned || this.data.gp) + gpReward,
+            planetMineCount: planetMineCount,
             dailyTaskProgress: {
                 ...this.data.dailyTaskProgress,
                 mines: this.data.dailyTaskProgress.mines + 1
             }
         });
+
+        this.checkAchievements();
 
         if (window.showNotification) {
             window.showNotification(`💎 +${shardReward} Shards, +${gpReward} GP!`);
@@ -213,7 +255,6 @@ class GameState {
         return { shards: shardReward, gp: gpReward };
     }
 
-    // Battle aliens action
     battleAliens() {
         if (this.data.energy < 5) {
             if (window.showNotification) {
@@ -227,7 +268,8 @@ class GameState {
         
         this.update({
             energy: this.data.energy - 5,
-            gp: this.data.gp + reward
+            gp: this.data.gp + reward,
+            totalGPEarned: (this.data.totalGPEarned || this.data.gp) + reward
         });
 
         if (window.showNotification) {
@@ -237,7 +279,6 @@ class GameState {
         return { gp: reward };
     }
 
-    // Boss attack action
     attackBoss() {
         if (this.data.energy < 3) {
             if (window.showNotification) {
@@ -258,27 +299,29 @@ class GameState {
         let bossDefeated = false;
 
         if (newBossHealth <= 0) {
-            // Boss defeated
             reward = 150 + Math.floor(Math.random() * 100);
             bossDefeated = true;
             
             this.update({
                 energy: this.data.energy - 3,
-                bossHealth: this.data.maxBossHealth, // Reset boss
-                playerDamage: 0, // Reset damage
+                bossHealth: this.data.maxBossHealth,
+                playerDamage: 0,
                 gp: this.data.gp + reward,
+                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + reward,
                 adDamageBoost: newAdBoost,
+                bossesDefeated: (this.data.bossesDefeated || 0) + 1,
                 dailyTaskProgress: {
                     ...this.data.dailyTaskProgress,
                     bossBattles: this.data.dailyTaskProgress.bossBattles + 1
                 }
             });
 
+            this.checkAchievements();
+
             if (window.showNotification) {
                 window.showNotification(`🐉 Boss defeated! +${reward} GP!`);
             }
         } else {
-            // Boss damaged but not defeated
             reward = Math.floor(actualDamage * 1.5);
             
             this.update({
@@ -286,6 +329,7 @@ class GameState {
                 bossHealth: newBossHealth,
                 playerDamage: newPlayerDamage,
                 gp: this.data.gp + reward,
+                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + reward,
                 adDamageBoost: newAdBoost,
                 dailyTaskProgress: {
                     ...this.data.dailyTaskProgress,
@@ -301,7 +345,6 @@ class GameState {
         return { damage: actualDamage, gp: reward, bossDefeated };
     }
 
-    // Buy upgrade
     buyUpgrade(upgradeType) {
         const costs = {
             speed: 50 * Math.pow(2, this.data.upgrades.speed),
@@ -326,22 +369,22 @@ class GameState {
             upgrades: newUpgrades
         };
 
-        // Special handling for energy upgrade
         if (upgradeType === 'energy') {
             updateData.maxEnergy = this.data.maxEnergy + 25;
-            updateData.energy = this.data.maxEnergy + 25; // Fill to new max
+            updateData.energy = this.data.maxEnergy + 25;
         }
 
         this.update(updateData);
+        this.checkAchievements();
 
-        // Check for first purchase task
         if (!this.data.oneTimeTasks.purchase) {
             this.update({
                 oneTimeTasks: {
                     ...this.data.oneTimeTasks,
                     purchase: true
                 },
-                gp: this.data.gp + 40 // Bonus for first purchase
+                gp: this.data.gp + 40,
+                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + 40
             });
 
             if (window.showNotification) {
@@ -359,7 +402,6 @@ class GameState {
         return { success: true, message: messages[upgradeType], cost };
     }
 
-    // Task completion methods
     claimDailyTask(taskType) {
         const rewards = { mine: 50, boss: 75, combo: 30 };
         const requirements = {
@@ -380,7 +422,8 @@ class GameState {
         
         this.update({
             dailyTasks: newDailyTasks,
-            gp: this.data.gp + rewards[taskType]
+            gp: this.data.gp + rewards[taskType],
+            totalGPEarned: (this.data.totalGPEarned || this.data.gp) + rewards[taskType]
         });
 
         if (window.showNotification) {
@@ -393,8 +436,8 @@ class GameState {
     claimOneTimeTask(taskType) {
         const rewards = { planet: 20, purchase: 40, shards100: 80, invite5: 200 };
         const requirements = {
-            planet: true, // Already checked when visiting planet
-            purchase: true, // Already checked when making purchase
+            planet: true,
+            purchase: true,
             shards100: this.data.shards >= 100,
             invite5: this.data.totalReferrals >= 5
         };
@@ -411,7 +454,8 @@ class GameState {
         
         this.update({
             oneTimeTasks: newOneTimeTasks,
-            gp: this.data.gp + rewards[taskType]
+            gp: this.data.gp + rewards[taskType],
+            totalGPEarned: (this.data.totalGPEarned || this.data.gp) + rewards[taskType]
         });
 
         if (window.showNotification) {
@@ -421,7 +465,39 @@ class GameState {
         return true;
     }
 
-    // Auto-save scheduling
+    checkAchievements() {
+        if (!window.AchievementManager) return;
+
+        const achievementManager = new window.AchievementManager();
+        const unlockedAchievements = this.data.unlockedAchievements || [];
+        let newAchievements = [];
+        let totalReward = 0;
+
+        Object.keys(achievementManager.achievements).forEach(achievementId => {
+            if (!unlockedAchievements.includes(achievementId)) {
+                if (achievementManager.isUnlocked(achievementId, this.data)) {
+                    newAchievements.push(achievementId);
+                    totalReward += achievementManager.achievements[achievementId].reward;
+                }
+            }
+        });
+
+        if (newAchievements.length > 0) {
+            this.update({
+                unlockedAchievements: [...unlockedAchievements, ...newAchievements],
+                gp: this.data.gp + totalReward,
+                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + totalReward
+            });
+
+            newAchievements.forEach(id => {
+                const achievement = achievementManager.achievements[id];
+                if (window.showNotification) {
+                    window.showNotification(`🏆 Achievement Unlocked: ${achievement.title}! +${achievement.reward} GP`);
+                }
+            });
+        }
+    }
+
     scheduleSave() {
         if (this.autoSaveInterval) {
             clearTimeout(this.autoSaveInterval);
@@ -431,10 +507,9 @@ class GameState {
             if (window.backendManager) {
                 window.backendManager.saveProgress(this.data);
             }
-        }, 2000); // Save 2 seconds after last change
+        }, 2000);
     }
 
-    // Manual save
     async save() {
         if (window.backendManager) {
             return await window.backendManager.saveProgress(this.data);
@@ -442,24 +517,19 @@ class GameState {
         return { success: false, error: 'Backend manager not available' };
     }
 
-    // Load data
     async load() {
         if (window.backendManager) {
             const result = await window.backendManager.loadProgress();
             if (result.success && result.data) {
                 this.set(result.data);
-                
-                // Update time-based values
                 this.updateEnergyFromTime();
                 this.updateTicketsFromTime();
-                
                 return true;
             }
         }
         return false;
     }
 
-    // Initialize all systems
     initialize() {
         this.generateReferralCode();
         this.generateDailyCombo();
@@ -467,20 +537,17 @@ class GameState {
         this.updateEnergyFromTime();
         this.updateTicketsFromTime();
         
-        // Start energy regeneration timer
         setInterval(() => {
             if (this.data.energy < this.data.maxEnergy) {
                 this.addValue('energy', 1);
                 this.setValue('energyLastRegen', Date.now());
             }
-        }, 30000); // Every 30 seconds
+        }, 30000);
         
-        // Start ticket regeneration timer
         setInterval(() => {
             this.updateTicketsFromTime();
-        }, 60000); // Check every minute
+        }, 60000);
     }
 }
 
-// Global game state instance
 window.gameState = new GameState();
