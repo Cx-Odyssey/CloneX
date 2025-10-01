@@ -35,9 +35,9 @@ class UIController {
         if (!starfield) return;
         
         const starTypes = ['star-small', 'star-medium', 'star-large'];
-        const starCounts = [60, 15, 5];
+        const starCounts = [60, 15, 5]; // More small stars, fewer large ones
         
-        starfield.innerHTML = '';
+        starfield.innerHTML = ''; // Clear existing stars
         
         starTypes.forEach((type, index) => {
             for (let i = 0; i < starCounts[index]; i++) {
@@ -54,6 +54,7 @@ class UIController {
 
     // Update planet background images
     updatePlanetImages() {
+        // Update galaxy screen planets
         Object.keys(this.planetImages).forEach(planet => {
             const planetElement = document.querySelector(`.planet-${planet}`);
             if (planetElement) {
@@ -114,15 +115,10 @@ class UIController {
     loadScreenData(screenId) {
         switch (screenId) {
             case 'profileScreen':
-                // Initialize ProfileManager if not already
-                if (!window.ProfileManager) {
-                    console.warn('ProfileManager not initialized, creating new instance');
-                    window.ProfileManager = new ProfileManager();
-                }
-                // Render the default tab (referral)
-                setTimeout(() => {
+                this.loadLeaderboard();
+                if (window.ProfileManager) {
                     window.ProfileManager.renderContent();
-                }, 150);
+                }
                 break;
             case 'tasksScreen':
                 this.renderTaskContent();
@@ -173,7 +169,7 @@ class UIController {
             if (el) el.textContent = gameState.gp.toLocaleString();
         });
 
-        // Update balance displays
+        // Update balance displays in sections
         const balanceElements = document.querySelectorAll('#taskBalanceDisplay, #profileBalanceDisplay');
         balanceElements.forEach(el => {
             if (el) el.textContent = gameState.gp.toLocaleString();
@@ -221,6 +217,7 @@ class UIController {
             userLevelEl.textContent = userLevel;
         }
 
+        // Update rank (will be updated by leaderboard)
         const userRankEls = document.querySelectorAll('#userRank, #profileRank');
         userRankEls.forEach(el => {
             if (el && !el.dataset.updating) {
@@ -236,6 +233,7 @@ class UIController {
             if (el) el.textContent = gameState.gameTickets;
         });
 
+        // Update cooldown
         const now = Date.now();
         const nextTicketIn = 180000 - (now - gameState.lastTicketTime);
         const minutesLeft = Math.ceil(nextTicketIn / 60000);
@@ -269,6 +267,7 @@ class UIController {
 
     // Notification system
     showNotification(text) {
+        // Remove existing notifications
         document.querySelectorAll('.notification').forEach(n => n.remove());
         
         const notification = document.createElement('div');
@@ -308,7 +307,7 @@ class UIController {
         this.showModal('rewardModal');
     }
 
-    // Planet selection
+    // Planet selection with achievement tracking
     selectPlanet(planetName, planetId) {
         const gameState = window.gameState;
         if (!gameState) return;
@@ -317,19 +316,27 @@ class UIController {
             currentPlanet: planetName
         });
 
+        // Track planet visit for achievements
+        gameState.trackPlanetVisit(planetName);
+
+        // Check first planet task
         if (!gameState.getValue('oneTimeTasks').planet) {
             gameState.update({
                 oneTimeTasks: {
                     ...gameState.getValue('oneTimeTasks'),
                     planet: true
                 },
-                gp: gameState.getValue('gp') + 20
+                gp: gameState.getValue('gp') + 20,
+                totalGPEarned: (gameState.getValue('totalGPEarned') || gameState.getValue('gp')) + 20
             });
             
             this.showNotification('🚀 First planet visited! +20 GP!');
         }
 
+        // Update mining screen
         this.updateMiningScreen(planetName, planetId);
+        
+        // Show mining screen
         this.showScreen('miningScreen');
         this.showNotification(`🌍 Landed on ${planetName}!`);
     }
@@ -346,6 +353,7 @@ class UIController {
             mineRewardEl.textContent = Math.floor(planetId * 1.5 + 3);
         }
 
+        // Update mining planet background
         const miningPlanet = document.getElementById('miningPlanet');
         if (miningPlanet) {
             const planetKey = planetName.toLowerCase();
@@ -361,6 +369,7 @@ class UIController {
         if (!window.backendManager) return;
 
         try {
+            // Show loading state
             const entriesContainer = document.getElementById('leaderboardEntries');
             if (entriesContainer) {
                 entriesContainer.innerHTML = `
@@ -375,6 +384,7 @@ class UIController {
             if (result.success && result.data && result.data.topPlayers) {
                 this.displayLeaderboard(result.data.topPlayers);
                 
+                // Update user rank with backend data
                 const userRankEls = document.querySelectorAll('#userRank, #profileRank');
                 userRankEls.forEach(el => {
                     if (el) {
@@ -387,6 +397,7 @@ class UIController {
                 
                 console.log('✅ Leaderboard loaded successfully from backend');
             } else {
+                // Show error message if backend fails
                 if (entriesContainer) {
                     entriesContainer.innerHTML = `
                         <div class="task-item" style="flex-direction: column; text-align: center; padding: 30px;">
@@ -449,6 +460,7 @@ class UIController {
 
     // Render task content
     renderTaskContent() {
+        // This will be implemented in the tasks.js file
         if (window.TasksManager) {
             window.TasksManager.renderContent();
         }
