@@ -586,7 +586,7 @@ body {
     border-radius: 25px;
     padding: 30px;
     margin: 20px 0;
-    border: 1px solid rgba(255, 215, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .balance-label {
@@ -620,7 +620,7 @@ body {
 }
 
 /* Tabs */
-.task-tabs, .profile-tabs {
+.task-tabs {
     display: flex;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 15px;
@@ -646,8 +646,52 @@ body {
     color: #000;
 }
 
+/* Updated Profile Tabs - 4 Column Grid */
+.profile-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    padding: 5px;
+    margin: 20px 0;
+    gap: 5px;
+}
+
+.profile-tab {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border: none;
+    padding: 10px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
 .profile-tab.active {
+    transform: translateY(-2px);
+}
+
+/* Specific colors for each tab when active */
+.profile-tab.active#referralTab {
     background: linear-gradient(135deg, var(--success-green), #00CC70);
+    color: #000;
+}
+
+.profile-tab.active#achievementsTab {
+    background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
+    color: #000;
+}
+
+.profile-tab.active#leaderboardTab {
+    background: linear-gradient(135deg, var(--accent-purple), #5A0F8C);
+    color: white;
+}
+
+.profile-tab.active#walletTab {
+    background: linear-gradient(135deg, var(--neon-blue), #0091EA);
     color: #000;
 }
 
@@ -921,7 +965,7 @@ body {
     margin: 12px 0;
     background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
     border-radius: 20px;
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .task-item .task-icon {
@@ -976,6 +1020,75 @@ body {
 .task-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+/* Achievement Grid */
+.achievement-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.achievement-card {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(22, 33, 62, 0.8));
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.achievement-card.unlocked {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
+    border-color: var(--primary-gold);
+}
+
+.achievement-card.locked {
+    opacity: 0.6;
+}
+
+.achievement-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.achievement-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.achievement-desc {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.achievement-reward {
+    background: var(--success-green);
+    color: #000;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.achievement-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+
+.achievement-progress-fill {
+    height: 100%;
+    background: var(--primary-gold);
+    transition: width 0.3s ease;
 }
 
 /* Mobile Responsiveness */
@@ -1046,5 +1159,20 @@ body {
     .modal-content {
         padding: 20px;
         max-width: 95%;
+    }
+    
+    .profile-tabs {
+        gap: 3px;
+        padding: 3px;
+    }
+    
+    .profile-tab {
+        font-size: 10px;
+        padding: 8px 4px;
+    }
+    
+    .achievement-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
 }
