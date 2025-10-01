@@ -7,7 +7,6 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/sdk@latest/dist/tonconnect-sdk.min.js"></script>
     
-    <!-- Load external CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -103,7 +102,6 @@
             </div>
 
             <div class="mining-container">
-                <!-- Dynamic planet background will be set via JavaScript -->
                 <div class="mining-planet" id="miningPlanet" onclick="minePlanet()">
                     <div class="mining-overlay">
                         <div class="mine-text">
@@ -214,7 +212,6 @@
                 </div>
             </div>
 
-            <!-- Balance Section -->
             <div class="balance-section">
                 <div class="balance-label">Your balance</div>
                 <div class="balance-display">
@@ -223,7 +220,6 @@
                 </div>
             </div>
 
-            <!-- Task Tabs -->
             <div class="task-tabs">
                 <button class="task-tab active" id="dailyTasksTab" onclick="switchTaskTab('daily')">
                     Daily Tasks
@@ -233,7 +229,6 @@
                 </button>
             </div>
 
-            <!-- Task Content will be loaded dynamically -->
             <div id="taskContent"></div>
 
             <div class="task-actions">
@@ -254,7 +249,6 @@
                 </div>
             </div>
 
-            <!-- Daily Combo Game -->
             <div class="daily-combo-game">
                 <h3 class="combo-title">🔮 Daily Combo Code</h3>
                 <p class="combo-description">Guess today's secret code!</p>
@@ -286,7 +280,7 @@
             </div>
         </div>
 
-        <!-- Command Center (Profile) Screen - UPDATED WITH 4 TABS -->
+        <!-- Command Center (Profile) Screen -->
         <div class="screen" id="profileScreen">
             <div class="header">
                 <div class="logo">COMMAND CENTER</div>
@@ -295,7 +289,6 @@
                 </div>
             </div>
 
-            <!-- Balance Section -->
             <div class="balance-section">
                 <div class="balance-label">Your balance</div>
                 <div class="balance-display">
@@ -304,23 +297,21 @@
                 </div>
             </div>
 
-            <!-- Profile Tabs - NOW WITH 4 TABS -->
-            <div class="profile-tabs" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px;">
-                <button class="profile-tab active" id="referralTab" onclick="switchProfileTab('referral')" style="font-size: 11px; padding: 10px 8px;">
+            <div class="profile-tabs">
+                <button class="profile-tab active" id="referralTab" onclick="switchProfileTab('referral')">
                     Referral
                 </button>
-                <button class="profile-tab" id="achievementsTab" onclick="switchProfileTab('achievements')" style="font-size: 11px; padding: 10px 8px;">
+                <button class="profile-tab" id="achievementsTab" onclick="switchProfileTab('achievements')">
                     Achievements
                 </button>
-                <button class="profile-tab" id="leaderboardTab" onclick="switchProfileTab('leaderboard')" style="font-size: 11px; padding: 10px 8px;">
+                <button class="profile-tab" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">
                     Leaderboard
                 </button>
-                <button class="profile-tab" id="walletTab" onclick="switchProfileTab('wallet')" style="font-size: 11px; padding: 10px 8px;">
+                <button class="profile-tab" id="walletTab" onclick="switchProfileTab('wallet')">
                     Wallet
                 </button>
             </div>
 
-            <!-- Profile Content will be loaded dynamically -->
             <div id="profileContent"></div>
 
             <div class="profile-actions">
@@ -392,7 +383,6 @@
         </div>
     </div>
 
-    <!-- Load JavaScript modules -->
     <script src="js/gameState.js"></script>
     <script src="js/backend.js"></script>
     <script src="js/ui.js"></script>
