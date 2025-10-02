@@ -650,43 +650,42 @@ class ProfileManager {
     }
 
     switchTab(tab) {
-    this.currentTab = tab;
-    
-    const referralTab = document.getElementById('referralTab');
-    const achievementsTab = document.getElementById('achievementsTab');
-    const leaderboardTab = document.getElementById('leaderboardTab');
-    const walletTab = document.getElementById('walletTab');
-    
-    // Reset all tabs
-    [referralTab, achievementsTab, leaderboardTab, walletTab].forEach(t => {
-        if (t) {
-            t.classList.remove('active');
-            t.style.background = 'transparent';
-            t.style.color = 'rgba(255, 255, 255, 0.6)';
+        this.currentTab = tab;
+        
+        const referralTab = document.getElementById('referralTab');
+        const achievementsTab = document.getElementById('achievementsTab');
+        const leaderboardTab = document.getElementById('leaderboardTab');
+        const walletTab = document.getElementById('walletTab');
+        
+        [referralTab, achievementsTab, leaderboardTab, walletTab].forEach(t => {
+            if (t) {
+                t.classList.remove('active');
+                t.style.background = 'transparent';
+                t.style.color = 'rgba(255, 255, 255, 0.6)';
+            }
+        });
+        
+        if (tab === 'referral' && referralTab) {
+            referralTab.classList.add('active');
+            referralTab.style.background = 'linear-gradient(135deg, var(--success-green), #00CC70)';
+            referralTab.style.color = '#000';
+        } else if (tab === 'achievements' && achievementsTab) {
+            achievementsTab.classList.add('active');
+            achievementsTab.style.background = 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))';
+            achievementsTab.style.color = '#000';
+        } else if (tab === 'leaderboard' && leaderboardTab) {
+            leaderboardTab.classList.add('active');
+            leaderboardTab.style.background = 'linear-gradient(135deg, var(--accent-purple), #5A0F8C)';
+            leaderboardTab.style.color = 'white';
+        } else if (tab === 'wallet' && walletTab) {
+            walletTab.classList.add('active');
+            walletTab.style.background = 'linear-gradient(135deg, var(--neon-blue), #0091EA)';
+            walletTab.style.color = '#000';
         }
-    });
-    
-    // Set active tab styling
-    if (tab === 'referral' && referralTab) {
-        referralTab.classList.add('active');
-        referralTab.style.background = 'linear-gradient(135deg, var(--success-green), #00CC70)';
-        referralTab.style.color = '#000';
-    } else if (tab === 'achievements' && achievementsTab) {
-        achievementsTab.classList.add('active');
-        achievementsTab.style.background = 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))';
-        achievementsTab.style.color = '#000';
-    } else if (tab === 'leaderboard' && leaderboardTab) {
-        leaderboardTab.classList.add('active');
-        leaderboardTab.style.background = 'linear-gradient(135deg, var(--accent-purple), #5A0F8C)';
-        leaderboardTab.style.color = 'white';
-    } else if (tab === 'wallet' && walletTab) {
-        walletTab.classList.add('active');
-        walletTab.style.background = 'linear-gradient(135deg, var(--neon-blue), #0091EA)';
-        walletTab.style.color = '#000';
+        
+        this.renderContent();
     }
-    
-    this.renderContent();
-}
+
     loadLeaderboardData() {
         if (window.uiController) {
             window.uiController.loadLeaderboard();
