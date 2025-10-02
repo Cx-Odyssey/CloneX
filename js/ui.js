@@ -115,7 +115,10 @@ class UIController {
     loadScreenData(screenId) {
         switch (screenId) {
             case 'profileScreen':
-                this.loadLeaderboard();
+                // Render profile content if switching tabs
+                if (window.ProfileManager) {
+                    window.ProfileManager.renderContent();
+                }
                 break;
             case 'tasksScreen':
                 this.renderTaskContent();
