@@ -143,7 +143,6 @@ class AchievementManager {
                 const allOthers = Object.keys(this.achievements).filter(id => id !== achievementId);
                 const unlockedOthers = allOthers.filter(id => this.isUnlocked(id, gameState)).length;
                 current = unlockedOthers;
-                value = allOthers.length;
                 break;
             case 'all_planets_mined':
                 const planetMines = gameState.planetMineCount || {};
@@ -349,15 +348,22 @@ class ProfileManager {
     }
 
     renderContent() {
+        console.log('ProfileManager: Rendering content for tab:', this.currentTab);
+        
         const container = document.getElementById('profileContent');
-        if (!container) return;
+        if (!container) {
+            console.error('ProfileManager: Profile content container not found!');
+            return;
+        }
 
         switch (this.currentTab) {
             case 'referral':
                 container.innerHTML = this.getReferralHTML();
                 break;
             case 'achievements':
+                console.log('ProfileManager: Generating achievements HTML...');
                 container.innerHTML = this.getAchievementsHTML();
+                console.log('ProfileManager: Achievements HTML rendered');
                 break;
             case 'leaderboard':
                 container.innerHTML = this.getLeaderboardHTML();
@@ -483,9 +489,27 @@ class ProfileManager {
     }
 
     getAchievementsHTML() {
+        console.log('DEBUG: getAchievementsHTML called');
+        
         const gameState = window.gameState?.get();
+        if (!gameState) {
+            console.error('DEBUG: Game state not available');
+            return '<div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.7);">Loading game state...</div>';
+        }
+        
+        console.log('DEBUG: Game state:', {
+            planetsVisited: gameState.planetsVisited,
+            totalMines: gameState.totalMines,
+            bossesDefeated: gameState.bossesDefeated,
+            totalShardsCollected: gameState.totalShardsCollected,
+            unlockedAchievements: gameState.unlockedAchievements
+        });
+        
+        // Create achievement manager instance directly
         const achievementManager = new AchievementManager();
         const stats = achievementManager.getStats(gameState);
+        
+        console.log('DEBUG: Achievement stats:', stats);
         
         const categories = [
             { id: 'exploration', name: 'Exploration', icon: '🌍' },
@@ -519,6 +543,8 @@ class ProfileManager {
         categories.forEach(category => {
             const achievements = achievementManager.getByCategory(category.id);
             const categoryUnlocked = achievements.filter(a => achievementManager.isUnlocked(a.id, gameState)).length;
+            
+            console.log(`DEBUG: Category ${category.name}: ${categoryUnlocked}/${achievements.length}`);
             
             html += `
                 <div style="margin-bottom: 20px;">
@@ -568,6 +594,7 @@ class ProfileManager {
             </div>
         `;
 
+        console.log('DEBUG: Achievements HTML generated successfully');
         return html;
     }
 
@@ -650,6 +677,7 @@ class ProfileManager {
     }
 
     switchTab(tab) {
+        console.log('ProfileManager: Switching to tab:', tab);
         this.currentTab = tab;
         
         const referralTab = document.getElementById('referralTab');
@@ -909,6 +937,7 @@ function switchTaskTab(tab) {
 }
 
 function switchProfileTab(tab) {
+    console.log('Global: switchProfileTab called with:', tab);
     window.ProfileManager?.switchTab(tab);
 }
 
