@@ -8,12 +8,10 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Credentials', 'false');
   res.setHeader('Access-Control-Max-Age', '86400');
 
-  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Only allow POST requests
   if (req.method !== 'POST') {
     console.log('❌ Invalid method:', req.method);
     return res.status(405).json({ 
@@ -26,7 +24,6 @@ export default async function handler(req, res) {
     console.log('=== SAVE REQUEST START ===');
     console.log('Request body:', typeof req.body, req.body);
 
-    // Parse body if it's a string
     let body = req.body;
     if (typeof body === 'string') {
       try {
@@ -38,7 +35,6 @@ export default async function handler(req, res) {
 
     const { telegramId, username, gameState } = body;
 
-    // Enhanced validation
     if (!telegramId) {
       console.log('❌ Missing telegramId');
       return res.status(400).json({ 
@@ -55,7 +51,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Safely parse and validate game state data
     const safeParseInt = (value, fallback = 0) => {
       const parsed = parseInt(value);
       return isNaN(parsed) ? fallback : Math.max(0, parsed);
@@ -73,7 +68,6 @@ export default async function handler(req, res) {
       return fallback;
     };
 
-    // Prepare sanitized data
     const playerData = {
       telegram_id: parseInt(telegramId),
       username: (username || 'Anonymous').substring(0, 100),
@@ -99,6 +93,17 @@ export default async function handler(req, res) {
       total_referrals: safeParseInt(gameState.totalReferrals, 0),
       referral_earnings: safeParseInt(gameState.referralEarnings, 0),
       last_daily_reset: gameState.lastDailyReset || new Date().toDateString(),
+      
+      // ACHIEVEMENT TRACKING FIELDS - NEW
+      planets_visited: JSON.stringify(safeParseJSON(gameState.planetsVisited, [])),
+      planet_mine_count: JSON.stringify(safeParseJSON(gameState.planetMineCount, {})),
+      total_mines: safeParseInt(gameState.totalMines, 0),
+      bosses_defeated: safeParseInt(gameState.bossesDefeated, 0),
+      total_shards_collected: safeParseInt(gameState.totalShardsCollected, 0),
+      total_gp_earned: safeParseInt(gameState.totalGPEarned, 0),
+      unlocked_achievements: JSON.stringify(safeParseJSON(gameState.unlockedAchievements, [])),
+      daily_tasks_completed: safeParseInt(gameState.dailyTasksCompleted, 0),
+      
       updated_at: new Date().toISOString()
     };
 
@@ -106,10 +111,11 @@ export default async function handler(req, res) {
       telegram_id: playerData.telegram_id,
       gp: playerData.gp,
       username: playerData.username,
-      energy: playerData.energy
+      energy: playerData.energy,
+      totalMines: playerData.total_mines,
+      unlockedAchievements: JSON.parse(playerData.unlocked_achievements).length
     });
 
-    // Attempt database save with retry logic
     let saveAttempts = 0;
     const maxAttempts = 3;
     let lastError = null;
@@ -153,13 +159,11 @@ export default async function handler(req, res) {
         console.warn(`⚠️ Save attempt ${saveAttempts} failed:`, error.message);
         
         if (saveAttempts < maxAttempts) {
-          // Wait before retry
           await new Promise(resolve => setTimeout(resolve, 1000 * saveAttempts));
         }
       }
     }
 
-    // If all attempts failed
     console.error('❌ All save attempts failed:', lastError);
     return res.status(500).json({
       error: 'Database save failed after multiple attempts',
