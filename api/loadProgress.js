@@ -88,6 +88,17 @@ export default async function handler(req, res) {
       totalReferrals: safeParseInt(data.total_referrals, 0),
       referralEarnings: safeParseInt(data.referral_earnings, 0),
       lastDailyReset: data.last_daily_reset || new Date().toDateString(),
+      
+      // ACHIEVEMENT TRACKING FIELDS - ADDED
+      planetsVisited: safeParseJSON(data.planets_visited, []),
+      planetMineCount: safeParseJSON(data.planet_mine_count, {}),
+      totalMines: safeParseInt(data.total_mines, 0),
+      bossesDefeated: safeParseInt(data.bosses_defeated, 0),
+      totalShardsCollected: safeParseInt(data.total_shards_collected, 0),
+      totalGPEarned: safeParseInt(data.total_gp_earned, 0),
+      unlockedAchievements: safeParseJSON(data.unlocked_achievements, []),
+      dailyTasksCompleted: safeParseInt(data.daily_tasks_completed, 0),
+      
       isNewPlayer: false
     };
 
@@ -105,7 +116,9 @@ export default async function handler(req, res) {
       telegramId: telegramIdInt,
       gp: gameState.gp,
       energy: gameState.energy,
-      tickets: gameState.gameTickets
+      tickets: gameState.gameTickets,
+      totalMines: gameState.totalMines,
+      unlockedAchievements: gameState.unlockedAchievements.length
     });
     console.log('=== LOAD REQUEST END ===');
 
@@ -172,7 +185,17 @@ function createDefaultGameState() {
     referralCode: generateReferralCode(),
     totalReferrals: 0,
     referralEarnings: 0,
-    lastDailyReset: new Date().toDateString()
+    lastDailyReset: new Date().toDateString(),
+    
+    // ACHIEVEMENT TRACKING DEFAULTS
+    planetsVisited: [],
+    planetMineCount: {},
+    totalMines: 0,
+    bossesDefeated: 0,
+    totalShardsCollected: 0,
+    totalGPEarned: 0,
+    unlockedAchievements: [],
+    dailyTasksCompleted: 0
   };
 }
 
