@@ -54,11 +54,14 @@ class UIController {
 
     // Update planet background images
     updatePlanetImages() {
-        // Update galaxy screen planets
+        // Update galaxy screen planets with proper background settings
         Object.keys(this.planetImages).forEach(planet => {
             const planetElement = document.querySelector(`.planet-${planet}`);
             if (planetElement) {
                 planetElement.style.backgroundImage = `url(${this.planetImages[planet]})`;
+                planetElement.style.backgroundSize = 'cover';
+                planetElement.style.backgroundPosition = 'center';
+                planetElement.style.backgroundRepeat = 'no-repeat';
             }
         });
     }
@@ -360,6 +363,9 @@ class UIController {
             const backgroundImage = this.planetImages[planetKey];
             if (backgroundImage) {
                 miningPlanet.style.backgroundImage = `url(${backgroundImage})`;
+                miningPlanet.style.backgroundSize = 'cover';
+                miningPlanet.style.backgroundPosition = 'center';
+                miningPlanet.style.backgroundRepeat = 'no-repeat';
             }
         }
     }
