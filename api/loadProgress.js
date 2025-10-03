@@ -89,7 +89,7 @@ export default async function handler(req, res) {
       referralEarnings: safeParseInt(data.referral_earnings, 0),
       lastDailyReset: data.last_daily_reset || new Date().toDateString(),
       
-      // ACHIEVEMENT TRACKING FIELDS - ADDED
+      // ACHIEVEMENT TRACKING FIELDS
       planetsVisited: safeParseJSON(data.planets_visited, []),
       planetMineCount: safeParseJSON(data.planet_mine_count, {}),
       totalMines: safeParseInt(data.total_mines, 0),
@@ -98,6 +98,17 @@ export default async function handler(req, res) {
       totalGPEarned: safeParseInt(data.total_gp_earned, 0),
       unlockedAchievements: safeParseJSON(data.unlocked_achievements, []),
       dailyTasksCompleted: safeParseInt(data.daily_tasks_completed, 0),
+      
+      // NEW: SHOP ACTIVE BOOSTS
+      activeBoosts: safeParseJSON(data.active_boosts, { 
+        shardBooster: 0, 
+        gpBooster: 0, 
+        autoMiner: 0, 
+        luckyCharm: 0 
+      }),
+      
+      // NEW: ITEMS PURCHASED (optional tracking)
+      itemsPurchased: safeParseJSON(data.items_purchased, {}),
       
       isNewPlayer: false
     };
@@ -112,13 +123,17 @@ export default async function handler(req, res) {
     // Update tickets based on time
     updateTicketsFromTime(gameState);
 
+    // Expire old boosts based on time
+    expireOldBoosts(gameState);
+
     console.log('Load successful:', {
       telegramId: telegramIdInt,
       gp: gameState.gp,
       energy: gameState.energy,
       tickets: gameState.gameTickets,
       totalMines: gameState.totalMines,
-      unlockedAchievements: gameState.unlockedAchievements.length
+      unlockedAchievements: gameState.unlockedAchievements.length,
+      activeBoosts: gameState.activeBoosts
     });
     console.log('=== LOAD REQUEST END ===');
 
@@ -195,7 +210,11 @@ function createDefaultGameState() {
     totalShardsCollected: 0,
     totalGPEarned: 0,
     unlockedAchievements: [],
-    dailyTasksCompleted: 0
+    dailyTasksCompleted: 0,
+    
+    // NEW: SHOP DEFAULTS
+    activeBoosts: { shardBooster: 0, gpBooster: 0, autoMiner: 0, luckyCharm: 0 },
+    itemsPurchased: {}
   };
 }
 
@@ -207,5 +226,23 @@ function updateTicketsFromTime(gameState) {
   if (ticketsToAdd > 0) {
     gameState.gameTickets = Math.min(10, gameState.gameTickets + ticketsToAdd);
     gameState.lastTicketTime = now;
+  }
+}
+
+function expireOldBoosts(gameState) {
+  const now = Date.now();
+  
+  // Check each boost and set to 0 if expired
+  if (gameState.activeBoosts.shardBooster > 0 && gameState.activeBoosts.shardBooster < now) {
+    gameState.activeBoosts.shardBooster = 0;
+  }
+  if (gameState.activeBoosts.gpBooster > 0 && gameState.activeBoosts.gpBooster < now) {
+    gameState.activeBoosts.gpBooster = 0;
+  }
+  if (gameState.activeBoosts.autoMiner > 0 && gameState.activeBoosts.autoMiner < now) {
+    gameState.activeBoosts.autoMiner = 0;
+  }
+  if (gameState.activeBoosts.luckyCharm > 0 && gameState.activeBoosts.luckyCharm < now) {
+    gameState.activeBoosts.luckyCharm = 0;
   }
 }
