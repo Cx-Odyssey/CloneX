@@ -94,7 +94,7 @@ export default async function handler(req, res) {
       referral_earnings: safeParseInt(gameState.referralEarnings, 0),
       last_daily_reset: gameState.lastDailyReset || new Date().toDateString(),
       
-      // ACHIEVEMENT TRACKING FIELDS - NEW
+      // ACHIEVEMENT TRACKING FIELDS
       planets_visited: JSON.stringify(safeParseJSON(gameState.planetsVisited, [])),
       planet_mine_count: JSON.stringify(safeParseJSON(gameState.planetMineCount, {})),
       total_mines: safeParseInt(gameState.totalMines, 0),
@@ -103,6 +103,17 @@ export default async function handler(req, res) {
       total_gp_earned: safeParseInt(gameState.totalGPEarned, 0),
       unlocked_achievements: JSON.stringify(safeParseJSON(gameState.unlockedAchievements, [])),
       daily_tasks_completed: safeParseInt(gameState.dailyTasksCompleted, 0),
+      
+      // NEW: SHOP ACTIVE BOOSTS
+      active_boosts: JSON.stringify(safeParseJSON(gameState.activeBoosts, { 
+        shardBooster: 0, 
+        gpBooster: 0, 
+        autoMiner: 0, 
+        luckyCharm: 0 
+      })),
+      
+      // NEW: ITEMS PURCHASED (optional tracking)
+      items_purchased: JSON.stringify(safeParseJSON(gameState.itemsPurchased, {})),
       
       updated_at: new Date().toISOString()
     };
@@ -113,7 +124,8 @@ export default async function handler(req, res) {
       username: playerData.username,
       energy: playerData.energy,
       totalMines: playerData.total_mines,
-      unlockedAchievements: JSON.parse(playerData.unlocked_achievements).length
+      unlockedAchievements: JSON.parse(playerData.unlocked_achievements).length,
+      activeBoosts: JSON.parse(playerData.active_boosts)
     });
 
     let saveAttempts = 0;
