@@ -1,4 +1,4 @@
-// gameState.js - Complete with Achievement Tracking
+// gameState.js - Complete with Achievement Tracking and Shop Boosts
 
 class GameState {
     constructor() {
@@ -37,7 +37,11 @@ class GameState {
             totalGPEarned: 0,
             unlockedAchievements: [],
             dailyStreak: 1,
-            dailyTasksCompleted: 0
+            dailyTasksCompleted: 0,
+            
+            // NEW: Shop active boosts
+            activeBoosts: { shardBooster: 0, gpBooster: 0, autoMiner: 0, luckyCharm: 0 },
+            itemsPurchased: {}
         };
         
         this.listeners = [];
@@ -123,14 +127,12 @@ class GameState {
     }
 
     checkDailyReset() {
-        // Use UTC time for consistent global reset at 00:00 UTC
         const now = new Date();
-        const todayUTC = now.toISOString().split('T')[0]; // Gets YYYY-MM-DD in UTC
+        const todayUTC = now.toISOString().split('T')[0];
         
         if (this.data.lastDailyReset !== todayUTC) {
             console.log('Daily reset triggered (UTC):', { old: this.data.lastDailyReset, new: todayUTC });
             
-            // Check if all daily tasks were completed yesterday
             const allTasksCompleted = this.data.dailyTasks.login && 
                                       this.data.dailyTasks.mine && 
                                       this.data.dailyTasks.boss && 
@@ -138,7 +140,7 @@ class GameState {
             
             this.update({
                 dailyTasks: { 
-                    login: true,  // Auto-complete login task on reset
+                    login: true,
                     mine: false, 
                     boss: false, 
                     combo: false 
@@ -226,10 +228,17 @@ class GameState {
         const planetMultiplier = this.getPlanetMultiplier(this.data.currentPlanet);
         const speedBonus = 1 + (this.data.upgrades.speed * 0.2);
         const baseReward = 3 + Math.random() * 4;
-        const shardReward = Math.floor(baseReward * planetMultiplier * speedBonus);
-        const gpReward = Math.floor(shardReward * 0.5 * (1 + this.data.upgrades.multiplier * 0.5));
+        
+        // Apply shop boosts
+        const shardMultiplier = window.shopSystem?.getShardMultiplier() || 1;
+        const luckyMultiplier = window.shopSystem?.getLuckyMultiplier() || 1;
+        
+        const shardReward = Math.floor(baseReward * planetMultiplier * speedBonus * shardMultiplier * luckyMultiplier);
+        
+        // Apply GP boost
+        const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
+        const gpReward = Math.floor(shardReward * 0.5 * (1 + this.data.upgrades.multiplier * 0.5) * gpMultiplier);
 
-        // Track planet-specific mining
         const planetMineCount = this.data.planetMineCount || {};
         planetMineCount[this.data.currentPlanet] = (planetMineCount[this.data.currentPlanet] || 0) + 1;
 
@@ -265,7 +274,10 @@ class GameState {
         }
 
         const baseReward = 25 + Math.random() * 15;
-        const reward = Math.floor(baseReward * (1 + this.data.upgrades.multiplier * 0.5));
+        
+        // Apply GP boost
+        const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
+        const reward = Math.floor(baseReward * (1 + this.data.upgrades.multiplier * 0.5) * gpMultiplier);
         
         this.update({
             energy: this.data.energy - 5,
@@ -300,7 +312,9 @@ class GameState {
         let bossDefeated = false;
 
         if (newBossHealth <= 0) {
-            reward = 150 + Math.floor(Math.random() * 100);
+            // Apply GP boost to boss rewards
+            const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
+            reward = Math.floor((150 + Math.floor(Math.random() * 100)) * gpMultiplier);
             bossDefeated = true;
             
             this.update({
@@ -323,7 +337,8 @@ class GameState {
                 window.showNotification(`🐉 Boss defeated! +${reward} GP!`);
             }
         } else {
-            reward = Math.floor(actualDamage * 1.5);
+            const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
+            reward = Math.floor(actualDamage * 1.5 * gpMultiplier);
             
             this.update({
                 energy: this.data.energy - 3,
