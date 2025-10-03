@@ -123,11 +123,12 @@ class GameState {
     }
 
     checkDailyReset() {
+        // Use UTC time for consistent global reset at 00:00 UTC
         const now = new Date();
-        const today = now.toISOString().split('T')[0];
+        const todayUTC = now.toISOString().split('T')[0]; // Gets YYYY-MM-DD in UTC
         
-        if (this.data.lastDailyReset !== today) {
-            console.log('Daily reset triggered:', { old: this.data.lastDailyReset, new: today });
+        if (this.data.lastDailyReset !== todayUTC) {
+            console.log('Daily reset triggered (UTC):', { old: this.data.lastDailyReset, new: todayUTC });
             
             // Check if all daily tasks were completed yesterday
             const allTasksCompleted = this.data.dailyTasks.login && 
@@ -137,7 +138,7 @@ class GameState {
             
             this.update({
                 dailyTasks: { 
-                    login: true,
+                    login: true,  // Auto-complete login task on reset
                     mine: false, 
                     boss: false, 
                     combo: false 
@@ -147,7 +148,7 @@ class GameState {
                     bossBattles: 0, 
                     comboAttempts: 0 
                 },
-                lastDailyReset: today,
+                lastDailyReset: todayUTC,
                 gp: this.data.gp + 25,
                 totalGPEarned: (this.data.totalGPEarned || this.data.gp) + 25,
                 dailyStreak: (this.data.dailyStreak || 0) + 1,
