@@ -926,6 +926,19 @@ function fallbackCopyTextToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
+// Wallet Functions
+function connectWallet() {
+    if (window.uiController) {
+        window.uiController.showNotification('🔗 Wallet connection coming soon!');
+    }
+}
+
+function disconnectWallet() {
+    if (window.uiController) {
+        window.uiController.showNotification('Wallet disconnected');
+    }
+}
+
 // Initialize global instances
 window.TasksManager = new TasksManager();
 window.ProfileManager = new ProfileManager();
