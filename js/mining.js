@@ -1,4 +1,5 @@
-// Mining System
+// mining.js - Updated with Ad Tracking
+
 class MiningSystem {
     constructor() {
         this.adTimerActive = false;
@@ -9,7 +10,6 @@ class MiningSystem {
     minePlanet() {
         const result = window.gameState?.mine();
         if (result) {
-            // Animation could be added here
             this.playMiningAnimation();
         }
     }
@@ -30,7 +30,7 @@ class MiningSystem {
         }
     }
 
-    // Watch ad for energy
+    // Watch ad for energy - now with tracking
     watchAdForEnergy() {
         if (window.uiController) {
             window.uiController.showModal('adModal');
@@ -40,10 +40,13 @@ class MiningSystem {
                     const currentEnergy = gameState.getValue('energy');
                     const maxEnergy = gameState.getValue('maxEnergy');
                     gameState.setValue('energy', Math.min(maxEnergy, currentEnergy + 25));
+                    
+                    // Track ad watch for faster energy regen
+                    gameState.watchAd('energy');
                 }
                 
                 window.uiController.closeModal('adModal');
-                window.uiController.showRewardModal('⚡ +25 Energy!', '⚡');
+                window.uiController.showRewardModal('⚡ +25 Energy!\n\nEnergy now regenerates 2x faster for 30 minutes!', '⚡');
             });
         }
     }
@@ -56,6 +59,7 @@ class MiningSystem {
                 const gameState = window.gameState;
                 if (gameState) {
                     gameState.setValue('adDamageBoost', 3);
+                    gameState.watchAd('damage');
                 }
                 
                 window.uiController.closeModal('adModal');
@@ -99,7 +103,7 @@ class MiningSystem {
         }
     }
 
-    // Buy upgrade function
+    // Buy upgrade function - now just redirects to purchase confirmation
     buyUpgrade(upgradeType) {
         const result = window.gameState?.buyUpgrade(upgradeType);
         if (result && result.success) {
@@ -139,7 +143,6 @@ class MiningSystem {
 
     // Battle animation
     playBattleAnimation() {
-        // Could add particle effects or screen shake here
         const body = document.body;
         body.style.animation = 'shake 0.5s';
         setTimeout(() => {
