@@ -37,7 +37,7 @@
                 <img class="tg-avatar" id="tgAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23FFD700'/%3E%3Ctext x='50' y='65' text-anchor='middle' font-size='40' fill='%23000'%3E👤%3C/text%3E%3C/svg%3E">
                 <div>
                     <div id="tgUserName" style="font-weight: 700; font-size: 16px;">Explorer</div>
-                    <div style="font-size: 12px; opacity: 0.8;">Level <span id="tgUserLevel">1</span> • Rank #<span id="userRank">999</span></div>
+                    <div style="font-size: 12px; opacity: 0.8;">Level <span id="tgUserLevel">1</span></div>
                 </div>
             </div>
 
@@ -91,7 +91,7 @@
             </div>
         </div>
 
-        <!-- Mining Screen -->
+        <!-- IMPROVED Mining Screen -->
         <div class="screen" id="miningScreen">
             <div class="header">
                 <div class="logo">MINING: <span id="currentPlanet">Planet</span></div>
@@ -119,15 +119,40 @@
                     </div>
                 </div>
 
-                <div class="mining-actions">
-                    <button class="action-btn" onclick="watchAdForEnergy()" id="adBtn">📺 Ad (+25 Energy)</button>
-                    <button class="action-btn" onclick="battleAliens()">⚔️ Battle (+30 GP)</button>
-                    <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
+                <!-- IMPROVED ACTION BUTTONS LAYOUT -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 400px; margin: 20px auto;">
+                    <!-- Watch Ad Button - Enhanced with benefits -->
+                    <button class="action-btn" onclick="watchAdForEnergy()" id="adBtn" style="grid-column: 1 / -1; background: linear-gradient(135deg, #FF6B35, #FF073A); border: 2px solid #FFD700; position: relative; padding: 15px;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span style="font-size: 20px;">📺</span>
+                            <div style="text-align: left;">
+                                <div style="font-size: 14px; font-weight: bold;">Watch Ad</div>
+                                <div style="font-size: 10px; opacity: 0.9;">+25 Energy + 2x Rewards (5min)</div>
+                            </div>
+                        </div>
+                        <div style="position: absolute; top: 5px; right: 10px; background: var(--primary-gold); color: #000; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: bold;">BONUS!</div>
+                    </button>
+
+                    <button class="action-btn" onclick="battleAliens()" style="background: linear-gradient(135deg, #9C27B0, #6A1B9A);">
+                        <span style="font-size: 16px;">⚔️</span> Battle
+                        <div style="font-size: 10px; opacity: 0.8;">+30 GP</div>
+                    </button>
+
+                    <button class="action-btn" onclick="showScreen('galaxyScreen')" style="background: linear-gradient(135deg, #1A1A2E, #16213E);">
+                        <span style="font-size: 16px;">🌌</span> Galaxy
+                    </button>
+                </div>
+
+                <!-- Energy Recovery Info -->
+                <div style="text-align: center; margin-top: 15px; padding: 12px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 1px solid rgba(255,215,0,0.3);">
+                    <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">⚡ Energy Recovery</div>
+                    <div style="font-size: 13px; color: var(--primary-gold); font-weight: 600;">+1 Energy every 30 seconds</div>
+                    <div style="font-size: 10px; color: var(--success-green); margin-top: 5px;">💡 Watch ads for instant +25 energy + temporary 2x boost!</div>
                 </div>
             </div>
         </div>
 
-        <!-- Boss Screen -->
+        <!-- IMPROVED Boss Screen -->
         <div class="screen" id="bossScreen">
             <div class="header">
                 <div class="logo">BOSS RAID</div>
@@ -138,9 +163,16 @@
             </div>
 
             <div class="boss-container">
-                <h2 class="boss-title">🐉 COSMIC OVERLORD</h2>
+                <h2 class="boss-title" style="background: linear-gradient(135deg, var(--danger-red), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 24px; margin-bottom: 10px;">🐉 COSMIC OVERLORD 🐉</h2>
                 
-                <div class="boss-image" onclick="attackBoss()">👹</div>
+                <!-- Boss Info Card -->
+                <div style="background: rgba(255,7,58,0.1); border: 2px solid var(--danger-red); border-radius: 15px; padding: 15px; margin-bottom: 20px; text-align: center;">
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Current Boss</div>
+                    <div style="font-size: 18px; font-weight: bold; color: var(--danger-red);">Level 1 Overlord</div>
+                    <div style="font-size: 11px; color: var(--primary-gold); margin-top: 5px;">Defeat for 150-250 GP!</div>
+                </div>
+
+                <div class="boss-image" onclick="attackBoss()" style="border: 4px solid var(--danger-red); box-shadow: 0 0 30px rgba(255,7,58,0.4); animation: bossPulse 2s ease-in-out infinite;">👹</div>
 
                 <div class="boss-health-section">
                     <div class="boss-health-text">Boss Health: <span id="bossHealthText">500/500</span></div>
@@ -149,19 +181,41 @@
                     </div>
                 </div>
 
-                <div class="boss-actions">
-                    <button class="action-btn" onclick="attackBoss()">⚔️ ATTACK!</button>
-                    <button class="action-btn" onclick="watchAdForDamage()">📺 Ad (2x Damage)</button>
-                    <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
+                <!-- Action Buttons Grid -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 400px; margin: 20px auto;">
+                    <button class="action-btn" onclick="attackBoss()" style="grid-column: 1 / -1; background: linear-gradient(135deg, var(--danger-red), #B71C1C); font-size: 16px; padding: 18px;">
+                        ⚔️ ATTACK BOSS!
+                    </button>
+
+                    <button class="action-btn" onclick="watchAdForDamage()" style="background: linear-gradient(135deg, #FF6B35, #FF073A); border: 2px solid var(--primary-gold); position: relative;">
+                        📺 Ad
+                        <div style="font-size: 10px; opacity: 0.9;">2x Damage (3 hits)</div>
+                        <div style="position: absolute; top: 3px; right: 5px; background: var(--primary-gold); color: #000; padding: 1px 5px; border-radius: 8px; font-size: 8px; font-weight: bold;">BOOST</div>
+                    </button>
+
+                    <button class="action-btn" onclick="showScreen('galaxyScreen')" style="background: linear-gradient(135deg, #1A1A2E, #16213E);">
+                        🌌 Galaxy
+                    </button>
                 </div>
 
-                <div class="player-damage-display">
-                    Your Damage: <span id="playerDamage" class="damage-value">0</span>
+                <div class="player-damage-display" style="background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,107,53,0.1)); border: 2px solid var(--primary-gold); padding: 15px;">
+                    <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Your Total Damage</div>
+                    <div style="font-size: 28px; font-weight: bold; color: var(--primary-gold);"><span id="playerDamage">0</span></div>
+                </div>
+
+                <!-- Boss Tips -->
+                <div style="margin-top: 20px; padding: 12px; background: rgba(114,9,183,0.1); border-radius: 12px; border: 1px solid var(--accent-purple);">
+                    <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 8px;">💡 Boss Tips</div>
+                    <div style="font-size: 10px; color: rgba(255,255,255,0.8); line-height: 1.5;">
+                        • Watch ads for 2x damage (3 attacks)<br>
+                        • Upgrade damage in shop for stronger attacks<br>
+                        • Defeat bosses for massive GP rewards!
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Shop Screen -->
+        <!-- Shop Screen (2 TABS ONLY) -->
         <div class="screen" id="shopScreen">
             <div class="header">
                 <div class="logo">SHOP & UPGRADES</div>
@@ -172,11 +226,8 @@
             </div>
 
             <div class="shop-tabs">
-                <button class="shop-tab active" id="upgradesShopTab" onclick="switchShopTab('upgrades')">
-                    Upgrades
-                </button>
-                <button class="shop-tab" id="itemsShopTab" onclick="switchShopTab('items')">
-                    Items
+                <button class="shop-tab active" id="itemsShopTab" onclick="switchShopTab('items')">
+                    Items & Upgrades
                 </button>
                 <button class="shop-tab premium-tab" id="premiumShopTab" onclick="switchShopTab('premium')">
                     Premium
@@ -184,8 +235,9 @@
             </div>
 
             <div id="shopContent">
-                <!-- Upgrades Tab (Default) -->
-                <div class="shop-grid" id="upgradesShopContent">
+                <!-- Items Tab (Includes Upgrades) -->
+                <div class="shop-grid" id="itemsShopContent">
+                    <!-- Upgrades -->
                     <div class="shop-item" onclick="buyUpgrade('speed')">
                         <div class="shop-icon">🚀</div>
                         <div class="shop-title">Speed Boost</div>
@@ -210,10 +262,8 @@
                         <div class="shop-cost" id="multiplierCost">200 GP</div>
                         <div class="shop-desc">+50% GP Gain</div>
                     </div>
-                </div>
-
-                <!-- Items Tab -->
-                <div class="shop-grid" id="itemsShopContent" style="display: none;">
+                    
+                    <!-- Consumable Items -->
                     <div class="shop-item" onclick="buyShopItem('energyPotion')">
                         <div class="shop-icon">🧪</div>
                         <div class="shop-title">Energy Potion</div>
@@ -238,12 +288,6 @@
                         <div class="shop-cost">400 GP</div>
                         <div class="shop-desc">2x GP (1 hour)</div>
                     </div>
-                    <div class="shop-item" onclick="buyShopItem('autoMiner')">
-                        <div class="shop-icon">🤖</div>
-                        <div class="shop-title">Auto Miner</div>
-                        <div class="shop-cost">800 GP</div>
-                        <div class="shop-desc">Auto mine (2 hours)</div>
-                    </div>
                     <div class="shop-item" onclick="buyShopItem('luckyCharm')">
                         <div class="shop-icon">🍀</div>
                         <div class="shop-title">Lucky Charm</div>
@@ -254,6 +298,13 @@
 
                 <!-- Premium Tab -->
                 <div class="shop-grid" id="premiumShopContent" style="display: none;">
+                    <div class="shop-item premium-item" onclick="buyPremiumItem('autoMiner')">
+                        <div class="premium-badge">💎</div>
+                        <div class="shop-icon">🤖</div>
+                        <div class="shop-title">Auto Miner</div>
+                        <div class="shop-cost">2,000 GP</div>
+                        <div class="shop-desc">Auto mine forever (persistent)</div>
+                    </div>
                     <div class="shop-item premium-item" onclick="buyPremiumItem('vipPass')">
                         <div class="premium-badge">💎</div>
                         <div class="shop-icon">👑</div>
@@ -312,10 +363,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="shop-actions">
-                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
-            </div>
         </div>
 
         <!-- Tasks Screen -->
@@ -345,10 +392,6 @@
             </div>
 
             <div id="taskContent"></div>
-
-            <div class="task-actions">
-                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
-            </div>
         </div>
 
         <!-- Mini-Games Screen -->
@@ -389,10 +432,6 @@
                 </div>
                 <p class="combo-info">Attempts: <span id="comboAttempts">3</span>/3 | Reward: 100 GP</p>
             </div>
-
-            <div class="minigame-actions">
-                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
-            </div>
         </div>
 
         <!-- Command Center (Profile) Screen -->
@@ -400,7 +439,7 @@
             <div class="header">
                 <div class="logo">COMMAND CENTER</div>
                 <div class="resources">
-                    <div class="resource">#<span id="profileRank">999</span></div>
+                    <div class="resource">🏆 <span id="profileGP">0</span></div>
                 </div>
             </div>
 
@@ -428,10 +467,6 @@
             </div>
 
             <div id="profileContent"></div>
-
-            <div class="profile-actions">
-                <button class="action-btn" onclick="showScreen('galaxyScreen')">🌌 Back to Galaxy</button>
-            </div>
         </div>
 
         <!-- Navigation Bar -->
@@ -497,6 +532,14 @@
             </div>
         </div>
     </div>
+
+    <!-- Boss Pulse Animation -->
+    <style>
+    @keyframes bossPulse {
+        0%, 100% { box-shadow: 0 0 30px rgba(255,7,58,0.4); transform: scale(1); }
+        50% { box-shadow: 0 0 50px rgba(255,7,58,0.8); transform: scale(1.02); }
+    }
+    </style>
 
     <script src="js/gameState.js"></script>
     <script src="js/backend.js"></script>
