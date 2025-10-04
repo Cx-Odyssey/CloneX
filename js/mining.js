@@ -1,12 +1,10 @@
-// mining.js - Updated with Ad Tracking
-
+// Mining System with Enhanced Ad Incentives
 class MiningSystem {
     constructor() {
         this.adTimerActive = false;
         this.adTimerInterval = null;
     }
 
-    // Main mining function
     minePlanet() {
         const result = window.gameState?.mine();
         if (result) {
@@ -14,7 +12,6 @@ class MiningSystem {
         }
     }
 
-    // Battle aliens function
     battleAliens() {
         const result = window.gameState?.battleAliens();
         if (result) {
@@ -22,7 +19,6 @@ class MiningSystem {
         }
     }
 
-    // Boss attack function
     attackBoss() {
         const result = window.gameState?.attackBoss();
         if (result && result.bossDefeated) {
@@ -30,7 +26,7 @@ class MiningSystem {
         }
     }
 
-    // Watch ad for energy - now with tracking
+    // ENHANCED: Watch ad for energy + 5min 2x reward boost
     watchAdForEnergy() {
         if (window.uiController) {
             window.uiController.showModal('adModal');
@@ -41,12 +37,15 @@ class MiningSystem {
                     const maxEnergy = gameState.getValue('maxEnergy');
                     gameState.setValue('energy', Math.min(maxEnergy, currentEnergy + 25));
                     
-                    // Track ad watch for faster energy regen
-                    gameState.watchAd('energy');
+                    // Add 5 minute 2x reward boost
+                    const boostExpiry = Date.now() + (5 * 60 * 1000); // 5 minutes
+                    gameState.setValue('adBoostExpiry', boostExpiry);
+                    
+                    this.startAdBoostTimer();
                 }
                 
                 window.uiController.closeModal('adModal');
-                window.uiController.showRewardModal('⚡ +25 Energy!\n\nEnergy now regenerates 2x faster for 30 minutes!', '⚡');
+                window.uiController.showRewardModal('⚡ +25 Energy + 2x Rewards (5min)!', '⚡');
             });
         }
     }
@@ -59,13 +58,62 @@ class MiningSystem {
                 const gameState = window.gameState;
                 if (gameState) {
                     gameState.setValue('adDamageBoost', 3);
-                    gameState.watchAd('damage');
                 }
                 
                 window.uiController.closeModal('adModal');
                 window.uiController.showRewardModal('⚔️ 2x Damage for next 3 attacks!', '⚔️');
             });
         }
+    }
+
+    // NEW: Ad boost countdown timer
+    startAdBoostTimer() {
+        // Update UI to show remaining boost time
+        const updateBoostDisplay = () => {
+            const gameState = window.gameState;
+            if (!gameState) return;
+
+            const boostExpiry = gameState.getValue('adBoostExpiry');
+            const now = Date.now();
+            
+            if (now >= boostExpiry) {
+                clearInterval(this.boostTimerInterval);
+                if (window.uiController) {
+                    window.uiController.showNotification('2x Reward boost expired!');
+                }
+                return;
+            }
+
+            const timeLeft = Math.ceil((boostExpiry - now) / 1000);
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            
+            // Update button text if on mining screen
+            const adBtn = document.getElementById('adBtn');
+            if (adBtn && window.uiController.currentScreen === 'miningScreen') {
+                const boostActive = `
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span style="font-size: 20px;">🔥</span>
+                        <div style="text-align: left;">
+                            <div style="font-size: 14px; font-weight: bold;">2x Boost Active!</div>
+                            <div style="font-size: 10px; opacity: 0.9;">${minutes}:${seconds.toString().padStart(2, '0')} remaining</div>
+                        </div>
+                    </div>
+                `;
+                adBtn.innerHTML = boostActive;
+                adBtn.style.background = 'linear-gradient(135deg, #00FF88, #00CC70)';
+                adBtn.style.border = '2px solid var(--primary-gold)';
+            }
+        };
+
+        // Clear existing interval
+        if (this.boostTimerInterval) {
+            clearInterval(this.boostTimerInterval);
+        }
+
+        // Update every second
+        updateBoostDisplay();
+        this.boostTimerInterval = setInterval(updateBoostDisplay, 1000);
     }
 
     // Ad timer system
@@ -103,7 +151,6 @@ class MiningSystem {
         }
     }
 
-    // Buy upgrade function - now just redirects to purchase confirmation
     buyUpgrade(upgradeType) {
         const result = window.gameState?.buyUpgrade(upgradeType);
         if (result && result.success) {
@@ -125,12 +172,10 @@ class MiningSystem {
                 window.uiController.showRewardModal(messages[upgradeType], icons[upgradeType]);
             }
 
-            // Update shop costs display
             window.uiController?.updateShopCosts(window.gameState.get());
         }
     }
 
-    // Mining animation
     playMiningAnimation() {
         const miningPlanet = document.getElementById('miningPlanet');
         if (miningPlanet) {
@@ -141,7 +186,6 @@ class MiningSystem {
         }
     }
 
-    // Battle animation
     playBattleAnimation() {
         const body = document.body;
         body.style.animation = 'shake 0.5s';
@@ -150,7 +194,6 @@ class MiningSystem {
         }, 500);
     }
 
-    // Boss defeat animation
     playBossDefeatAnimation() {
         const bossImage = document.querySelector('.boss-image');
         if (bossImage) {
