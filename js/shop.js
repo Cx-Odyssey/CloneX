@@ -1,47 +1,41 @@
-// Shop System - Extended with Items and Premium
+// shop.js - Updated with Auto Miner Premium and 2-tab system
+
 class ShopSystem {
     constructor() {
-        this.currentTab = 'upgrades';
+        this.currentTab = 'items';
         this.activeBoosts = {
             shardBooster: 0,
             gpBooster: 0,
-            autoMiner: 0,
             luckyCharm: 0
         };
         this.activePremiumItems = {
             vipPass: 0,
             legendaryShip: false,
             unlimitedEnergy: 0,
-            doubleXP: false
+            doubleXP: false,
+            autoMinerPremium: 0
         };
     }
 
     switchTab(tab) {
         this.currentTab = tab;
         
-        // Update tab buttons
-        const upgradesTab = document.getElementById('upgradesShopTab');
         const itemsTab = document.getElementById('itemsShopTab');
         const premiumTab = document.getElementById('premiumShopTab');
         
-        [upgradesTab, itemsTab, premiumTab].forEach(t => {
+        [itemsTab, premiumTab].forEach(t => {
             if (t) t.classList.remove('active');
         });
         
-        if (tab === 'upgrades' && upgradesTab) {
-            upgradesTab.classList.add('active');
-        } else if (tab === 'items' && itemsTab) {
+        if (tab === 'items' && itemsTab) {
             itemsTab.classList.add('active');
         } else if (tab === 'premium' && premiumTab) {
             premiumTab.classList.add('active');
         }
         
-        // Show/hide content
-        const upgradesContent = document.getElementById('upgradesShopContent');
         const itemsContent = document.getElementById('itemsShopContent');
         const premiumContent = document.getElementById('premiumShopContent');
         
-        if (upgradesContent) upgradesContent.style.display = tab === 'upgrades' ? 'grid' : 'none';
         if (itemsContent) itemsContent.style.display = tab === 'items' ? 'grid' : 'none';
         if (premiumContent) premiumContent.style.display = tab === 'premium' ? 'grid' : 'none';
     }
@@ -76,7 +70,7 @@ class ShopSystem {
                 cost: 300,
                 icon: '💠',
                 effect: () => {
-                    this.activeBoosts.shardBooster = Date.now() + (60 * 60 * 1000); // 1 hour
+                    this.activeBoosts.shardBooster = Date.now() + (60 * 60 * 1000);
                     this.startBoostTimer('shardBooster');
                 }
             },
@@ -85,17 +79,8 @@ class ShopSystem {
                 cost: 400,
                 icon: '🎯',
                 effect: () => {
-                    this.activeBoosts.gpBooster = Date.now() + (60 * 60 * 1000); // 1 hour
+                    this.activeBoosts.gpBooster = Date.now() + (60 * 60 * 1000);
                     this.startBoostTimer('gpBooster');
-                }
-            },
-            autoMiner: {
-                name: 'Auto Miner',
-                cost: 800,
-                icon: '🤖',
-                effect: () => {
-                    this.activeBoosts.autoMiner = Date.now() + (2 * 60 * 60 * 1000); // 2 hours
-                    this.startAutoMiner();
                 }
             },
             luckyCharm: {
@@ -103,7 +88,7 @@ class ShopSystem {
                 cost: 500,
                 icon: '🍀',
                 effect: () => {
-                    this.activeBoosts.luckyCharm = Date.now() + (60 * 60 * 1000); // 1 hour
+                    this.activeBoosts.luckyCharm = Date.now() + (60 * 60 * 1000);
                     this.startBoostTimer('luckyCharm');
                 }
             }
@@ -120,18 +105,13 @@ class ShopSystem {
             return;
         }
 
-        // Deduct cost
         gameState.setValue('gp', currentGP - item.cost);
-
-        // Apply effect
         item.effect();
 
-        // Show notification
         if (window.uiController) {
             window.uiController.showNotification(`${item.icon} ${item.name} activated!`);
         }
 
-        // Save progress
         if (window.backendManager) {
             window.backendManager.saveProgress(gameState.get());
         }
@@ -147,7 +127,7 @@ class ShopSystem {
                 cost: 5000,
                 icon: '👑',
                 effect: () => {
-                    this.activePremiumItems.vipPass = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 days
+                    this.activePremiumItems.vipPass = Date.now() + (30 * 24 * 60 * 60 * 1000);
                     this.startPremiumTimer('vipPass');
                 }
             },
@@ -157,7 +137,6 @@ class ShopSystem {
                 icon: '🛸',
                 effect: () => {
                     this.activePremiumItems.legendaryShip = true;
-                    // Double all upgrade levels
                     const upgrades = gameState.getValue('upgrades');
                     gameState.setValue('upgrades', {
                         speed: upgrades.speed + 5,
@@ -169,12 +148,22 @@ class ShopSystem {
                     gameState.setValue('energy', gameState.getValue('maxEnergy'));
                 }
             },
+            autoMiner: {
+                name: 'Auto Miner Premium',
+                cost: 5000,
+                icon: '🤖',
+                effect: () => {
+                    this.activePremiumItems.autoMinerPremium = Date.now() + (30 * 24 * 60 * 60 * 1000); // 30 days
+                    gameState.setValue('activePremiumItems', this.activePremiumItems);
+                    this.startPremiumTimer('autoMinerPremium');
+                }
+            },
             unlimitedEnergy: {
                 name: 'Unlimited Energy',
                 cost: 3000,
                 icon: '⚡',
                 effect: () => {
-                    this.activePremiumItems.unlimitedEnergy = Date.now() + (7 * 24 * 60 * 60 * 1000); // 7 days
+                    this.activePremiumItems.unlimitedEnergy = Date.now() + (7 * 24 * 60 * 60 * 1000);
                     gameState.setValue('maxEnergy', 9999);
                     gameState.setValue('energy', 9999);
                     this.startPremiumTimer('unlimitedEnergy');
@@ -213,7 +202,6 @@ class ShopSystem {
                 cost: 2000,
                 icon: '🎁',
                 effect: () => {
-                    // Give multiple benefits
                     gameState.setValue('gp', gameState.getValue('gp') + 5000);
                     gameState.setValue('shards', gameState.getValue('shards') + 1000);
                     gameState.setValue('gameTickets', 10);
@@ -234,8 +222,7 @@ class ShopSystem {
                 cost: 20000,
                 icon: '🌟',
                 effect: () => {
-                    // Ultimate benefits
-                    this.activePremiumItems.vipPass = Date.now() + (365 * 24 * 60 * 60 * 1000); // 1 year
+                    this.activePremiumItems.vipPass = Date.now() + (365 * 24 * 60 * 60 * 1000);
                     this.activePremiumItems.doubleXP = true;
                     this.activePremiumItems.legendaryShip = true;
                     
@@ -267,18 +254,13 @@ class ShopSystem {
             return;
         }
 
-        // Deduct cost
         gameState.setValue('gp', currentGP - item.cost);
-
-        // Apply effect
         item.effect();
 
-        // Show notification
         if (window.uiController) {
             window.uiController.showNotification(`${item.icon} ${item.name} purchased!`);
         }
 
-        // Save progress
         if (window.backendManager) {
             window.backendManager.saveProgress(gameState.get());
         }
@@ -321,28 +303,14 @@ class ShopSystem {
                 if (window.uiController) {
                     window.uiController.showNotification('Unlimited Energy expired');
                 }
-            }
-        }, 60000); // Check every minute
-    }
-
-    startAutoMiner() {
-        const mineInterval = setInterval(() => {
-            if (Date.now() >= this.activeBoosts.autoMiner) {
-                clearInterval(mineInterval);
+            } else if (itemType === 'autoMinerPremium' && Date.now() >= this.activePremiumItems.autoMinerPremium) {
+                this.activePremiumItems.autoMinerPremium = 0;
+                clearInterval(checkTimer);
                 if (window.uiController) {
-                    window.uiController.showNotification('Auto Miner stopped');
+                    window.uiController.showNotification('Auto Miner Premium expired');
                 }
-                return;
             }
-
-            const gameState = window.gameState;
-            if (!gameState) return;
-
-            const energy = gameState.getValue('energy');
-            if (energy >= 2) {
-                gameState.mine();
-            }
-        }, 10000); // Mine every 10 seconds
+        }, 60000);
     }
 
     isBoostActive(boostType) {
@@ -376,12 +344,6 @@ class ShopSystem {
     hasUnlimitedEnergy() {
         return this.activePremiumItems.unlimitedEnergy > Date.now();
     }
-}
-
-// Premium Shop Functions
-function showPremiumComingSoon() {
-    // This function is no longer used but kept for compatibility
-    buyPremiumItem(arguments[0]);
 }
 
 // Global shop system
