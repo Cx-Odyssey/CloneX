@@ -39,9 +39,17 @@ class GameState {
             dailyStreak: 1,
             dailyTasksCompleted: 0,
             
-            // NEW: Shop active boosts
+            // Shop active boosts
             activeBoosts: { shardBooster: 0, gpBooster: 0, autoMiner: 0, luckyCharm: 0 },
-            itemsPurchased: {}
+            itemsPurchased: {},
+            
+            // Premium items
+            activePremiumItems: {
+                vipPass: 0,
+                legendaryShip: false,
+                unlimitedEnergy: 0,
+                doubleXP: false
+            }
         };
         
         this.listeners = [];
@@ -161,7 +169,7 @@ class GameState {
             this.checkAchievements();
             
             if (window.showNotification) {
-                window.showNotification(`🎁 Daily login reward: +25 GP! (Day ${this.data.dailyStreak})`);
+                window.showNotification(`Daily login reward: +25 GP! (Day ${this.data.dailyStreak})`);
             }
             
             return true;
@@ -218,9 +226,12 @@ class GameState {
     }
 
     mine() {
-        if (this.data.energy <= 0) {
+        // Check for unlimited energy
+        const hasUnlimitedEnergy = window.shopSystem?.hasUnlimitedEnergy();
+        
+        if (!hasUnlimitedEnergy && this.data.energy <= 0) {
             if (window.showNotification) {
-                window.showNotification('⚡ No energy! Wait for regeneration or watch an ad.');
+                window.showNotification('No energy! Wait for regeneration or watch an ad.');
             }
             return false;
         }
@@ -242,8 +253,11 @@ class GameState {
         const planetMineCount = this.data.planetMineCount || {};
         planetMineCount[this.data.currentPlanet] = (planetMineCount[this.data.currentPlanet] || 0) + 1;
 
+        // Only reduce energy if not unlimited
+        const energyChange = hasUnlimitedEnergy ? 0 : 2;
+
         this.update({
-            energy: this.data.energy - 2,
+            energy: this.data.energy - energyChange,
             shards: this.data.shards + shardReward,
             gp: this.data.gp + gpReward,
             totalMines: (this.data.totalMines || 0) + 1,
@@ -259,16 +273,18 @@ class GameState {
         this.checkAchievements();
 
         if (window.showNotification) {
-            window.showNotification(`💎 +${shardReward} Shards, +${gpReward} GP!`);
+            window.showNotification(`+${shardReward} Shards, +${gpReward} GP!`);
         }
 
         return { shards: shardReward, gp: gpReward };
     }
 
     battleAliens() {
-        if (this.data.energy < 5) {
+        const hasUnlimitedEnergy = window.shopSystem?.hasUnlimitedEnergy();
+        
+        if (!hasUnlimitedEnergy && this.data.energy < 5) {
             if (window.showNotification) {
-                window.showNotification('⚡ Need at least 5 energy to battle!');
+                window.showNotification('Need at least 5 energy to battle!');
             }
             return false;
         }
@@ -279,23 +295,27 @@ class GameState {
         const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
         const reward = Math.floor(baseReward * (1 + this.data.upgrades.multiplier * 0.5) * gpMultiplier);
         
+        const energyChange = hasUnlimitedEnergy ? 0 : 5;
+        
         this.update({
-            energy: this.data.energy - 5,
+            energy: this.data.energy - energyChange,
             gp: this.data.gp + reward,
             totalGPEarned: (this.data.totalGPEarned || this.data.gp) + reward
         });
 
         if (window.showNotification) {
-            window.showNotification(`⚔️ Defeated aliens! +${reward} GP!`);
+            window.showNotification(`Defeated aliens! +${reward} GP!`);
         }
 
         return { gp: reward };
     }
 
     attackBoss() {
-        if (this.data.energy < 3) {
+        const hasUnlimitedEnergy = window.shopSystem?.hasUnlimitedEnergy();
+        
+        if (!hasUnlimitedEnergy && this.data.energy < 3) {
             if (window.showNotification) {
-                window.showNotification('⚡ Need at least 3 energy to attack!');
+                window.showNotification('Need at least 3 energy to attack!');
             }
             return false;
         }
@@ -311,6 +331,8 @@ class GameState {
         let reward = 0;
         let bossDefeated = false;
 
+        const energyChange = hasUnlimitedEnergy ? 0 : 3;
+
         if (newBossHealth <= 0) {
             // Apply GP boost to boss rewards
             const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
@@ -318,7 +340,7 @@ class GameState {
             bossDefeated = true;
             
             this.update({
-                energy: this.data.energy - 3,
+                energy: this.data.energy - energyChange,
                 bossHealth: this.data.maxBossHealth,
                 playerDamage: 0,
                 gp: this.data.gp + reward,
@@ -334,14 +356,14 @@ class GameState {
             this.checkAchievements();
 
             if (window.showNotification) {
-                window.showNotification(`🐉 Boss defeated! +${reward} GP!`);
+                window.showNotification(`Boss defeated! +${reward} GP!`);
             }
         } else {
             const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
             reward = Math.floor(actualDamage * 1.5 * gpMultiplier);
             
             this.update({
-                energy: this.data.energy - 3,
+                energy: this.data.energy - energyChange,
                 bossHealth: newBossHealth,
                 playerDamage: newPlayerDamage,
                 gp: this.data.gp + reward,
@@ -354,7 +376,7 @@ class GameState {
             });
 
             if (window.showNotification) {
-                window.showNotification(`⚔️ Hit for ${actualDamage} damage! +${reward} GP!`);
+                window.showNotification(`Hit for ${actualDamage} damage! +${reward} GP!`);
             }
         }
 
@@ -372,7 +394,7 @@ class GameState {
         const cost = costs[upgradeType];
         if (this.data.gp < cost) {
             if (window.showNotification) {
-                window.showNotification('🏆 Not enough GP!');
+                window.showNotification('Not enough GP!');
             }
             return false;
         }
@@ -404,7 +426,7 @@ class GameState {
             });
 
             if (window.showNotification) {
-                window.showNotification('🚀 First purchase completed! +40 GP bonus!');
+                window.showNotification('First purchase completed! +40 GP bonus!');
             }
         }
 
@@ -428,7 +450,7 @@ class GameState {
         
         if (this.data.dailyTasks[taskType] || !requirements[taskType]) {
             if (window.showNotification) {
-                window.showNotification('❌ Task requirements not met or already completed!');
+                window.showNotification('Task requirements not met or already completed!');
             }
             return false;
         }
@@ -443,7 +465,7 @@ class GameState {
         });
 
         if (window.showNotification) {
-            window.showNotification(`✅ Daily task completed! +${rewards[taskType]} GP!`);
+            window.showNotification(`Daily task completed! +${rewards[taskType]} GP!`);
         }
 
         return true;
@@ -460,7 +482,7 @@ class GameState {
         
         if (this.data.oneTimeTasks[taskType] || !requirements[taskType]) {
             if (window.showNotification) {
-                window.showNotification('❌ Task requirements not met or already completed!');
+                window.showNotification('Task requirements not met or already completed!');
             }
             return false;
         }
@@ -475,7 +497,7 @@ class GameState {
         });
 
         if (window.showNotification) {
-            window.showNotification(`✅ One-time task completed! +${rewards[taskType]} GP!`);
+            window.showNotification(`One-time task completed! +${rewards[taskType]} GP!`);
         }
 
         return true;
@@ -508,7 +530,7 @@ class GameState {
             newAchievements.forEach(id => {
                 const achievement = achievementManager.achievements[id];
                 if (window.showNotification) {
-                    window.showNotification(`🏆 Achievement Unlocked: ${achievement.title}! +${achievement.reward} GP`);
+                    window.showNotification(`Achievement Unlocked: ${achievement.title}! +${achievement.reward} GP`);
                 }
             });
         }
@@ -540,6 +562,12 @@ class GameState {
                 this.set(result.data);
                 this.updateEnergyFromTime();
                 this.updateTicketsFromTime();
+                
+                // Sync premium items from shop system
+                if (window.shopSystem && result.data.activePremiumItems) {
+                    window.shopSystem.activePremiumItems = result.data.activePremiumItems;
+                }
+                
                 return true;
             }
         }
