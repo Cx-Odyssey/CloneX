@@ -1,4 +1,4 @@
-// gameState.js - Updated with Harder Leveling and Capped Progress
+// gameState.js - With Harder Leveling & Ad Reward System
 
 class GameState {
     constructor() {
@@ -13,6 +13,8 @@ class GameState {
             playerDamage: 0,
             upgrades: { speed: 0, damage: 0, energy: 0, multiplier: 0 },
             adDamageBoost: 0,
+            adRewardBoost: 0, // NEW: 2x rewards from ads
+            adBoostExpiry: 0, // NEW: when ad boost expires
             gameTickets: 3,
             lastTicketTime: Date.now(),
             maxTickets: 10,
@@ -27,8 +29,8 @@ class GameState {
             lastDailyReset: '',
             walletConnected: false,
             walletAddress: '',
-            adWatchCount: 0,
-            lastAdTime: 0,
+            hasAutoMiner: false, // NEW: For persistent auto miner
+            autoMinerStartTime: 0,
             
             // Achievement tracking
             planetsVisited: [],
@@ -50,26 +52,12 @@ class GameState {
                 vipPass: 0,
                 legendaryShip: false,
                 unlimitedEnergy: 0,
-                doubleXP: false,
-                autoMinerPremium: 0
+                doubleXP: false
             }
         };
         
         this.listeners = [];
         this.autoSaveInterval = null;
-        this.adEnergyBoostActive = false;
-    }
-
-    // Harder level calculation - exponential growth
-    getLevel() {
-        const gp = this.data.gp;
-        // New formula: Level = floor(sqrt(GP/50)) + 1
-        // This makes leveling much harder
-        // Level 10 = 5,000 GP
-        // Level 50 = 125,000 GP
-        // Level 100 = 500,000 GP
-        // Level 500 = 12,500,000 GP
-        return Math.floor(Math.sqrt(gp / 50)) + 1;
     }
 
     get() {
@@ -125,19 +113,7 @@ class GameState {
     updateEnergyFromTime() {
         const now = Date.now();
         const timePassed = now - this.data.energyLastRegen;
-        
-        // Ad boost: energy regenerates 2x faster for 30 minutes after watching ad
-        let regenRate = 30000; // Default: 1 energy per 30 seconds
-        if (this.adEnergyBoostActive) {
-            const timeSinceAd = now - this.data.lastAdTime;
-            if (timeSinceAd < 1800000) { // 30 minutes
-                regenRate = 15000; // 2x faster: 1 energy per 15 seconds
-            } else {
-                this.adEnergyBoostActive = false;
-            }
-        }
-        
-        const energyToAdd = Math.floor(timePassed / regenRate);
+        const energyToAdd = Math.floor(timePassed / 30000);
         
         if (energyToAdd > 0) {
             const newEnergy = Math.min(this.data.maxEnergy, this.data.energy + energyToAdd);
@@ -162,255 +138,13 @@ class GameState {
         }
     }
 
-    // Auto miner premium - runs even when offline
-    processAutoMinerPremium() {
-        const now = Date.now();
-        if (this.data.activePremiumItems.autoMinerPremium > now && this.data.currentPlanet) {
-            // Calculate mines since last update
-            const timePassed = Math.min(now - (this.data.lastAutoMineTime || now), 3600000); // Cap at 1 hour
-            const mineCount = Math.floor(timePassed / 10000); // 1 mine every 10 seconds
-            
-            if (mineCount > 0) {
-                const planetMultiplier = this.getPlanetMultiplier(this.data.currentPlanet);
-                const speedBonus = 1 + (this.data.upgrades.speed * 0.2);
-                const baseReward = 3;
-                
-                const shardMultiplier = window.shopSystem?.getShardMultiplier() || 1;
-                const totalShards = Math.floor(mineCount * baseReward * planetMultiplier * speedBonus * shardMultiplier);
-                
-                const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
-                const totalGP = Math.floor(totalShards * 0.5 * (1 + this.data.upgrades.multiplier * 0.5) * gpMultiplier);
-                
-                this.update({
-                    shards: this.data.shards + totalShards,
-                    gp: this.data.gp + totalGP,
-                    totalMines: (this.data.totalMines || 0) + mineCount,
-                    totalShardsCollected: (this.data.totalShardsCollected || 0) + totalShards,
-                    totalGPEarned: (this.data.totalGPEarned || this.data.gp) + totalGP,
-                    lastAutoMineTime: now
-                });
-                
-                if (window.showNotification) {
-                    window.showNotification(`Auto Miner: +${totalShards} Shards, +${totalGP} GP!`);
-                }
-            }
-        }
-        
-        this.data.lastAutoMineTime = now;
-    }
-
-    mine() {
-        // Check for unlimited energy
-        const hasUnlimitedEnergy = window.shopSystem?.hasUnlimitedEnergy();
-        
-        if (!hasUnlimitedEnergy && this.data.energy <= 0) {
-            if (window.showNotification) {
-                window.showNotification('No energy! Watch an ad for faster regen!');
-            }
-            return false;
-        }
-
-        const planetMultiplier = this.getPlanetMultiplier(this.data.currentPlanet);
-        const speedBonus = 1 + (this.data.upgrades.speed * 0.2);
-        const baseReward = 3 + Math.random() * 4;
-        
-        const shardMultiplier = window.shopSystem?.getShardMultiplier() || 1;
-        const luckyMultiplier = window.shopSystem?.getLuckyMultiplier() || 1;
-        
-        const shardReward = Math.floor(baseReward * planetMultiplier * speedBonus * shardMultiplier * luckyMultiplier);
-        
-        const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
-        const gpReward = Math.floor(shardReward * 0.5 * (1 + this.data.upgrades.multiplier * 0.5) * gpMultiplier);
-
-        const planetMineCount = this.data.planetMineCount || {};
-        planetMineCount[this.data.currentPlanet] = (planetMineCount[this.data.currentPlanet] || 0) + 1;
-
-        const energyChange = hasUnlimitedEnergy ? 0 : 2;
-        
-        // Cap daily task progress at 10
-        const newMineProgress = Math.min(this.data.dailyTaskProgress.mines + 1, 10);
-
-        this.update({
-            energy: this.data.energy - energyChange,
-            shards: this.data.shards + shardReward,
-            gp: this.data.gp + gpReward,
-            totalMines: (this.data.totalMines || 0) + 1,
-            totalShardsCollected: (this.data.totalShardsCollected || 0) + shardReward,
-            totalGPEarned: (this.data.totalGPEarned || this.data.gp) + gpReward,
-            planetMineCount: planetMineCount,
-            dailyTaskProgress: {
-                ...this.data.dailyTaskProgress,
-                mines: newMineProgress
-            }
-        });
-
-        if (window.showNotification) {
-            window.showNotification(`+${shardReward} Shards, +${gpReward} GP!`);
-        }
-
-        return { shards: shardReward, gp: gpReward };
-    }
-
-    attackBoss() {
-        const hasUnlimitedEnergy = window.shopSystem?.hasUnlimitedEnergy();
-        
-        if (!hasUnlimitedEnergy && this.data.energy < 3) {
-            if (window.showNotification) {
-                window.showNotification('Need at least 3 energy to attack!');
-            }
-            return false;
-        }
-
-        const baseDamage = 8 + (this.data.upgrades.damage * 5);
-        const damage = baseDamage + Math.floor(Math.random() * 12);
-        const actualDamage = this.data.adDamageBoost > 0 ? damage * 2 : damage;
-        
-        const newBossHealth = Math.max(0, this.data.bossHealth - actualDamage);
-        const newPlayerDamage = this.data.playerDamage + actualDamage;
-        const newAdBoost = Math.max(0, this.data.adDamageBoost - 1);
-
-        let reward = 0;
-        let bossDefeated = false;
-
-        const energyChange = hasUnlimitedEnergy ? 0 : 3;
-        
-        // Cap daily boss task progress at 3
-        const newBossProgress = Math.min(this.data.dailyTaskProgress.bossBattles + 1, 3);
-
-        if (newBossHealth <= 0) {
-            const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
-            reward = Math.floor((150 + Math.floor(Math.random() * 100)) * gpMultiplier);
-            bossDefeated = true;
-            
-            this.update({
-                energy: this.data.energy - energyChange,
-                bossHealth: this.data.maxBossHealth,
-                playerDamage: 0,
-                gp: this.data.gp + reward,
-                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + reward,
-                adDamageBoost: newAdBoost,
-                bossesDefeated: (this.data.bossesDefeated || 0) + 1,
-                dailyTaskProgress: {
-                    ...this.data.dailyTaskProgress,
-                    bossBattles: newBossProgress
-                }
-            });
-
-            if (window.showNotification) {
-                window.showNotification(`Boss defeated! +${reward} GP!`);
-            }
-        } else {
-            const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
-            reward = Math.floor(actualDamage * 1.5 * gpMultiplier);
-            
-            this.update({
-                energy: this.data.energy - energyChange,
-                bossHealth: newBossHealth,
-                playerDamage: newPlayerDamage,
-                gp: this.data.gp + reward,
-                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + reward,
-                adDamageBoost: newAdBoost,
-                dailyTaskProgress: {
-                    ...this.data.dailyTaskProgress,
-                    bossBattles: newBossProgress
-                }
-            });
-
-            if (window.showNotification) {
-                window.showNotification(`Hit for ${actualDamage} damage! +${reward} GP!`);
-            }
-        }
-
-        return { damage: actualDamage, gp: reward, bossDefeated };
-    }
-
-    // Track ad watches for bonus
-    watchAd(type) {
-        const now = Date.now();
-        this.update({
-            adWatchCount: (this.data.adWatchCount || 0) + 1,
-            lastAdTime: now
-        });
-        
-        // Enable faster energy regen for 30 minutes
-        if (type === 'energy') {
-            this.adEnergyBoostActive = true;
-        }
-    }
-
-    getPlanetMultiplier(planetName) {
-        const multipliers = {
-            'Pyrion': 1.2,
-            'Aqueos': 1.0,
-            'Voidex': 1.6,
-            'Chloros': 1.1,
-            'Aurelia': 1.8,
-            'Crimson': 1.4
-        };
-        return multipliers[planetName] || 1.0;
-    }
-
-    trackPlanetVisit(planetName) {
-        const visited = this.data.planetsVisited || [];
-        if (!visited.includes(planetName)) {
-            this.update({
-                planetsVisited: [...visited, planetName]
-            });
-        }
-    }
-
-    // ... rest of the methods remain the same ...
-    
-    initialize() {
-        this.generateReferralCode();
-        this.generateDailyCombo();
-        this.checkDailyReset();
-        this.updateEnergyFromTime();
-        this.updateTicketsFromTime();
-        this.processAutoMinerPremium();
-        
-        setInterval(() => {
-            if (this.data.energy < this.data.maxEnergy) {
-                this.addValue('energy', 1);
-                this.setValue('energyLastRegen', Date.now());
-            }
-            this.processAutoMinerPremium();
-        }, 30000);
-        
-        setInterval(() => {
-            this.updateTicketsFromTime();
-        }, 60000);
-    }
-
-    generateReferralCode() {
-        if (!this.data.referralCode) {
-            const code = 'CX' + Math.random().toString(36).substr(2, 8).toUpperCase();
-            this.setValue('referralCode', code);
-        }
-    }
-
-    generateDailyCombo() {
-        const today = new Date().toISOString().split('T')[0];
-        
-        if (!this.data.dailyCombo.code || this.data.dailyCombo.date !== today) {
-            const newCode = Math.floor(1000 + Math.random() * 9000).toString();
-            
-            this.update({
-                dailyCombo: {
-                    code: newCode,
-                    attempts: 3,
-                    completed: false,
-                    date: today
-                }
-            });
-        }
-    }
-
     checkDailyReset() {
         const now = new Date();
         const todayUTC = now.toISOString().split('T')[0];
         
         if (this.data.lastDailyReset !== todayUTC) {
+            console.log('Daily reset triggered (UTC):', { old: this.data.lastDailyReset, new: todayUTC });
+            
             const allTasksCompleted = this.data.dailyTasks.login && 
                                       this.data.dailyTasks.mine && 
                                       this.data.dailyTasks.boss && 
@@ -436,6 +170,7 @@ class GameState {
             });
             
             this.generateDailyCombo();
+            this.checkAchievements();
             
             if (window.showNotification) {
                 window.showNotification(`Daily login reward: +25 GP! (Day ${this.data.dailyStreak})`);
@@ -447,7 +182,461 @@ class GameState {
         return false;
     }
 
-    // ... (include all other methods from the original gameState.js) ...
+    generateDailyCombo() {
+        const today = new Date().toISOString().split('T')[0];
+        
+        if (!this.data.dailyCombo.code || this.data.dailyCombo.date !== today) {
+            const newCode = Math.floor(1000 + Math.random() * 9000).toString();
+            console.log('Generated new daily combo:', newCode, 'for date:', today);
+            
+            this.update({
+                dailyCombo: {
+                    code: newCode,
+                    attempts: 3,
+                    completed: false,
+                    date: today
+                }
+            });
+        }
+    }
+
+    generateReferralCode() {
+        if (!this.data.referralCode) {
+            const code = 'CX' + Math.random().toString(36).substr(2, 8).toUpperCase();
+            this.setValue('referralCode', code);
+        }
+    }
+
+    getPlanetMultiplier(planetName) {
+        const multipliers = {
+            'Pyrion': 1.2,
+            'Aqueos': 1.0,
+            'Voidex': 1.6,
+            'Chloros': 1.1,
+            'Aurelia': 1.8,
+            'Crimson': 1.4
+        };
+        return multipliers[planetName] || 1.0;
+    }
+
+    trackPlanetVisit(planetName) {
+        const visited = this.data.planetsVisited || [];
+        if (!visited.includes(planetName)) {
+            this.update({
+                planetsVisited: [...visited, planetName]
+            });
+            this.checkAchievements();
+        }
+    }
+
+    // Check if ad boost is active
+    hasAdBoost() {
+        return Date.now() < this.data.adBoostExpiry;
+    }
+
+    // Get ad reward multiplier (2x if active)
+    getAdRewardMultiplier() {
+        return this.hasAdBoost() ? 2 : 1;
+    }
+
+    mine() {
+        // Check for unlimited energy
+        const hasUnlimitedEnergy = window.shopSystem?.hasUnlimitedEnergy();
+        
+        if (!hasUnlimitedEnergy && this.data.energy <= 0) {
+            if (window.showNotification) {
+                window.showNotification('No energy! Wait for regeneration or watch an ad.');
+            }
+            return false;
+        }
+
+        const planetMultiplier = this.getPlanetMultiplier(this.data.currentPlanet);
+        const speedBonus = 1 + (this.data.upgrades.speed * 0.2);
+        const baseReward = 3 + Math.random() * 4;
+        
+        // Apply shop boosts
+        const shardMultiplier = window.shopSystem?.getShardMultiplier() || 1;
+        const luckyMultiplier = window.shopSystem?.getLuckyMultiplier() || 1;
+        
+        // Apply ad boost
+        const adMultiplier = this.getAdRewardMultiplier();
+        
+        const shardReward = Math.floor(baseReward * planetMultiplier * speedBonus * shardMultiplier * luckyMultiplier * adMultiplier);
+        
+        // Apply GP boost
+        const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
+        const gpReward = Math.floor(shardReward * 0.5 * (1 + this.data.upgrades.multiplier * 0.5) * gpMultiplier * adMultiplier);
+
+        const planetMineCount = this.data.planetMineCount || {};
+        planetMineCount[this.data.currentPlanet] = (planetMineCount[this.data.currentPlanet] || 0) + 1;
+
+        // Only reduce energy if not unlimited
+        const energyChange = hasUnlimitedEnergy ? 0 : 2;
+
+        this.update({
+            energy: this.data.energy - energyChange,
+            shards: this.data.shards + shardReward,
+            gp: this.data.gp + gpReward,
+            totalMines: (this.data.totalMines || 0) + 1,
+            totalShardsCollected: (this.data.totalShardsCollected || 0) + shardReward,
+            totalGPEarned: (this.data.totalGPEarned || this.data.gp) + gpReward,
+            planetMineCount: planetMineCount,
+            dailyTaskProgress: {
+                ...this.data.dailyTaskProgress,
+                mines: Math.min(10, this.data.dailyTaskProgress.mines + 1) // CAP AT 10
+            }
+        });
+
+        this.checkAchievements();
+
+        let message = `+${shardReward} Shards, +${gpReward} GP!`;
+        if (this.hasAdBoost()) {
+            message += ' (2x Ad Boost!)';
+        }
+
+        if (window.showNotification) {
+            window.showNotification(message);
+        }
+
+        return { shards: shardReward, gp: gpReward };
+    }
+
+    battleAliens() {
+        const hasUnlimitedEnergy = window.shopSystem?.hasUnlimitedEnergy();
+        
+        if (!hasUnlimitedEnergy && this.data.energy < 5) {
+            if (window.showNotification) {
+                window.showNotification('Need at least 5 energy to battle!');
+            }
+            return false;
+        }
+
+        const baseReward = 25 + Math.random() * 15;
+        
+        // Apply GP boost and ad boost
+        const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
+        const adMultiplier = this.getAdRewardMultiplier();
+        const reward = Math.floor(baseReward * (1 + this.data.upgrades.multiplier * 0.5) * gpMultiplier * adMultiplier);
+        
+        const energyChange = hasUnlimitedEnergy ? 0 : 5;
+        
+        this.update({
+            energy: this.data.energy - energyChange,
+            gp: this.data.gp + reward,
+            totalGPEarned: (this.data.totalGPEarned || this.data.gp) + reward
+        });
+
+        let message = `Defeated aliens! +${reward} GP!`;
+        if (this.hasAdBoost()) {
+            message += ' (2x Ad Boost!)';
+        }
+
+        if (window.showNotification) {
+            window.showNotification(message);
+        }
+
+        return { gp: reward };
+    }
+
+    attackBoss() {
+        const hasUnlimitedEnergy = window.shopSystem?.hasUnlimitedEnergy();
+        
+        if (!hasUnlimitedEnergy && this.data.energy < 3) {
+            if (window.showNotification) {
+                window.showNotification('Need at least 3 energy to attack!');
+            }
+            return false;
+        }
+
+        const baseDamage = 8 + (this.data.upgrades.damage * 5);
+        const damage = baseDamage + Math.floor(Math.random() * 12);
+        const actualDamage = this.data.adDamageBoost > 0 ? damage * 2 : damage;
+        
+        const newBossHealth = Math.max(0, this.data.bossHealth - actualDamage);
+        const newPlayerDamage = this.data.playerDamage + actualDamage;
+        const newAdBoost = Math.max(0, this.data.adDamageBoost - 1);
+
+        let reward = 0;
+        let bossDefeated = false;
+
+        const energyChange = hasUnlimitedEnergy ? 0 : 3;
+
+        if (newBossHealth <= 0) {
+            // Apply GP boost and ad boost to boss rewards
+            const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
+            const adMultiplier = this.getAdRewardMultiplier();
+            reward = Math.floor((150 + Math.floor(Math.random() * 100)) * gpMultiplier * adMultiplier);
+            bossDefeated = true;
+            
+            this.update({
+                energy: this.data.energy - energyChange,
+                bossHealth: this.data.maxBossHealth,
+                playerDamage: 0,
+                gp: this.data.gp + reward,
+                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + reward,
+                adDamageBoost: newAdBoost,
+                bossesDefeated: (this.data.bossesDefeated || 0) + 1,
+                dailyTaskProgress: {
+                    ...this.data.dailyTaskProgress,
+                    bossBattles: Math.min(3, this.data.dailyTaskProgress.bossBattles + 1) // CAP AT 3
+                }
+            });
+
+            this.checkAchievements();
+
+            let message = `Boss defeated! +${reward} GP!`;
+            if (this.hasAdBoost()) {
+                message += ' (2x Ad Boost!)';
+            }
+
+            if (window.showNotification) {
+                window.showNotification(message);
+            }
+        } else {
+            const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
+            const adMultiplier = this.getAdRewardMultiplier();
+            reward = Math.floor(actualDamage * 1.5 * gpMultiplier * adMultiplier);
+            
+            this.update({
+                energy: this.data.energy - energyChange,
+                bossHealth: newBossHealth,
+                playerDamage: newPlayerDamage,
+                gp: this.data.gp + reward,
+                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + reward,
+                adDamageBoost: newAdBoost,
+                dailyTaskProgress: {
+                    ...this.data.dailyTaskProgress,
+                    bossBattles: Math.min(3, this.data.dailyTaskProgress.bossBattles + 1) // CAP AT 3
+                }
+            });
+
+            let message = `Hit for ${actualDamage} damage! +${reward} GP!`;
+            if (this.hasAdBoost()) {
+                message += ' (2x Boost!)';
+            }
+
+            if (window.showNotification) {
+                window.showNotification(message);
+            }
+        }
+
+        return { damage: actualDamage, gp: reward, bossDefeated };
+    }
+
+    buyUpgrade(upgradeType) {
+        const costs = {
+            speed: 50 * Math.pow(2, this.data.upgrades.speed),
+            damage: 75 * Math.pow(2, this.data.upgrades.damage),
+            energy: 100 * Math.pow(2, this.data.upgrades.energy),
+            multiplier: 200 * Math.pow(2, this.data.upgrades.multiplier)
+        };
+
+        const cost = costs[upgradeType];
+        if (this.data.gp < cost) {
+            if (window.showNotification) {
+                window.showNotification('Not enough GP!');
+            }
+            return false;
+        }
+
+        const newUpgrades = { ...this.data.upgrades };
+        newUpgrades[upgradeType]++;
+
+        const updateData = {
+            gp: this.data.gp - cost,
+            upgrades: newUpgrades
+        };
+
+        if (upgradeType === 'energy') {
+            updateData.maxEnergy = this.data.maxEnergy + 25;
+            updateData.energy = this.data.maxEnergy + 25;
+        }
+
+        this.update(updateData);
+        this.checkAchievements();
+
+        if (!this.data.oneTimeTasks.purchase) {
+            this.update({
+                oneTimeTasks: {
+                    ...this.data.oneTimeTasks,
+                    purchase: true
+                },
+                gp: this.data.gp + 40,
+                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + 40
+            });
+
+            if (window.showNotification) {
+                window.showNotification('First purchase completed! +40 GP bonus!');
+            }
+        }
+
+        const messages = {
+            speed: 'Mining speed increased!',
+            damage: 'Combat damage boosted!',
+            energy: 'Maximum energy increased!',
+            multiplier: 'GP multiplier activated!'
+        };
+
+        return { success: true, message: messages[upgradeType], cost };
+    }
+
+    claimDailyTask(taskType) {
+        const rewards = { mine: 50, boss: 75, combo: 30 };
+        const requirements = {
+            mine: this.data.dailyTaskProgress.mines >= 10,
+            boss: this.data.dailyTaskProgress.bossBattles >= 3,
+            combo: this.data.dailyTaskProgress.comboAttempts > 0
+        };
+        
+        if (this.data.dailyTasks[taskType] || !requirements[taskType]) {
+            if (window.showNotification) {
+                window.showNotification('Task requirements not met or already completed!');
+            }
+            return false;
+        }
+        
+        const newDailyTasks = { ...this.data.dailyTasks };
+        newDailyTasks[taskType] = true;
+        
+        this.update({
+            dailyTasks: newDailyTasks,
+            gp: this.data.gp + rewards[taskType],
+            totalGPEarned: (this.data.totalGPEarned || this.data.gp) + rewards[taskType]
+        });
+
+        if (window.showNotification) {
+            window.showNotification(`Daily task completed! +${rewards[taskType]} GP!`);
+        }
+
+        return true;
+    }
+
+    claimOneTimeTask(taskType) {
+        const rewards = { planet: 20, purchase: 40, shards100: 80, invite5: 200 };
+        const requirements = {
+            planet: true,
+            purchase: true,
+            shards100: this.data.shards >= 100,
+            invite5: this.data.totalReferrals >= 5
+        };
+        
+        if (this.data.oneTimeTasks[taskType] || !requirements[taskType]) {
+            if (window.showNotification) {
+                window.showNotification('Task requirements not met or already completed!');
+            }
+            return false;
+        }
+        
+        const newOneTimeTasks = { ...this.data.oneTimeTasks };
+        newOneTimeTasks[taskType] = true;
+        
+        this.update({
+            oneTimeTasks: newOneTimeTasks,
+            gp: this.data.gp + rewards[taskType],
+            totalGPEarned: (this.data.totalGPEarned || this.data.gp) + rewards[taskType]
+        });
+
+        if (window.showNotification) {
+            window.showNotification(`One-time task completed! +${rewards[taskType]} GP!`);
+        }
+
+        return true;
+    }
+
+    checkAchievements() {
+        if (!window.AchievementManager) return;
+
+        const achievementManager = new window.AchievementManager();
+        const unlockedAchievements = this.data.unlockedAchievements || [];
+        let newAchievements = [];
+        let totalReward = 0;
+
+        Object.keys(achievementManager.achievements).forEach(achievementId => {
+            if (!unlockedAchievements.includes(achievementId)) {
+                if (achievementManager.isUnlocked(achievementId, this.data)) {
+                    newAchievements.push(achievementId);
+                    totalReward += achievementManager.achievements[achievementId].reward;
+                }
+            }
+        });
+
+        if (newAchievements.length > 0) {
+            this.update({
+                unlockedAchievements: [...unlockedAchievements, ...newAchievements],
+                gp: this.data.gp + totalReward,
+                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + totalReward
+            });
+
+            newAchievements.forEach(id => {
+                const achievement = achievementManager.achievements[id];
+                if (window.showNotification) {
+                    window.showNotification(`Achievement Unlocked: ${achievement.title}! +${achievement.reward} GP`);
+                }
+            });
+        }
+    }
+
+    scheduleSave() {
+        if (this.autoSaveInterval) {
+            clearTimeout(this.autoSaveInterval);
+        }
+        
+        this.autoSaveInterval = setTimeout(() => {
+            if (window.backendManager) {
+                window.backendManager.saveProgress(this.data);
+            }
+        }, 2000);
+    }
+
+    async save() {
+        if (window.backendManager) {
+            return await window.backendManager.saveProgress(this.data);
+        }
+        return { success: false, error: 'Backend manager not available' };
+    }
+
+    async load() {
+        if (window.backendManager) {
+            const result = await window.backendManager.loadProgress();
+            if (result.success && result.data) {
+                this.set(result.data);
+                this.updateEnergyFromTime();
+                this.updateTicketsFromTime();
+                
+                // Sync premium items from shop system
+                if (window.shopSystem && result.data.activePremiumItems) {
+                    window.shopSystem.activePremiumItems = result.data.activePremiumItems;
+                }
+                
+                // Restart auto miner if player has it
+                if (result.data.hasAutoMiner && window.shopSystem) {
+                    window.shopSystem.startAutoMinerInterval();
+                }
+                
+                return true;
+            }
+        }
+        return false;
+    }
+
+    initialize() {
+        this.generateReferralCode();
+        this.generateDailyCombo();
+        this.checkDailyReset();
+        this.updateEnergyFromTime();
+        this.updateTicketsFromTime();
+        
+        setInterval(() => {
+            if (this.data.energy < this.data.maxEnergy) {
+                this.addValue('energy', 1);
+                this.setValue('energyLastRegen', Date.now());
+            }
+        }, 30000);
+        
+        setInterval(() => {
+            this.updateTicketsFromTime();
+        }, 60000);
+    }
 }
 
 window.gameState = new GameState();
