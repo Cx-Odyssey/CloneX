@@ -254,60 +254,60 @@
 
                 <!-- Premium Tab -->
                 <div class="shop-grid" id="premiumShopContent" style="display: none;">
-                    <div class="shop-item premium-item" onclick="showPremiumComingSoon()">
+                    <div class="shop-item premium-item" onclick="buyPremiumItem('vipPass')">
                         <div class="premium-badge">💎</div>
                         <div class="shop-icon">👑</div>
                         <div class="shop-title">VIP Pass</div>
-                        <div class="shop-cost ton-cost">2.5 TON</div>
-                        <div class="shop-desc">30 days premium benefits</div>
+                        <div class="shop-cost">5,000 GP</div>
+                        <div class="shop-desc">30 days +50% bonuses</div>
                     </div>
-                    <div class="shop-item premium-item" onclick="showPremiumComingSoon()">
+                    <div class="shop-item premium-item" onclick="buyPremiumItem('legendaryShip')">
                         <div class="premium-badge">💎</div>
                         <div class="shop-icon">🛸</div>
                         <div class="shop-title">Legendary Ship</div>
-                        <div class="shop-cost ton-cost">5 TON</div>
+                        <div class="shop-cost">10,000 GP</div>
                         <div class="shop-desc">+100% to all stats</div>
                     </div>
-                    <div class="shop-item premium-item" onclick="showPremiumComingSoon()">
+                    <div class="shop-item premium-item" onclick="buyPremiumItem('unlimitedEnergy')">
                         <div class="premium-badge">💎</div>
                         <div class="shop-icon">⚡</div>
                         <div class="shop-title">Unlimited Energy</div>
-                        <div class="shop-cost ton-cost">1.5 TON</div>
-                        <div class="shop-desc">No energy limit (7 days)</div>
+                        <div class="shop-cost">3,000 GP</div>
+                        <div class="shop-desc">9999 energy (7 days)</div>
                     </div>
-                    <div class="shop-item premium-item" onclick="showPremiumComingSoon()">
+                    <div class="shop-item premium-item" onclick="buyPremiumItem('gpMegaPack')">
                         <div class="premium-badge">💎</div>
                         <div class="shop-icon">💰</div>
                         <div class="shop-title">GP Mega Pack</div>
-                        <div class="shop-cost ton-cost">3 TON</div>
+                        <div class="shop-cost">6,000 GP</div>
                         <div class="shop-desc">Instant 50,000 GP</div>
                     </div>
-                    <div class="shop-item premium-item" onclick="showPremiumComingSoon()">
+                    <div class="shop-item premium-item" onclick="buyPremiumItem('cosmicSkinPack')">
                         <div class="premium-badge">💎</div>
                         <div class="shop-icon">🎨</div>
                         <div class="shop-title">Cosmic Skin Pack</div>
-                        <div class="shop-cost ton-cost">4 TON</div>
+                        <div class="shop-cost">8,000 GP</div>
                         <div class="shop-desc">10 exclusive skins</div>
                     </div>
-                    <div class="shop-item premium-item" onclick="showPremiumComingSoon()">
+                    <div class="shop-item premium-item" onclick="buyPremiumItem('doubleXP')">
                         <div class="premium-badge">💎</div>
                         <div class="shop-icon">🔥</div>
                         <div class="shop-title">Double XP Boost</div>
-                        <div class="shop-cost ton-cost">2 TON</div>
+                        <div class="shop-cost">4,000 GP</div>
                         <div class="shop-desc">2x XP forever</div>
                     </div>
-                    <div class="shop-item premium-item" onclick="showPremiumComingSoon()">
+                    <div class="shop-item premium-item" onclick="buyPremiumItem('starterBundle')">
                         <div class="premium-badge">💎</div>
                         <div class="shop-icon">🎁</div>
                         <div class="shop-title">Starter Bundle</div>
-                        <div class="shop-cost ton-cost">1 TON</div>
+                        <div class="shop-cost">2,000 GP</div>
                         <div class="shop-desc">Best value package</div>
                     </div>
-                    <div class="shop-item premium-item" onclick="showPremiumComingSoon()">
+                    <div class="shop-item premium-item" onclick="buyPremiumItem('ultimatePack')">
                         <div class="premium-badge">💎</div>
                         <div class="shop-icon">🌟</div>
                         <div class="shop-title">Ultimate Pack</div>
-                        <div class="shop-cost ton-cost">10 TON</div>
+                        <div class="shop-cost">20,000 GP</div>
                         <div class="shop-desc">Everything unlocked</div>
                     </div>
                 </div>
@@ -494,27 +494,6 @@
                 <div class="upgrade-text" id="upgradeText">Speed boost activated!</div>
                 <p class="modal-text">Your ship is now more powerful!</p>
                 <button class="action-btn" onclick="closeModal('upgradeModal')">Awesome!</button>
-            </div>
-        </div>
-
-        <div class="modal" id="premiumComingSoonModal">
-            <div class="modal-content premium-modal">
-                <button class="close-btn" onclick="closeModal('premiumComingSoonModal')">&times;</button>
-                <h2 class="modal-title">💎 Premium Features</h2>
-                <div class="premium-icon">🚀</div>
-                <div class="premium-message">
-                    <p style="font-size: 18px; color: var(--neon-blue); font-weight: bold; margin-bottom: 15px;">Coming Soon!</p>
-                    <p style="font-size: 14px; line-height: 1.6; margin-bottom: 20px;">
-                        Premium TON purchases will be available soon.<br>
-                        Connect your TON wallet to get notified!
-                    </p>
-                    <div style="background: rgba(0, 245, 255, 0.1); padding: 15px; border-radius: 12px; margin: 15px 0;">
-                        <p style="font-size: 12px; color: rgba(255, 255, 255, 0.8); margin: 0;">
-                            💡 Tip: Start earning GP now to unlock exclusive rewards when premium features launch!
-                        </p>
-                    </div>
-                </div>
-                <button class="action-btn" onclick="closeModal('premiumComingSoonModal')" style="background: linear-gradient(135deg, var(--neon-blue), #0091EA);">Got it!</button>
             </div>
         </div>
     </div>
