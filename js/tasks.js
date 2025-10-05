@@ -708,6 +708,19 @@ class ProfileManager {
             walletTab.classList.add('active');
             walletTab.style.background = 'linear-gradient(135deg, var(--neon-blue), #0091EA)';
             walletTab.style.color = '#000';
+            
+            // ADDED: Refresh wallet UI when switching to wallet tab
+            if (window.walletManager) {
+                setTimeout(() => {
+                    const currentWallet = window.walletManager.tonConnectUI?.wallet;
+                    if (currentWallet) {
+                        const friendlyAddress = window.walletManager.formatAddress(currentWallet.account.address);
+                        window.walletManager.updateWalletUI(friendlyAddress);
+                    } else {
+                        window.walletManager.updateWalletUI(null);
+                    }
+                }, 100);
+            }
         }
         
         this.renderContent();
