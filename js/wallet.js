@@ -25,9 +25,20 @@ class WalletManager {
                 }
             });
 
+            // FIXED: Check for existing wallet connection
             const currentWallet = this.tonConnectUI.wallet;
             if (currentWallet) {
                 this.handleWalletConnected(currentWallet);
+            } else {
+                // Check if wallet was previously connected (from gameState)
+                const gameState = window.gameState?.get();
+                if (gameState?.walletConnected && gameState?.walletAddress) {
+                    // Wallet was connected before but session expired
+                    this.isConnected = false;
+                    this.walletAddress = null;
+                    // Update UI to show disconnected state
+                    this.updateWalletUI(null);
+                }
             }
 
             console.log('✅ TON Connect UI initialized');
@@ -113,19 +124,31 @@ class WalletManager {
 
     async connect() {
         if (!this.tonConnectUI) {
+            console.error('TON Connect UI not initialized');
             if (window.showNotification) {
-                window.showNotification('Wallet system not initialized');
+                window.showNotification('Wallet system not ready. Please refresh the page.');
             }
             return;
         }
 
         try {
             console.log('🔗 Opening wallet connection modal...');
+            
+            // FIXED: Properly handle the connection flow
             await this.tonConnectUI.openModal();
+            
         } catch (error) {
             console.error('❌ Connection error:', error);
-            if (window.showNotification) {
-                window.showNotification('Failed to connect wallet');
+            
+            // More specific error handling
+            if (error.message && error.message.includes('user reject')) {
+                if (window.showNotification) {
+                    window.showNotification('Connection cancelled');
+                }
+            } else {
+                if (window.showNotification) {
+                    window.showNotification('Failed to connect wallet. Please try again.');
+                }
             }
         }
     }
@@ -148,6 +171,7 @@ class WalletManager {
             if (window.showNotification) {
                 window.showNotification('Please connect your wallet first');
             }
+            // Try to connect
             await this.connect();
             return false;
         }
@@ -155,22 +179,24 @@ class WalletManager {
         const item = window.PREMIUM_ITEMS?.[itemId];
         if (!item) {
             console.error('Item not found:', itemId);
+            if (window.showNotification) {
+                window.showNotification('Item not found');
+            }
             return false;
         }
 
-        // YOUR WALLET ADDRESS (from Vercel env variable)
+        // FIXED: Use correct recipient address format
         const recipientAddress = 'EQDte6-r3llgo8OsQ6_wGRzSmXM4cg2i1irWY5B35QATaOAI';
 
         const tonAmount = item.price;
         const nanotons = Math.floor(tonAmount * 1e9).toString();
 
         const transaction = {
-            validUntil: Math.floor(Date.now() / 1000) + 360,
+            validUntil: Math.floor(Date.now() / 1000) + 600, // 10 minutes
             messages: [
                 {
                     address: recipientAddress,
-                    amount: nanotons,
-                    payload: this.createPayload(`${item.name} - ${itemId}`)
+                    amount: nanotons
                 }
             ]
         };
@@ -184,23 +210,29 @@ class WalletManager {
             
             console.log('✅ Transaction sent:', result);
 
+            // Store purchase for verification
             const purchaseId = `${Date.now()}_${itemId}`;
             this.pendingPurchases.set(purchaseId, {
                 itemId,
                 amount: tonAmount,
                 timestamp: Date.now(),
-                userWallet: this.walletAddress
+                userWallet: this.walletAddress,
+                boc: result.boc
             });
 
+            // Start verification process
             await this.verifyAndUnlockItem(purchaseId, itemId);
 
             return true;
         } catch (error) {
             console.error('❌ Transaction failed:', error);
             
+            // FIXED: Better error messages
             if (window.showNotification) {
-                if (error.message && error.message.includes('reject')) {
+                if (error.message && error.message.toLowerCase().includes('reject')) {
                     window.showNotification('Transaction cancelled');
+                } else if (error.message && error.message.toLowerCase().includes('insufficient')) {
+                    window.showNotification('Insufficient TON balance');
                 } else {
                     window.showNotification('Payment failed. Please try again');
                 }
