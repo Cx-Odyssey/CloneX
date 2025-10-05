@@ -34,6 +34,14 @@ class GameInitializer {
             setTimeout(() => {
                 this.hideLoadingScreen();
                 this.isInitialized = true;
+                
+                // FIXED: Ensure galaxy screen is shown and active
+                const galaxyScreen = document.getElementById('galaxyScreen');
+                if (galaxyScreen) {
+                    galaxyScreen.classList.add('active');
+                    window.uiController.currentScreen = 'galaxyScreen';
+                }
+                
                 console.log('✅ GAME INITIALIZATION COMPLETE');
             }, 500);
             
