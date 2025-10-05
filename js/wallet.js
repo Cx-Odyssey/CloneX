@@ -13,7 +13,7 @@ class WalletManager {
             console.log('🔗 Initializing TON Connect UI...');
             
             this.tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                manifestUrl: 'https://muntasi179.github.io/cx-odyssey/tonconnect-manifest.json',
+                manifestUrl: 'https://cx-odyssey.github.io/CloneX/tonconnect-manifest.json',
                 buttonRootId: null
             });
 
