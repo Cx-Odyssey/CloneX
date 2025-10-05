@@ -1,4 +1,4 @@
-// main.js - Game Initialization and Core Logic
+// main.js - Game Initialization with Universal Daily Combo
 
 class GameInitializer {
     constructor() {
@@ -35,11 +35,12 @@ class GameInitializer {
                 this.hideLoadingScreen();
                 this.isInitialized = true;
                 
-                // FIXED: Ensure galaxy screen is shown and active
                 const galaxyScreen = document.getElementById('galaxyScreen');
                 if (galaxyScreen) {
                     galaxyScreen.classList.add('active');
-                    window.uiController.currentScreen = 'galaxyScreen';
+                    if (window.uiController) {
+                        window.uiController.currentScreen = 'galaxyScreen';
+                    }
                 }
                 
                 console.log('✅ GAME INITIALIZATION COMPLETE');
@@ -122,6 +123,40 @@ class GameInitializer {
             }
             
             window.gameState.initialize();
+            
+            // Initialize universal daily combo
+            this.initializeDailyCombo();
+        }
+    }
+
+    // Universal Daily Combo - Same code for everyone, resets at 00:00 UTC
+    initializeDailyCombo() {
+        const gameState = window.gameState;
+        if (!gameState) return;
+        
+        const state = gameState.get();
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+        const todayString = today.toISOString().split('T')[0];
+        
+        // Generate universal code based on UTC date
+        const seed = Math.floor(today.getTime() / 86400000);
+        const random = (seed * 9301 + 49297) % 233280;
+        const universalCode = String(Math.floor(random / 233280 * 10000)).padStart(4, '0');
+        
+        console.log('🔮 Universal daily combo code:', universalCode, 'for date:', todayString);
+        
+        // Reset combo if new day
+        if (!state.dailyCombo?.date || state.dailyCombo.date !== todayString) {
+            gameState.update({
+                dailyCombo: {
+                    code: universalCode,
+                    attempts: 3,
+                    completed: false,
+                    date: todayString
+                }
+            });
+            console.log('Daily combo reset for new day');
         }
     }
 
