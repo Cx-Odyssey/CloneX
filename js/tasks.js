@@ -287,7 +287,6 @@ class TasksManager {
         this.updateElement('oneTimeShardCount', gameState.shards);
         this.updateElement('referralCount', gameState.totalReferrals);
         
-        // Daily tasks - check both progress AND completion status
         this.updateTaskButton('dailyMineBtn', 
             gameState.dailyTaskProgress.mines >= 10 && !gameState.dailyTasks.mine,
             gameState.dailyTasks.mine
@@ -301,7 +300,6 @@ class TasksManager {
             gameState.dailyTasks.combo
         );
         
-        // One-time tasks
         this.updateTaskButton('firstPlanetBtn', false, gameState.oneTimeTasks.planet);
         this.updateTaskButton('firstPurchaseBtn', false, gameState.oneTimeTasks.purchase);
         this.updateTaskButton('shards100Btn', 
@@ -340,7 +338,6 @@ class TasksManager {
                 btn.style.cursor = 'default';
             } else {
                 btn.disabled = !canClaim;
-                // Reset button appearance if not completed
                 if (!canClaim) {
                     btn.style.background = '';
                     btn.style.color = '';
@@ -626,7 +623,7 @@ class ProfileManager {
                 <div style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 145, 234, 0.05)); border-radius: 25px; padding: 25px; margin: 20px 0; border: 1px solid rgba(0, 245, 255, 0.3);">
                     <div style="text-align: center; margin-bottom: 20px;">
                         <h3 style="color: var(--neon-blue); font-size: 20px; margin-bottom: 8px;">TON Wallet</h3>
-                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Connect wallet for future airdrops</p>
+                        <p style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Connect wallet for premium purchases</p>
                     </div>
                     
                     <button style="width: 100%; background: linear-gradient(135deg, var(--neon-blue), #0091EA); color: #000; border: none; padding: 15px; border-radius: 15px; font-weight: bold; font-size: 15px; cursor: pointer; margin-bottom: 15px;" onclick="connectWallet()" id="connectWalletBtn">
@@ -644,21 +641,22 @@ class ProfileManager {
                     </div>
                     
                     <div style="background: rgba(0, 0, 0, 0.2); padding: 20px; border-radius: 15px; margin-top: 20px; text-align: center;">
-                        <div style="color: var(--neon-blue); font-size: 14px; font-weight: 600; margin-bottom: 12px;">Future Features</div>
+                        <div style="color: var(--neon-blue); font-size: 14px; font-weight: 600; margin-bottom: 12px;">Premium Items (TON)</div>
                         <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
                             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(0, 245, 255, 0.1); border-radius: 8px;">
-                                <span style="font-size: 16px;">🚀</span>
-                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">CX Token Airdrops</span>
+                                <span style="font-size: 16px;">🤖</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Auto Miner (0.5 TON)</span>
                             </div>
                             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(0, 245, 255, 0.1); border-radius: 8px;">
-                                <span style="font-size: 16px;">💰</span>
-                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">NFT Rewards</span>
+                                <span style="font-size: 16px;">👑</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">VIP Pass (2 TON)</span>
                             </div>
                             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(0, 245, 255, 0.1); border-radius: 8px;">
-                                <span style="font-size: 16px;">🎮</span>
-                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Exclusive Items</span>
+                                <span style="font-size: 16px;">🛸</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Legendary Ship (5 TON)</span>
                             </div>
                         </div>
+                        <div style="margin-top: 12px; font-size: 11px; color: rgba(255,255,255,0.6);">Visit Shop → Premium to purchase</div>
                     </div>
                 </div>
             </div>
@@ -756,7 +754,7 @@ class MinigamesManager {
         const state = gameState.get();
         if (state.dailyCombo.completed || state.dailyCombo.attempts <= 0) {
             if (window.uiController) {
-                window.uiController.showNotification('🔮 No attempts remaining!');
+                window.uiController.showNotification('No attempts remaining!');
             }
             return;
         }
@@ -767,7 +765,7 @@ class MinigamesManager {
         
         if (guess.length !== 4) {
             if (window.uiController) {
-                window.uiController.showNotification('🔮 Please enter a complete 4-digit code!');
+                window.uiController.showNotification('Please enter a complete 4-digit code!');
             }
             return;
         }
@@ -793,7 +791,7 @@ class MinigamesManager {
             });
             
             if (window.uiController) {
-                window.uiController.showNotification('✅ Daily combo task completed! +30 GP!');
+                window.uiController.showNotification('Daily combo task completed! +30 GP!');
             }
         }
         
@@ -809,17 +807,17 @@ class MinigamesManager {
             });
             
             if (window.uiController) {
-                window.uiController.showNotification('🎉 Correct! You earned 100 GP!');
+                window.uiController.showNotification('Correct! You earned 100 GP!');
             }
             this.clearCombo();
         } else {
             if (newState.dailyCombo.attempts > 0) {
                 if (window.uiController) {
-                    window.uiController.showNotification(`❌ Wrong code! ${newState.dailyCombo.attempts} attempts remaining.`);
+                    window.uiController.showNotification(`Wrong code! ${newState.dailyCombo.attempts} attempts remaining.`);
                 }
             } else {
                 if (window.uiController) {
-                    window.uiController.showNotification(`❌ Game over! The code was ${newState.dailyCombo.code}.`);
+                    window.uiController.showNotification(`Game over! The code was ${newState.dailyCombo.code}.`);
                 }
             }
             this.clearCombo();
@@ -844,7 +842,7 @@ function shareReferral() {
     const gameState = window.gameState?.get();
     if (!gameState || !gameState.referralCode) {
         if (window.uiController) {
-            window.uiController.showNotification('❌ Referral code not ready!');
+            window.uiController.showNotification('Referral code not ready!');
         }
         return;
     }
@@ -879,7 +877,7 @@ Start your space adventure now!`;
     }
     
     if (window.uiController) {
-        window.uiController.showNotification('📤 Share with friends to earn rewards!');
+        window.uiController.showNotification('Share with friends to earn rewards!');
     }
 }
 
@@ -892,7 +890,7 @@ function copyReferralCode() {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(code).then(() => {
             if (window.uiController) {
-                window.uiController.showNotification('✅ Referral code copied!');
+                window.uiController.showNotification('Referral code copied!');
             }
         }).catch(() => {
             fallbackCopyTextToClipboard(code);
@@ -915,28 +913,15 @@ function fallbackCopyTextToClipboard(text) {
     try {
         document.execCommand('copy');
         if (window.uiController) {
-            window.uiController.showNotification('✅ Referral code copied!');
+            window.uiController.showNotification('Referral code copied!');
         }
     } catch (err) {
         if (window.uiController) {
-            window.uiController.showNotification('❌ Copy failed. Code: ' + text);
+            window.uiController.showNotification('Copy failed. Code: ' + text);
         }
     }
     
     document.body.removeChild(textArea);
-}
-
-// Wallet Functions
-function connectWallet() {
-    if (window.uiController) {
-        window.uiController.showNotification('🔗 Wallet connection coming soon!');
-    }
-}
-
-function disconnectWallet() {
-    if (window.uiController) {
-        window.uiController.showNotification('Wallet disconnected');
-    }
 }
 
 // Initialize global instances
