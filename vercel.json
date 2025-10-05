@@ -11,6 +11,12 @@
     },
     "api/saveWallet.js": {
       "maxDuration": 10
+    },
+    "api/processReferral.js": {
+      "maxDuration": 10
+    },
+    "api/verifyPayment.js": {
+      "maxDuration": 15
     }
   },
   "headers": [
