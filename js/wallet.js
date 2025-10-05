@@ -6,18 +6,28 @@ class WalletManager {
         this.isConnected = false;
         this.walletAddress = null;
         this.pendingPurchases = new Map();
+        this.isInitializing = false;
     }
 
     async initialize() {
+        if (this.isInitializing) {
+            console.log('⏳ Wallet already initializing...');
+            return false;
+        }
+
         try {
+            this.isInitializing = true;
             console.log('🔗 Initializing TON Connect UI...');
             
+            // Create TON Connect UI instance
             this.tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
                 manifestUrl: 'https://cx-odyssey.github.io/CloneX/tonconnect-manifest.json',
                 buttonRootId: null
             });
 
+            // Set up status change listener
             this.tonConnectUI.onStatusChange(wallet => {
+                console.log('Wallet status changed:', wallet);
                 if (wallet) {
                     this.handleWalletConnected(wallet);
                 } else {
@@ -25,27 +35,47 @@ class WalletManager {
                 }
             });
 
-            // FIXED: Check for existing wallet connection
-            const currentWallet = this.tonConnectUI.wallet;
-            if (currentWallet) {
-                this.handleWalletConnected(currentWallet);
-            } else {
-                // Check if wallet was previously connected (from gameState)
-                const gameState = window.gameState?.get();
-                if (gameState?.walletConnected && gameState?.walletAddress) {
-                    // Wallet was connected before but session expired
-                    this.isConnected = false;
-                    this.walletAddress = null;
-                    // Update UI to show disconnected state
-                    this.updateWalletUI(null);
-                }
-            }
+            // Check for existing connection
+            await this.checkExistingConnection();
 
             console.log('✅ TON Connect UI initialized');
+            this.isInitializing = false;
             return true;
         } catch (error) {
             console.error('❌ Wallet initialization error:', error);
+            this.isInitializing = false;
             return false;
+        }
+    }
+
+    async checkExistingConnection() {
+        try {
+            // Wait a bit for TON Connect to initialize
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            const currentWallet = this.tonConnectUI.wallet;
+            console.log('Checking existing wallet:', currentWallet);
+            
+            if (currentWallet && currentWallet.account) {
+                this.handleWalletConnected(currentWallet);
+            } else {
+                // Check gameState for previous connection
+                const gameState = window.gameState?.get();
+                if (gameState?.walletConnected && gameState?.walletAddress) {
+                    console.log('⚠️ Wallet was connected but session expired');
+                    // Clear the saved state since connection is lost
+                    if (window.gameState) {
+                        window.gameState.update({
+                            walletConnected: false,
+                            walletAddress: ''
+                        });
+                    }
+                }
+                this.updateWalletUI(null);
+            }
+        } catch (error) {
+            console.error('Error checking wallet connection:', error);
+            this.updateWalletUI(null);
         }
     }
 
@@ -134,13 +164,12 @@ class WalletManager {
         try {
             console.log('🔗 Opening wallet connection modal...');
             
-            // FIXED: Properly handle the connection flow
+            // Open the modal
             await this.tonConnectUI.openModal();
             
         } catch (error) {
             console.error('❌ Connection error:', error);
             
-            // More specific error handling
             if (error.message && error.message.includes('user reject')) {
                 if (window.showNotification) {
                     window.showNotification('Connection cancelled');
@@ -171,7 +200,6 @@ class WalletManager {
             if (window.showNotification) {
                 window.showNotification('Please connect your wallet first');
             }
-            // Try to connect
             await this.connect();
             return false;
         }
@@ -185,14 +213,12 @@ class WalletManager {
             return false;
         }
 
-        // FIXED: Use correct recipient address format
         const recipientAddress = 'EQDte6-r3llgo8OsQ6_wGRzSmXM4cg2i1irWY5B35QATaOAI';
-
         const tonAmount = item.price;
         const nanotons = Math.floor(tonAmount * 1e9).toString();
 
         const transaction = {
-            validUntil: Math.floor(Date.now() / 1000) + 600, // 10 minutes
+            validUntil: Math.floor(Date.now() / 1000) + 600,
             messages: [
                 {
                     address: recipientAddress,
@@ -210,7 +236,6 @@ class WalletManager {
             
             console.log('✅ Transaction sent:', result);
 
-            // Store purchase for verification
             const purchaseId = `${Date.now()}_${itemId}`;
             this.pendingPurchases.set(purchaseId, {
                 itemId,
@@ -220,14 +245,12 @@ class WalletManager {
                 boc: result.boc
             });
 
-            // Start verification process
             await this.verifyAndUnlockItem(purchaseId, itemId);
 
             return true;
         } catch (error) {
             console.error('❌ Transaction failed:', error);
             
-            // FIXED: Better error messages
             if (window.showNotification) {
                 if (error.message && error.message.toLowerCase().includes('reject')) {
                     window.showNotification('Transaction cancelled');
@@ -405,15 +428,6 @@ class WalletManager {
 
         if (window.showNotification) {
             window.showNotification(`${item.name} unlocked successfully!`);
-        }
-    }
-
-    createPayload(comment) {
-        try {
-            const bytes = new TextEncoder().encode(comment);
-            return btoa(String.fromCharCode(...bytes));
-        } catch {
-            return '';
         }
     }
 }
