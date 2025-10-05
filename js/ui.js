@@ -3,12 +3,12 @@ class UIController {
     constructor() {
         this.currentScreen = 'galaxyScreen';
         this.planetImages = {
-            'pyrion': 'https://muntasi179.github.io/cx-odyssey/assets/bgpyrion.png',
-            'aqueos': 'https://muntasi179.github.io/cx-odyssey/assets/bgaqueous.png',
-            'voidex': 'https://muntasi179.github.io/cx-odyssey/assets/bgvoidex.png',
-            'chloros': 'https://muntasi179.github.io/cx-odyssey/assets/bgchloros.png',
-            'aurelia': 'https://muntasi179.github.io/cx-odyssey/assets/bgaurelia.png',
-            'crimson': 'https://muntasi179.github.io/cx-odyssey/assets/bgcrimson.png'
+            'pyrion': 'https://cx-odyssey.github.io/CloneX/assets/bgpyrion.png',
+            'aqueos': 'https://cx-odyssey.github.io/CloneX/assets/bgaqueous.png',
+            'voidex': 'https://cx-odyssey.github.io/CloneX/assets/bgvoidex.png',
+            'chloros': 'https://cx-odyssey.github.io/CloneX/assets/bgchloros.png',
+            'aurelia': 'https://cx-odyssey.github.io/CloneX/assets/bgaurelia.png',
+            'crimson': 'https://cx-odyssey.github.io/CloneX/assets/bgcrimson.png'
         };
         
         this.init();
@@ -496,3 +496,4 @@ function showModal(modalId) {
 function closeModal(modalId) {
     window.uiController.closeModal(modalId);
 }
+
