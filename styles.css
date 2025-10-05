@@ -296,42 +296,42 @@ body {
 
 /* Planet backgrounds - properly fitted */
 .planet-pyrion { 
-    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/bgpyrion.png');
+    background-image: url('https://cx-odyssey.github.io/CloneX/assets/bgpyrion.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-color: #ff6b35;
 }
 .planet-aqueos { 
-    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/bgaqueous.png');
+    background-image: url('https://cx-odyssey.github.io/CloneX/assets/bgaqueous.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-color: #00f5ff;
 }
 .planet-voidex { 
-    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/bgvoidex.png');
+    background-image: url('https://cx-odyssey.github.io/CloneX/assets/bgvoidex.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-color: #7209b7;
 }
 .planet-chloros { 
-    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/bgchloros.png');
+    background-image: url('https://cx-odyssey.github.io/CloneX/assets/bgchloros.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-color: #00ff88;
 }
 .planet-aurelia { 
-    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/bgaurelia.png');
+    background-image: url('https://cx-odyssey.github.io/CloneX/assets/bgaurelia.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     border-color: #ffd700;
 }
 .planet-crimson { 
-    background-image: url('https://muntasi179.github.io/cx-odyssey/assets/bgcrimson.png');
+    background-image: url('https://cx-odyssey.github.io/CloneX/assets/bgcrimson.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -1198,3 +1198,4 @@ body {
         padding: 10px 8px;
     }
 }
+
