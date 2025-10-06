@@ -298,7 +298,22 @@
             <div class="header">
                 <div class="logo">TASKS & MISSIONS</div>
                 <div class="resources">
-                    <div class="resource">✅ <span id="completedTasks">0</span>/8</div>
+                    <div class="resource">✅ <span id="completedTasks">0</span>/2</div>
+                </div>
+            </div>
+
+            <!-- DAILY REWARDS BANNER - PINNED AT TOP -->
+            <div style="padding: 15px; background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,107,53,0.1)); border-radius: 20px; margin-bottom: 20px; border: 2px solid var(--primary-gold); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255,215,0,0.2);" 
+                 onclick="showDailyRewardsModal()">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="font-size: 48px;">📅</div>
+                        <div>
+                            <div style="font-size: 18px; font-weight: bold; color: white; margin-bottom: 4px;">Daily Rewards</div>
+                            <div style="font-size: 12px; color: rgba(255,255,255,0.9);">Claim your streak bonus!</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 24px; opacity: 0.7;">➡️</div>
                 </div>
             </div>
 
@@ -311,10 +326,10 @@
             </div>
 
             <div class="task-tabs">
-                <button class="task-tab active" id="dailyTasksTab" onclick="switchTaskTab('daily')">
-                    Daily Tasks
+                <button class="task-tab" id="dailyTasksTab" onclick="switchTaskTab('daily')">
+                    Daily
                 </button>
-                <button class="task-tab" id="oneTimeTasksTab" onclick="switchTaskTab('onetime')">
+                <button class="task-tab active" id="oneTimeTasksTab" onclick="switchTaskTab('onetime')">
                     Main Tasks
                 </button>
             </div>
