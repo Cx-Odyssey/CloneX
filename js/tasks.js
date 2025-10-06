@@ -1,5 +1,6 @@
-// tasks.js - Complete File with Balanced Achievements
+// tasks.js - Complete Task System with Achievements and Daily Rewards
 
+// Achievement Definitions
 const ACHIEVEMENTS = {
     // Exploration
     explorer_beginner: { id: 'explorer_beginner', title: 'Space Cadet', description: 'Visit your first planet', icon: '🚀', category: 'exploration', requirement: { type: 'planets_visited', value: 1 }, reward: 50 },
@@ -48,6 +49,7 @@ const ACHIEVEMENTS = {
     master_ultimate: { id: 'master_ultimate', title: 'Cosmic Champion', description: 'Unlock all other achievements', icon: '🏆', category: 'special', requirement: { type: 'all_achievements', value: 1 }, reward: 10000 }
 };
 
+// Achievement Manager Class
 class AchievementManager {
     constructor() {
         this.achievements = ACHIEVEMENTS;
@@ -175,7 +177,7 @@ class AchievementManager {
     }
 }
 
-// Tasks System
+// Tasks Manager Class
 class TasksManager {
     constructor() {
         this.currentTab = 'daily';
@@ -196,154 +198,61 @@ class TasksManager {
 
     getDailyTasksHTML() {
         return `
-            <div id="dailyTasksContent">
-                <div class="task-item">
-                    <div class="task-icon" style="background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));">📅</div>
-                    <div class="task-info">
-                        <div class="task-title">Daily reward</div>
-                        <div class="task-desc">Log in daily</div>
-                    </div>
-                    <div class="task-reward" id="dailyLoginStatus">Completed</div>
-                </div>
-
-                <div class="task-item">
-                    <div class="task-icon" style="background: linear-gradient(135deg, #FF6B35, #D84315);">⛏️</div>
-                    <div class="task-info">
-                        <div class="task-title">Mine crystals</div>
-                        <div class="task-desc">Mine 10 times (<span id="dailyMineCount">0</span>/10)</div>
-                    </div>
-                    <button class="task-button" id="dailyMineBtn" onclick="claimDailyTask('mine')" disabled>+50 GP</button>
-                </div>
-
-                <div class="task-item">
-                    <div class="task-icon" style="background: linear-gradient(135deg, #9C27B0, #6A1B9A);">⚔️</div>
-                    <div class="task-info">
-                        <div class="task-title">Battle cosmic overlord</div>
-                        <div class="task-desc">Attack boss 3 times (<span id="dailyBossCount">0</span>/3)</div>
-                    </div>
-                    <button class="task-button" id="dailyBossBtn" onclick="claimDailyTask('boss')" disabled>+75 GP</button>
-                </div>
-
-                <div class="task-item">
-                    <div class="task-icon" style="background: linear-gradient(135deg, #7209B7, #4A148C);">🔮</div>
-                    <div class="task-info">
-                        <div class="task-title">Code puzzle</div>
-                        <div class="task-desc">Try the daily combo</div>
-                    </div>
-                    <button class="task-button" id="dailyComboBtn" onclick="claimDailyTask('combo')" disabled>+30 GP</button>
-                </div>
+            <div style="text-align: center; padding: 40px 20px;">
+                <div style="font-size: 48px; margin-bottom: 20px;">📅</div>
+                <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Check Daily Rewards!</div>
+                <div style="font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6;">Daily rewards are now at the top of this screen.<br>Tap the Daily Rewards banner to claim your streak bonus!</div>
             </div>
         `;
     }
 
     getOneTimeTasksHTML() {
-        return `
-            <div id="oneTimeTasksContent">
-                <div class="task-item">
-                    <div class="task-icon" style="background: linear-gradient(135deg, #FF6B35, #D84315);">🚀</div>
-                    <div class="task-info">
-                        <div class="task-title">First exploration</div>
-                        <div class="task-desc">Visit any planet for mining</div>
-                    </div>
-                    <button class="task-button" id="firstPlanetBtn" onclick="claimOneTimeTask('planet')" disabled>+20 GP</button>
+        const gameState = window.gameState?.get();
+        if (!gameState) return '';
+        
+        const tasks = [
+            {
+                id: 'telegram',
+                icon: '📱',
+                title: 'Join Telegram Community',
+                desc: 'Subscribe to our official channel',
+                reward: 500,
+                completed: gameState.oneTimeTasks?.telegram || false,
+                link: 'https://t.me/Cx_Odyssey_Community'
+            },
+            {
+                id: 'twitter',
+                icon: '🐦',
+                title: 'Follow on Twitter',
+                desc: 'Follow us on X for updates',
+                reward: 500,
+                completed: gameState.oneTimeTasks?.twitter || false,
+                link: 'https://x.com/Cx_Odyssey'
+            }
+        ];
+        
+        return tasks.map(task => `
+            <div class="task-item">
+                <div class="task-icon" style="background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,107,53,0.1));">
+                    ${task.icon}
                 </div>
-
-                <div class="task-item">
-                    <div class="task-icon" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);">💰</div>
-                    <div class="task-info">
-                        <div class="task-title">First upgrade</div>
-                        <div class="task-desc">Buy any upgrade from shop</div>
-                    </div>
-                    <button class="task-button" id="firstPurchaseBtn" onclick="claimOneTimeTask('purchase')" disabled>+40 GP</button>
+                <div class="task-info">
+                    <div class="task-title">${task.title}</div>
+                    <div class="task-desc">${task.desc}</div>
                 </div>
-
-                <div class="task-item">
-                    <div class="task-icon" style="background: linear-gradient(135deg, #00F5FF, #0091EA);">💎</div>
-                    <div class="task-info">
-                        <div class="task-title">Crystal collector</div>
-                        <div class="task-desc">Collect 100 shards (<span id="oneTimeShardCount">0</span>/100)</div>
-                    </div>
-                    <button class="task-button" id="shards100Btn" onclick="claimOneTimeTask('shards100')" disabled>+80 GP</button>
-                </div>
-
-                <div class="task-item">
-                    <div class="task-icon" style="background: linear-gradient(135deg, #E91E63, #AD1457);">👥</div>
-                    <div class="task-info">
-                        <div class="task-title">Invite friends</div>
-                        <div class="task-desc">Refer 5 friends to game (<span id="referralCount">0</span>/5)</div>
-                    </div>
-                    <button class="task-button" id="invite5Btn" onclick="claimOneTimeTask('invite5')" disabled>+200 GP</button>
-                </div>
+                ${task.completed 
+                    ? `<div class="task-reward" style="background: var(--success-green); color: #000;">✅ Done</div>`
+                    : `<button class="task-button" onclick="openSocialTaskModal('${task.id}', '${task.link}', ${task.reward}, '${task.title}')">
+                        +${task.reward} GP
+                       </button>`
+                }
             </div>
-        `;
+        `).join('');
     }
 
     updateTaskStates() {
         const gameState = window.gameState?.get();
         if (!gameState) return;
-
-        this.updateElement('dailyMineCount', gameState.dailyTaskProgress.mines);
-        this.updateElement('dailyBossCount', gameState.dailyTaskProgress.bossBattles);
-        this.updateElement('oneTimeShardCount', gameState.shards);
-        this.updateElement('referralCount', gameState.totalReferrals);
-        
-        this.updateTaskButton('dailyMineBtn', 
-            gameState.dailyTaskProgress.mines >= 10 && !gameState.dailyTasks.mine,
-            gameState.dailyTasks.mine
-        );
-        this.updateTaskButton('dailyBossBtn', 
-            gameState.dailyTaskProgress.bossBattles >= 3 && !gameState.dailyTasks.boss,
-            gameState.dailyTasks.boss
-        );
-        this.updateTaskButton('dailyComboBtn', 
-            gameState.dailyTaskProgress.comboAttempts > 0 && !gameState.dailyTasks.combo,
-            gameState.dailyTasks.combo
-        );
-        
-        this.updateTaskButton('firstPlanetBtn', false, gameState.oneTimeTasks.planet);
-        this.updateTaskButton('firstPurchaseBtn', false, gameState.oneTimeTasks.purchase);
-        this.updateTaskButton('shards100Btn', 
-            gameState.shards >= 100 && !gameState.oneTimeTasks.shards100,
-            gameState.oneTimeTasks.shards100
-        );
-        this.updateTaskButton('invite5Btn', 
-            gameState.totalReferrals >= 5 && !gameState.oneTimeTasks.invite5,
-            gameState.oneTimeTasks.invite5
-        );
-        
-        const loginStatus = document.getElementById('dailyLoginStatus');
-        if (loginStatus) {
-            loginStatus.textContent = gameState.dailyTasks.login ? 'Completed' : '+25 GP';
-            if (gameState.dailyTasks.login) {
-                loginStatus.className = 'task-reward';
-                loginStatus.style.background = 'var(--success-green)';
-                loginStatus.style.color = '#000';
-            }
-        }
-    }
-
-    updateElement(id, value) {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value;
-    }
-
-    updateTaskButton(btnId, canClaim, isCompleted = false) {
-        const btn = document.getElementById(btnId);
-        if (btn) {
-            if (isCompleted) {
-                btn.disabled = true;
-                btn.textContent = 'Completed';
-                btn.style.background = 'var(--success-green)';
-                btn.style.color = '#000';
-                btn.style.cursor = 'default';
-            } else {
-                btn.disabled = !canClaim;
-                if (!canClaim) {
-                    btn.style.background = '';
-                    btn.style.color = '';
-                }
-            }
-        }
     }
 
     switchTab(tab) {
@@ -353,18 +262,18 @@ class TasksManager {
         const oneTimeTab = document.getElementById('oneTimeTasksTab');
         
         if (tab === 'daily') {
-            dailyTab.classList.add('active');
-            oneTimeTab.classList.remove('active');
+            dailyTab?.classList.add('active');
+            oneTimeTab?.classList.remove('active');
         } else {
-            oneTimeTab.classList.add('active');
-            dailyTab.classList.remove('active');
+            oneTimeTab?.classList.add('active');
+            dailyTab?.classList.remove('active');
         }
         
         this.renderContent();
     }
 }
 
-// Profile/Command Center System
+// Profile/Command Center Manager
 class ProfileManager {
     constructor() {
         this.currentTab = 'referral';
@@ -708,19 +617,6 @@ class ProfileManager {
             walletTab.classList.add('active');
             walletTab.style.background = 'linear-gradient(135deg, var(--neon-blue), #0091EA)';
             walletTab.style.color = '#000';
-            
-            // ADDED: Refresh wallet UI when switching to wallet tab
-            if (window.walletManager) {
-                setTimeout(() => {
-                    const currentWallet = window.walletManager.tonConnectUI?.wallet;
-                    if (currentWallet) {
-                        const friendlyAddress = window.walletManager.formatAddress(currentWallet.account.address);
-                        window.walletManager.updateWalletUI(friendlyAddress);
-                    } else {
-                        window.walletManager.updateWalletUI(null);
-                    }
-                }, 100);
-            }
         }
         
         this.renderContent();
@@ -850,6 +746,211 @@ class MinigamesManager {
     }
 }
 
+// Daily Rewards Modal
+function showDailyRewardsModal() {
+    const gameState = window.gameState;
+    if (!gameState) return;
+    
+    const state = gameState.get();
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.id = 'dailyRewardsModal';
+    
+    const streakRewards = [
+        { day: 1, gp: 100, tickets: 0 },
+        { day: 2, gp: 200, tickets: 0 },
+        { day: 3, gp: 300, tickets: 1 },
+        { day: 4, gp: 500, tickets: 0 },
+        { day: 5, gp: 700, tickets: 1 },
+        { day: 6, gp: 1000, tickets: 2 },
+        { day: 7, gp: 1500, tickets: 3 }
+    ];
+    
+    const currentStreak = Math.min(state.dailyStreak || 1, 7);
+    const today = new Date().toISOString().split('T')[0];
+    const canClaim = state.lastLogin !== today;
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeDailyRewardsModal()">&times;</button>
+            <h2 class="modal-title">📅 Daily Rewards</h2>
+            <div style="font-size: 14px; margin-bottom: 20px; color: rgba(255,255,255,0.9);">
+                Current Streak: <strong style="color: var(--primary-gold);">${currentStreak} ${currentStreak === 1 ? 'Day' : 'Days'}</strong>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0;">
+                ${streakRewards.map(r => `
+                    <div style="
+                        padding: 15px;
+                        background: ${r.day === currentStreak && canClaim 
+                            ? 'linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,107,53,0.2))' 
+                            : r.day < currentStreak 
+                                ? 'rgba(0,255,136,0.1)' 
+                                : 'rgba(255,255,255,0.05)'};
+                        border: 2px solid ${r.day === currentStreak && canClaim 
+                            ? 'var(--primary-gold)' 
+                            : r.day < currentStreak 
+                                ? 'var(--success-green)' 
+                                : 'rgba(255,255,255,0.1)'};
+                        border-radius: 12px;
+                        text-align: center;
+                    ">
+                        <div style="font-size: 11px; opacity: 0.8; margin-bottom: 5px;">Day ${r.day}</div>
+                        <div style="font-size: 14px; font-weight: bold; color: var(--primary-gold);">
+                            ${r.gp} GP
+                        </div>
+                        ${r.tickets > 0 ? `<div style="font-size: 11px; color: var(--success-green);">+${r.tickets} 🎫</div>` : ''}
+                        ${r.day < currentStreak ? '<div style="margin-top: 5px;">✅</div>' : ''}
+                        ${r.day === currentStreak && canClaim ? '<div style="margin-top: 5px;">⭐</div>' : ''}
+                    </div>
+                `).join('')}
+            </div>
+            
+            ${canClaim ? `
+                <button class="action-btn" onclick="claimDailyReward()" style="width: 100%; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));">
+                    🎁 Claim Day ${currentStreak} Reward
+                </button>
+            ` : `
+                <div style="padding: 15px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 1px solid rgba(255,215,0,0.3); text-align: center;">
+                    <div style="font-size: 13px; color: rgba(255,255,255,0.8);">✅ Already claimed today!</div>
+                    <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Come back tomorrow for Day ${Math.min(currentStreak + 1, 7)}</div>
+                </div>
+            `}
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+function closeDailyRewardsModal() {
+    const modal = document.getElementById('dailyRewardsModal');
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
+    }
+}
+
+function claimDailyReward() {
+    const gameState = window.gameState;
+    if (!gameState) return;
+    
+    const state = gameState.get();
+    const streakRewards = [
+        { day: 1, gp: 100, tickets: 0 },
+        { day: 2, gp: 200, tickets: 0 },
+        { day: 3, gp: 300, tickets: 1 },
+        { day: 4, gp: 500, tickets: 0 },
+        { day: 5, gp: 700, tickets: 1 },
+        { day: 6, gp: 1000, tickets: 2 },
+        { day: 7, gp: 1500, tickets: 3 }
+    ];
+    
+    const currentStreak = Math.min(state.dailyStreak || 1, 7);
+    const reward = streakRewards[currentStreak - 1];
+    
+    gameState.update({
+        gp: state.gp + reward.gp,
+        gameTickets: Math.min(10, state.gameTickets + reward.tickets),
+        lastLogin: new Date().toISOString().split('T')[0],
+        dailyStreak: currentStreak === 7 ? 1 : currentStreak + 1,
+        totalGPEarned: (state.totalGPEarned || state.gp) + reward.gp
+    });
+    
+    const dailyTasks = state.dailyTasks || {};
+    dailyTasks.login = true;
+    gameState.setValue('dailyTasks', dailyTasks);
+    
+    if (window.showNotification) {
+        window.showNotification(`🎁 Claimed! +${reward.gp} GP${reward.tickets > 0 ? ` +${reward.tickets} 🎫` : ''}`);
+    }
+    
+    if (window.backendManager) {
+        window.backendManager.saveProgress(gameState.get());
+    }
+    
+    if (window.uiController) {
+        window.uiController.updateUIElements(gameState.get());
+    }
+    
+    closeDailyRewardsModal();
+}
+
+// Social Task Modal
+let socialTaskClicked = {};
+
+function openSocialTaskModal(taskId, link, reward, title) {
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.id = 'socialTaskModal';
+    
+    modal.innerHTML = `
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeSocialTaskModal()">&times;</button>
+            <h2 class="modal-title">${title}</h2>
+            <div style="font-size: 48px; margin: 20px 0;">${taskId === 'telegram' ? '📱' : '🐦'}</div>
+            <p class="modal-text">Complete this task to earn <strong style="color: var(--primary-gold);">${reward} GP</strong></p>
+            <div style="margin: 20px 0; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 1px solid rgba(255,215,0,0.3);">
+                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 8px;">📋 Steps:</div>
+                <div style="font-size: 13px; line-height: 1.8; text-align: left;">
+                    1️⃣ Click "Open Link" below<br>
+                    2️⃣ ${taskId === 'telegram' ? 'Join the channel' : 'Follow the account'}<br>
+                    3️⃣ Return here and click "Check"
+                </div>
+            </div>
+            <button class="action-btn" id="socialTaskBtn" onclick="handleSocialTask('${taskId}', '${link}', ${reward})" style="width: 100%; margin-bottom: 10px;">
+                🔗 Open Link
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+function closeSocialTaskModal() {
+    const modal = document.getElementById('socialTaskModal');
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
+    }
+}
+
+function handleSocialTask(taskId, link, reward) {
+    const btn = document.getElementById('socialTaskBtn');
+    if (!btn) return;
+    
+    if (!socialTaskClicked[taskId]) {
+        window.open(link, '_blank');
+        socialTaskClicked[taskId] = true;
+        btn.innerHTML = '✅ Check';
+        btn.style.background = 'linear-gradient(135deg, var(--success-green), #00CC70)';
+    } else {
+        const gameState = window.gameState;
+        if (!gameState) return;
+        
+        const currentTasks = gameState.getValue('oneTimeTasks') || {};
+        currentTasks[taskId] = true;
+        
+        gameState.update({
+            oneTimeTasks: currentTasks,
+            gp: gameState.getValue('gp') + reward,
+            totalGPEarned: (gameState.getValue('totalGPEarned') || gameState.getValue('gp')) + reward
+        });
+        
+        if (window.showNotification) {
+            window.showNotification(`✅ Task completed! +${reward} GP`);
+        }
+        
+        if (window.backendManager) {
+            window.backendManager.saveProgress(gameState.get());
+        }
+        
+        closeSocialTaskModal();
+        if (window.TasksManager) {
+            window.TasksManager.renderContent();
+        }
+    }
+}
+
 // Referral Functions
 function shareReferral() {
     const gameState = window.gameState?.get();
@@ -943,7 +1044,7 @@ window.ProfileManager = new ProfileManager();
 window.MinigamesManager = new MinigamesManager();
 window.AchievementManager = AchievementManager;
 
-// Global functions
+// Global task functions
 function switchTaskTab(tab) {
     window.TasksManager?.switchTab(tab);
 }
@@ -976,4 +1077,32 @@ function clearCombo() {
 
 function submitCombo() {
     window.MinigamesManager?.submitCombo();
+}
+
+// Initialize tasks on load
+function initializeTasks() {
+    console.log('📋 Initializing tasks...');
+    if (window.TasksManager) {
+        window.TasksManager.renderContent();
+    }
+}
+
+// Export functions
+if (typeof window !== 'undefined') {
+    window.initializeTasks = initializeTasks;
+    window.switchTaskTab = switchTaskTab;
+    window.switchProfileTab = switchProfileTab;
+    window.showDailyRewardsModal = showDailyRewardsModal;
+    window.closeDailyRewardsModal = closeDailyRewardsModal;
+    window.claimDailyReward = claimDailyReward;
+    window.openSocialTaskModal = openSocialTaskModal;
+    window.closeSocialTaskModal = closeSocialTaskModal;
+    window.handleSocialTask = handleSocialTask;
+    window.shareReferral = shareReferral;
+    window.copyReferralCode = copyReferralCode;
+    window.claimDailyTask = claimDailyTask;
+    window.claimOneTimeTask = claimOneTimeTask;
+    window.inputComboDigit = inputComboDigit;
+    window.clearCombo = clearCombo;
+    window.submitCombo = submitCombo;
 }
