@@ -6,16 +6,32 @@
     <title>CX Odyssey: Rise of the Collectors</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Enhanced Loading Screen -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-logo">CX ODYSSEY</div>
-        <div class="loading-spinner"></div>
-        <div class="loading-text" id="loadingText">Initializing Game...</div>
-        <div class="loading-progress">
-            <div class="loading-progress-bar" id="loadingProgressBar"></div>
+        <div class="loading-stars-bg"></div>
+        <div class="loading-content">
+            <div class="loading-logo-container">
+                <div class="loading-logo">CX ODYSSEY</div>
+                <div class="loading-subtitle">Rise of the Collectors</div>
+            </div>
+            <div class="loading-spinner-wrapper">
+                <div class="spinner-orbit">
+                    <div class="spinner-planet"></div>
+                </div>
+                <div class="spinner-orbit orbit-2">
+                    <div class="spinner-planet planet-2"></div>
+                </div>
+                <div class="spinner-orbit orbit-3">
+                    <div class="spinner-planet planet-3"></div>
+                </div>
+            </div>
+            <div class="loading-text" id="loadingText">Initializing Game...</div>
+            <div class="loading-progress">
+                <div class="loading-progress-bar" id="loadingProgressBar"></div>
+            </div>
         </div>
     </div>
 
@@ -256,31 +272,31 @@
                         <div class="shop-desc">+50% GP Gain</div>
                     </div>
                     
-                    <div class="shop-item" onclick="buyShopItem('energyPotion')">
+                    <div class="shop-item" onclick="showShopItemModal('energyPotion')">
                         <div class="shop-icon">🧪</div>
                         <div class="shop-title">Energy Potion</div>
                         <div class="shop-cost">150 GP</div>
                         <div class="shop-desc">Instant +50 Energy</div>
                     </div>
-                    <div class="shop-item" onclick="buyShopItem('bossTicket')">
+                    <div class="shop-item" onclick="showShopItemModal('bossTicket')">
                         <div class="shop-icon">🎫</div>
                         <div class="shop-title">Boss Ticket</div>
                         <div class="shop-cost">200 GP</div>
                         <div class="shop-desc">+1 Game Ticket</div>
                     </div>
-                    <div class="shop-item" onclick="buyShopItem('shardBooster')">
+                    <div class="shop-item" onclick="showShopItemModal('shardBooster')">
                         <div class="shop-icon">💠</div>
                         <div class="shop-title">Shard Booster</div>
                         <div class="shop-cost">300 GP</div>
                         <div class="shop-desc">2x Shards (1 hour)</div>
                     </div>
-                    <div class="shop-item" onclick="buyShopItem('gpBooster')">
+                    <div class="shop-item" onclick="showShopItemModal('gpBooster')">
                         <div class="shop-icon">🎯</div>
                         <div class="shop-title">GP Booster</div>
                         <div class="shop-cost">400 GP</div>
                         <div class="shop-desc">2x GP (1 hour)</div>
                     </div>
-                    <div class="shop-item" onclick="buyShopItem('luckyCharm')">
+                    <div class="shop-item" onclick="showShopItemModal('luckyCharm')">
                         <div class="shop-icon">🍀</div>
                         <div class="shop-title">Lucky Charm</div>
                         <div class="shop-cost">500 GP</div>
@@ -293,28 +309,23 @@
             </div>
         </div>
 
-        <!-- Tasks Screen -->
+        <!-- Tasks Screen with Daily Rewards Banner -->
         <div class="screen" id="tasksScreen">
             <div class="header">
                 <div class="logo">TASKS & MISSIONS</div>
                 <div class="resources">
-                    <div class="resource">✅ <span id="completedTasks">0</span>/2</div>
+                    <div class="resource">✅ <span id="completedTasks">0</span>/8</div>
                 </div>
             </div>
 
-            <!-- DAILY REWARDS BANNER - PINNED AT TOP -->
-            <div style="padding: 15px; background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,107,53,0.1)); border-radius: 20px; margin-bottom: 20px; border: 2px solid var(--primary-gold); cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(255,215,0,0.2);" 
-                 onclick="showDailyRewardsModal()">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div style="font-size: 48px;">📅</div>
-                        <div>
-                            <div style="font-size: 18px; font-weight: bold; color: white; margin-bottom: 4px;">Daily Rewards</div>
-                            <div style="font-size: 12px; color: rgba(255,255,255,0.9);">Claim your streak bonus!</div>
-                        </div>
-                    </div>
-                    <div style="font-size: 24px; opacity: 0.7;">➡️</div>
+            <!-- Daily Rewards Banner (Pinned at Top) -->
+            <div class="daily-rewards-banner" onclick="showDailyRewardsModal()">
+                <div class="banner-icon">📅</div>
+                <div class="banner-content">
+                    <div class="banner-title">Daily Rewards</div>
+                    <div class="banner-desc">Claim your streak bonus!</div>
                 </div>
+                <div class="banner-arrow">→</div>
             </div>
 
             <div class="balance-section">
@@ -326,10 +337,10 @@
             </div>
 
             <div class="task-tabs">
-                <button class="task-tab" id="dailyTasksTab" onclick="switchTaskTab('daily')">
-                    Daily
+                <button class="task-tab active" id="tasksTab" onclick="switchTaskTab('tasks')">
+                    Tasks
                 </button>
-                <button class="task-tab active" id="oneTimeTasksTab" onclick="switchTaskTab('onetime')">
+                <button class="task-tab" id="mainTasksTab" onclick="switchTaskTab('main')">
                     Main Tasks
                 </button>
             </div>
@@ -337,7 +348,7 @@
             <div id="taskContent"></div>
         </div>
 
-        <!-- Mini-Games Screen -->
+        <!-- Mini-Games Screen (Enhanced) -->
         <div class="screen" id="minigamesScreen">
             <div class="header">
                 <div class="logo">MINI-GAMES HUB</div>
@@ -350,15 +361,20 @@
                 </div>
             </div>
 
-            <div class="daily-combo-game">
-                <h3 class="combo-title">🔮 Daily Combo Code</h3>
-                <p class="combo-description">Guess today's secret code!</p>
-                <div class="combo-input">
-                    <input type="text" class="combo-digit" maxlength="1" id="combo1">
-                    <input type="text" class="combo-digit" maxlength="1" id="combo2">
-                    <input type="text" class="combo-digit" maxlength="1" id="combo3">
-                    <input type="text" class="combo-digit" maxlength="1" id="combo4">
+            <div class="minigame-container">
+                <div class="minigame-header">
+                    <div class="minigame-icon">🔮</div>
+                    <h3 class="minigame-title">Daily Combo Code</h3>
+                    <p class="minigame-description">Crack today's secret 4-digit code!</p>
                 </div>
+
+                <div class="combo-display">
+                    <input type="text" class="combo-digit" maxlength="1" id="combo1" readonly>
+                    <input type="text" class="combo-digit" maxlength="1" id="combo2" readonly>
+                    <input type="text" class="combo-digit" maxlength="1" id="combo3" readonly>
+                    <input type="text" class="combo-digit" maxlength="1" id="combo4" readonly>
+                </div>
+
                 <div class="combo-keypad">
                     <button class="combo-key" onclick="inputComboDigit('1')">1</button>
                     <button class="combo-key" onclick="inputComboDigit('2')">2</button>
@@ -373,7 +389,17 @@
                     <button class="combo-key" onclick="inputComboDigit('0')">0</button>
                     <button class="combo-key submit-btn" onclick="submitCombo()">Submit</button>
                 </div>
-                <p class="combo-info">Attempts: <span id="comboAttempts">3</span>/3 | Reward: 100 GP</p>
+
+                <div class="combo-info">
+                    <div class="info-row">
+                        <span>Attempts:</span>
+                        <span class="info-value"><span id="comboAttempts">3</span>/3</span>
+                    </div>
+                    <div class="info-row">
+                        <span>Reward:</span>
+                        <span class="info-value gold">100 GP</span>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -437,6 +463,127 @@
         </div>
 
         <!-- Modals -->
+        <!-- Daily Rewards Modal -->
+        <div class="modal" id="dailyRewardsModal">
+            <div class="modal-content large-modal">
+                <button class="close-btn" onclick="closeModal('dailyRewardsModal')">&times;</button>
+                <h2 class="modal-title">📅 Daily Rewards</h2>
+                <div class="modal-subtitle">Current Streak: <span id="currentStreak">1</span> Day</div>
+                
+                <div class="rewards-grid">
+                    <div class="reward-day" data-day="1">
+                        <div class="day-label">Day 1</div>
+                        <div class="reward-amount">100 GP</div>
+                    </div>
+                    <div class="reward-day" data-day="2">
+                        <div class="day-label">Day 2</div>
+                        <div class="reward-amount">200 GP</div>
+                    </div>
+                    <div class="reward-day" data-day="3">
+                        <div class="day-label">Day 3</div>
+                        <div class="reward-amount">300 GP</div>
+                        <div class="reward-bonus">+1 🎫</div>
+                    </div>
+                    <div class="reward-day" data-day="4">
+                        <div class="day-label">Day 4</div>
+                        <div class="reward-amount">500 GP</div>
+                    </div>
+                    <div class="reward-day" data-day="5">
+                        <div class="day-label">Day 5</div>
+                        <div class="reward-amount">700 GP</div>
+                        <div class="reward-bonus">+1 🎫</div>
+                    </div>
+                    <div class="reward-day" data-day="6">
+                        <div class="day-label">Day 6</div>
+                        <div class="reward-amount">1000 GP</div>
+                        <div class="reward-bonus">+2 🎫</div>
+                    </div>
+                    <div class="reward-day" data-day="7">
+                        <div class="day-label">Day 7</div>
+                        <div class="reward-amount">1500 GP</div>
+                        <div class="reward-bonus">+3 🎫</div>
+                    </div>
+                </div>
+
+                <div class="claim-status" id="claimStatus">
+                    <div class="status-icon">✅</div>
+                    <div class="status-text">Already claimed today!</div>
+                    <div class="status-subtext">Come back tomorrow for Day 2</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Task Modal (for Telegram/Twitter) -->
+        <div class="modal" id="taskModal">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal('taskModal')">&times;</button>
+                <h2 class="modal-title" id="taskModalTitle">Complete Task</h2>
+                <div class="task-modal-icon" id="taskModalIcon">📱</div>
+                <div class="modal-text" id="taskModalDesc">Complete this task to earn <span id="taskModalReward">500 GP</span></div>
+                
+                <div class="task-steps">
+                    <div class="task-step-title">📋 Steps:</div>
+                    <div class="task-step">1️⃣ Click "Open Link" below</div>
+                    <div class="task-step" id="taskStep2">2️⃣ Join the channel</div>
+                    <div class="task-step">3️⃣ Return here and click "Check"</div>
+                </div>
+                
+                <button class="action-btn" id="taskOpenBtn" style="margin: 20px 0;">🔗 Open Link</button>
+                <button class="action-btn" id="taskCheckBtn" style="background: var(--success-green); color: #000; display: none;">✅ Check</button>
+            </div>
+        </div>
+
+        <!-- Shop Item Modal -->
+        <div class="modal" id="shopItemModal">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal('shopItemModal')">&times;</button>
+                <h2 class="modal-title" id="shopItemModalTitle">Item Details</h2>
+                <div class="shop-modal-icon" id="shopItemModalIcon">🧪</div>
+                <div class="shop-modal-desc" id="shopItemModalDesc">Description</div>
+                
+                <div class="item-benefits">
+                    <div class="benefits-title">💎 Benefits:</div>
+                    <div id="shopItemBenefits"></div>
+                </div>
+                
+                <div class="item-cost-display">
+                    <div class="cost-label">Cost:</div>
+                    <div class="cost-value" id="shopItemCost">150 GP</div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="action-btn" onclick="closeModal('shopItemModal')" style="background: rgba(255,255,255,0.1);">Cancel</button>
+                    <button class="action-btn" id="shopItemPurchaseBtn" style="background: var(--primary-gold); color: #000;">Purchase</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Premium Item Modal -->
+        <div class="modal" id="premiumItemModal">
+            <div class="modal-content premium-modal">
+                <button class="close-btn" onclick="closeModal('premiumItemModal')">&times;</button>
+                <h2 class="modal-title" id="premiumItemModalTitle">Premium Item</h2>
+                <div class="premium-badge-large">💎</div>
+                <div class="premium-modal-icon" id="premiumItemModalIcon">🤖</div>
+                <div class="premium-modal-desc" id="premiumItemModalDesc">Description</div>
+                
+                <div class="item-benefits premium-benefits">
+                    <div class="benefits-title">✨ Premium Benefits:</div>
+                    <div id="premiumItemBenefits"></div>
+                </div>
+                
+                <div class="item-cost-display premium-cost">
+                    <div class="cost-label">Price:</div>
+                    <div class="cost-value ton-price" id="premiumItemCost">1 TON</div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="action-btn" onclick="closeModal('premiumItemModal')" style="background: rgba(255,255,255,0.1);">Cancel</button>
+                    <button class="action-btn" id="premiumItemPurchaseBtn" style="background: linear-gradient(135deg, var(--neon-blue), #0091EA); color: #000;">Purchase with TON</button>
+                </div>
+            </div>
+        </div>
+
         <div class="modal" id="adModal">
             <div class="modal-content">
                 <button class="close-btn" onclick="closeModal('adModal')">&times;</button>
