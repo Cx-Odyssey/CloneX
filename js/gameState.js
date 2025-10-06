@@ -13,8 +13,8 @@ class GameState {
             playerDamage: 0,
             upgrades: { speed: 0, damage: 0, energy: 0, multiplier: 0 },
             adDamageBoost: 0,
-            adRewardBoost: 0, // NEW: 2x rewards from ads
-            adBoostExpiry: 0, // NEW: when ad boost expires
+            adRewardBoost: 0,
+            adBoostExpiry: 0,
             gameTickets: 3,
             lastTicketTime: Date.now(),
             maxTickets: 10,
@@ -29,7 +29,7 @@ class GameState {
             lastDailyReset: '',
             walletConnected: false,
             walletAddress: '',
-            hasAutoMiner: false, // NEW: For persistent auto miner
+            hasAutoMiner: false,
             autoMinerStartTime: 0,
             
             // Achievement tracking
@@ -229,18 +229,15 @@ class GameState {
         }
     }
 
-    // Check if ad boost is active
     hasAdBoost() {
         return Date.now() < this.data.adBoostExpiry;
     }
 
-    // Get ad reward multiplier (2x if active)
     getAdRewardMultiplier() {
         return this.hasAdBoost() ? 2 : 1;
     }
 
     mine() {
-        // Check for unlimited energy
         const hasUnlimitedEnergy = window.shopSystem?.hasUnlimitedEnergy();
         
         if (!hasUnlimitedEnergy && this.data.energy <= 0) {
@@ -254,23 +251,18 @@ class GameState {
         const speedBonus = 1 + (this.data.upgrades.speed * 0.2);
         const baseReward = 3 + Math.random() * 4;
         
-        // Apply shop boosts
         const shardMultiplier = window.shopSystem?.getShardMultiplier() || 1;
         const luckyMultiplier = window.shopSystem?.getLuckyMultiplier() || 1;
-        
-        // Apply ad boost
         const adMultiplier = this.getAdRewardMultiplier();
         
         const shardReward = Math.floor(baseReward * planetMultiplier * speedBonus * shardMultiplier * luckyMultiplier * adMultiplier);
         
-        // Apply GP boost
         const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
         const gpReward = Math.floor(shardReward * 0.5 * (1 + this.data.upgrades.multiplier * 0.5) * gpMultiplier * adMultiplier);
 
         const planetMineCount = this.data.planetMineCount || {};
         planetMineCount[this.data.currentPlanet] = (planetMineCount[this.data.currentPlanet] || 0) + 1;
 
-        // Only reduce energy if not unlimited
         const energyChange = hasUnlimitedEnergy ? 0 : 2;
 
         this.update({
@@ -283,7 +275,7 @@ class GameState {
             planetMineCount: planetMineCount,
             dailyTaskProgress: {
                 ...this.data.dailyTaskProgress,
-                mines: Math.min(10, this.data.dailyTaskProgress.mines + 1) // CAP AT 10
+                mines: Math.min(10, this.data.dailyTaskProgress.mines + 1)
             }
         });
 
@@ -313,7 +305,6 @@ class GameState {
 
         const baseReward = 25 + Math.random() * 15;
         
-        // Apply GP boost and ad boost
         const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
         const adMultiplier = this.getAdRewardMultiplier();
         const reward = Math.floor(baseReward * (1 + this.data.upgrades.multiplier * 0.5) * gpMultiplier * adMultiplier);
@@ -362,7 +353,6 @@ class GameState {
         const energyChange = hasUnlimitedEnergy ? 0 : 3;
 
         if (newBossHealth <= 0) {
-            // Apply GP boost and ad boost to boss rewards
             const gpMultiplier = window.shopSystem?.getGPMultiplier() || 1;
             const adMultiplier = this.getAdRewardMultiplier();
             reward = Math.floor((150 + Math.floor(Math.random() * 100)) * gpMultiplier * adMultiplier);
@@ -378,7 +368,7 @@ class GameState {
                 bossesDefeated: (this.data.bossesDefeated || 0) + 1,
                 dailyTaskProgress: {
                     ...this.data.dailyTaskProgress,
-                    bossBattles: Math.min(3, this.data.dailyTaskProgress.bossBattles + 1) // CAP AT 3
+                    bossBattles: Math.min(3, this.data.dailyTaskProgress.bossBattles + 1)
                 }
             });
 
@@ -406,7 +396,7 @@ class GameState {
                 adDamageBoost: newAdBoost,
                 dailyTaskProgress: {
                     ...this.data.dailyTaskProgress,
-                    bossBattles: Math.min(3, this.data.dailyTaskProgress.bossBattles + 1) // CAP AT 3
+                    bossBattles: Math.min(3, this.data.dailyTaskProgress.bossBattles + 1)
                 }
             });
 
@@ -552,6 +542,7 @@ class GameState {
         let totalReward = 0;
 
         Object.keys(achievementManager.achievements).forEach(achievementId => {
+            // FIXED: Check actual unlocked status from gameState, not just local check
             if (!unlockedAchievements.includes(achievementId)) {
                 if (achievementManager.isUnlocked(achievementId, this.data)) {
                     newAchievements.push(achievementId);
@@ -603,12 +594,10 @@ class GameState {
                 this.updateEnergyFromTime();
                 this.updateTicketsFromTime();
                 
-                // Sync premium items from shop system
                 if (window.shopSystem && result.data.activePremiumItems) {
                     window.shopSystem.activePremiumItems = result.data.activePremiumItems;
                 }
                 
-                // Restart auto miner if player has it
                 if (result.data.hasAutoMiner && window.shopSystem) {
                     window.shopSystem.startAutoMinerInterval();
                 }
