@@ -177,36 +177,95 @@ class AchievementManager {
     }
 }
 
+// Main Tasks Configuration
+const MAIN_TASKS = [
+    {
+        id: 'reach_level_10',
+        title: 'Reach Level 10',
+        description: 'Earn enough GP to reach level 10',
+        icon: '⭐',
+        reward: 500,
+        requirement: { type: 'level', value: 10 }
+    },
+    {
+        id: 'collect_10k_shards',
+        title: 'Collect 10,000 Shards',
+        description: 'Mine and collect a total of 10,000 shards',
+        icon: '💎',
+        reward: 750,
+        requirement: { type: 'total_shards', value: 10000 }
+    },
+    {
+        id: 'defeat_50_bosses',
+        title: 'Defeat 50 Bosses',
+        description: 'Win 50 boss battles',
+        icon: '⚔️',
+        reward: 1000,
+        requirement: { type: 'bosses_defeated', value: 50 }
+    },
+    {
+        id: 'mine_1000_times',
+        title: 'Mine 1,000 Times',
+        description: 'Complete 1,000 mining operations',
+        icon: '⛏️',
+        reward: 800,
+        requirement: { type: 'total_mines', value: 1000 }
+    },
+    {
+        id: 'visit_all_planets',
+        title: 'Visit All Planets',
+        description: 'Explore all 6 planets in the galaxy',
+        icon: '🌍',
+        reward: 600,
+        requirement: { type: 'planets_visited', value: 6 }
+    },
+    {
+        id: 'upgrade_10_times',
+        title: 'Purchase 10 Upgrades',
+        description: 'Buy a total of 10 upgrade levels',
+        icon: '🔧',
+        reward: 700,
+        requirement: { type: 'total_upgrades', value: 10 }
+    },
+    {
+        id: 'daily_streak_7',
+        title: '7 Day Login Streak',
+        description: 'Login for 7 consecutive days',
+        icon: '📅',
+        reward: 900,
+        requirement: { type: 'daily_streak', value: 7 }
+    },
+    {
+        id: 'earn_50k_gp',
+        title: 'Earn 50,000 GP',
+        description: 'Accumulate a total of 50,000 GP',
+        icon: '💰',
+        reward: 1500,
+        requirement: { type: 'total_gp', value: 50000 }
+    }
+];
+
 // Tasks Manager Class
 class TasksManager {
     constructor() {
-        this.currentTab = 'daily';
+        this.currentTab = 'tasks';
+        this.mainTasks = MAIN_TASKS;
     }
 
     renderContent() {
         const container = document.getElementById('taskContent');
         if (!container) return;
 
-        if (this.currentTab === 'daily') {
-            container.innerHTML = this.getDailyTasksHTML();
+        if (this.currentTab === 'tasks') {
+            container.innerHTML = this.getTasksHTML();
         } else {
-            container.innerHTML = this.getOneTimeTasksHTML();
+            container.innerHTML = this.getMainTasksHTML();
         }
 
         this.updateTaskStates();
     }
 
-    getDailyTasksHTML() {
-        return `
-            <div style="text-align: center; padding: 40px 20px;">
-                <div style="font-size: 48px; margin-bottom: 20px;">📅</div>
-                <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Check Daily Rewards!</div>
-                <div style="font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6;">Daily rewards are now at the top of this screen.<br>Tap the Daily Rewards banner to claim your streak bonus!</div>
-            </div>
-        `;
-    }
-
-    getOneTimeTasksHTML() {
+    getTasksHTML() {
         const gameState = window.gameState?.get();
         if (!gameState) return '';
         
@@ -250,6 +309,106 @@ class TasksManager {
         `).join('');
     }
 
+    getMainTasksHTML() {
+        const gameState = window.gameState?.get();
+        if (!gameState) return '<div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.7);">Loading...</div>';
+
+        const achievementManager = new AchievementManager();
+        const completedTasks = gameState.oneTimeTasks || {};
+
+        return this.mainTasks.map(task => {
+            const isCompleted = completedTasks[task.id] || false;
+            const isUnlocked = this.checkRequirement(task.requirement, gameState);
+            const progress = this.getProgress(task.requirement, gameState);
+
+            return `
+                <div class="task-item" style="opacity: ${isCompleted ? 0.6 : 1};">
+                    <div class="task-icon" style="background: linear-gradient(135deg, ${isCompleted ? 'rgba(0,255,136,0.2)' : 'rgba(255,215,0,0.2)'}, rgba(255,107,53,0.1)); font-size: 32px;">
+                        ${task.icon}
+                    </div>
+                    <div class="task-info">
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-desc">${task.description}</div>
+                        ${!isCompleted ? `
+                            <div style="margin-top: 8px;">
+                                <div style="width: 100%; height: 4px; background: rgba(0,0,0,0.3); border-radius: 2px; overflow: hidden;">
+                                    <div style="height: 100%; background: var(--primary-gold); width: ${progress}%;"></div>
+                                </div>
+                                <div style="font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 3px;">${progress}% Complete</div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${isCompleted 
+                        ? `<div class="task-reward" style="background: var(--success-green); color: #000;">✅ Claimed</div>`
+                        : isUnlocked
+                            ? `<button class="task-button" onclick="claimMainTask('${task.id}')">Claim ${task.reward} GP</button>`
+                            : `<div class="task-reward" style="background: rgba(255,215,0,0.2); color: var(--primary-gold);">Locked</div>`
+                    }
+                </div>
+            `;
+        }).join('');
+    }
+
+    checkRequirement(requirement, gameState) {
+        const { type, value } = requirement;
+        
+        switch (type) {
+            case 'level':
+                return Math.floor(gameState.gp / 100) + 1 >= value;
+            case 'total_shards':
+                return (gameState.totalShardsCollected || 0) >= value;
+            case 'bosses_defeated':
+                return (gameState.bossesDefeated || 0) >= value;
+            case 'total_mines':
+                return (gameState.totalMines || 0) >= value;
+            case 'planets_visited':
+                return (gameState.planetsVisited || []).length >= value;
+            case 'total_upgrades':
+                const totalUpgrades = Object.values(gameState.upgrades || {}).reduce((sum, val) => sum + val, 0);
+                return totalUpgrades >= value;
+            case 'daily_streak':
+                return (gameState.dailyStreak || 0) >= value;
+            case 'total_gp':
+                return (gameState.totalGPEarned || gameState.gp || 0) >= value;
+            default:
+                return false;
+        }
+    }
+
+    getProgress(requirement, gameState) {
+        const { type, value } = requirement;
+        let current = 0;
+
+        switch (type) {
+            case 'level':
+                current = Math.floor(gameState.gp / 100) + 1;
+                break;
+            case 'total_shards':
+                current = gameState.totalShardsCollected || 0;
+                break;
+            case 'bosses_defeated':
+                current = gameState.bossesDefeated || 0;
+                break;
+            case 'total_mines':
+                current = gameState.totalMines || 0;
+                break;
+            case 'planets_visited':
+                current = (gameState.planetsVisited || []).length;
+                break;
+            case 'total_upgrades':
+                current = Object.values(gameState.upgrades || {}).reduce((sum, val) => sum + val, 0);
+                break;
+            case 'daily_streak':
+                current = gameState.dailyStreak || 0;
+                break;
+            case 'total_gp':
+                current = gameState.totalGPEarned || gameState.gp || 0;
+                break;
+        }
+
+        return Math.min(100, Math.floor((current / value) * 100));
+    }
+
     updateTaskStates() {
         const gameState = window.gameState?.get();
         if (!gameState) return;
@@ -258,15 +417,15 @@ class TasksManager {
     switchTab(tab) {
         this.currentTab = tab;
         
-        const dailyTab = document.getElementById('dailyTasksTab');
-        const oneTimeTab = document.getElementById('oneTimeTasksTab');
+        const tasksTab = document.getElementById('tasksTab');
+        const mainTasksTab = document.getElementById('mainTasksTab');
         
-        if (tab === 'daily') {
-            dailyTab?.classList.add('active');
-            oneTimeTab?.classList.remove('active');
+        if (tab === 'tasks') {
+            tasksTab?.classList.add('active');
+            mainTasksTab?.classList.remove('active');
         } else {
-            oneTimeTab?.classList.add('active');
-            dailyTab?.classList.remove('active');
+            mainTasksTab?.classList.add('active');
+            tasksTab?.classList.remove('active');
         }
         
         this.renderContent();
@@ -469,7 +628,8 @@ class ProfileManager {
             `;
 
             achievements.forEach(achievement => {
-                const isUnlocked = achievementManager.isUnlocked(achievement.id, gameState);
+                const unlockedList = gameState.unlockedAchievements || [];
+                const isUnlocked = unlockedList.includes(achievement.id);
                 const progress = achievementManager.getProgress(achievement.id, gameState);
                 
                 html += `
@@ -813,7 +973,7 @@ function showDailyRewardsModal() {
             ` : `
                 <div style="padding: 15px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 1px solid rgba(255,215,0,0.3); text-align: center;">
                     <div style="font-size: 13px; color: rgba(255,255,255,0.8);">✅ Already claimed today!</div>
-                    <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Come back tomorrow for Day ${Math.min(currentStreak + 1, 7)}</div>
+                    <div style="font-size: 11px; color: rgba(255,255, 255, 255, 0.6); margin-top: 5px;">Come back tomorrow for Day ${Math.min(currentStreak + 1, 7)}</div>
                 </div>
             `}
         </div>
@@ -875,79 +1035,168 @@ function claimDailyReward() {
     closeDailyRewardsModal();
 }
 
-// Social Task Modal
-let socialTaskClicked = {};
+// Social Task Modal with Verification
+let socialTaskTimers = {};
 
 function openSocialTaskModal(taskId, link, reward, title) {
     const modal = document.createElement('div');
     modal.className = 'modal active';
     modal.id = 'socialTaskModal';
     
+    const isTelegram = taskId === 'telegram';
+    
     modal.innerHTML = `
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 400px;">
             <button class="close-btn" onclick="closeSocialTaskModal()">&times;</button>
-            <h2 class="modal-title">${title}</h2>
-            <div style="font-size: 48px; margin: 20px 0;">${taskId === 'telegram' ? '📱' : '🐦'}</div>
-            <p class="modal-text">Complete this task to earn <strong style="color: var(--primary-gold);">${reward} GP</strong></p>
+            <h2 class="modal-title" style="font-size: 20px; margin-bottom: 15px;">${title}</h2>
+            <div style="font-size: 60px; margin: 20px 0;">${isTelegram ? '📱' : '🐦'}</div>
+            <p style="font-size: 14px; margin-bottom: 20px;">Complete this task to earn <strong style="color: var(--primary-gold);">${reward} GP</strong></p>
+            
             <div style="margin: 20px 0; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 1px solid rgba(255,215,0,0.3);">
-                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 8px;">📋 Steps:</div>
+                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">📋 Steps:</div>
                 <div style="font-size: 13px; line-height: 1.8; text-align: left;">
-                    1️⃣ Click "Open Link" below<br>
-                    2️⃣ ${taskId === 'telegram' ? 'Join the channel' : 'Follow the account'}<br>
-                    3️⃣ Return here and click "Check"
+                    1️⃣ Click "Open" below<br>
+                    2️⃣ ${isTelegram ? 'Join the channel' : 'Follow the account'}<br>
+                    3️⃣ Return and click "Check"
                 </div>
             </div>
-            <button class="action-btn" id="socialTaskBtn" onclick="handleSocialTask('${taskId}', '${link}', ${reward})" style="width: 100%; margin-bottom: 10px;">
-                🔗 Open Link
+            
+            <button class="action-btn" id="socialOpenBtn" onclick="handleSocialTaskStep1('${taskId}', '${link}')" style="width: 100%; margin-bottom: 10px; background: linear-gradient(135deg, var(--neon-blue), #0091EA);">
+                🔗 Open
             </button>
+            
+            <button class="action-btn" id="socialCheckBtn" onclick="handleSocialTaskStep2('${taskId}', ${reward}, ${isTelegram})" style="width: 100%; background: var(--success-green); color: #000; display: none;">
+                ✅ Check
+            </button>
+            
+            <div id="socialTimer" style="display: none; text-align: center; padding: 15px; background: rgba(255,107,53,0.1); border-radius: 12px; margin-top: 10px; border: 1px solid var(--secondary-orange);">
+                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Please wait...</div>
+                <div style="font-size: 18px; font-weight: bold; color: var(--secondary-orange);" id="socialTimerText">5</div>
+                <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Verifying task completion</div>
+            </div>
         </div>
     `;
     
     document.body.appendChild(modal);
 }
 
+function handleSocialTaskStep1(taskId, link) {
+    window.open(link, '_blank');
+    
+    const openBtn = document.getElementById('socialOpenBtn');
+    const checkBtn = document.getElementById('socialCheckBtn');
+    
+    if (openBtn) openBtn.style.display = 'none';
+    if (checkBtn) checkBtn.style.display = 'block';
+}
+
+function handleSocialTaskStep2(taskId, reward, needsVerification) {
+    const checkBtn = document.getElementById('socialCheckBtn');
+    const timerDiv = document.getElementById('socialTimer');
+    const timerText = document.getElementById('socialTimerText');
+    
+    if (checkBtn) checkBtn.style.display = 'none';
+    if (timerDiv) timerDiv.style.display = 'block';
+    
+    let timeLeft = needsVerification ? 5 : 3;
+    if (timerText) timerText.textContent = timeLeft;
+    
+    const timer = setInterval(() => {
+        timeLeft--;
+        if (timerText) timerText.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            completeSocialTask(taskId, reward);
+        }
+    }, 1000);
+    
+    socialTaskTimers[taskId] = timer;
+}
+
+function completeSocialTask(taskId, reward) {
+    const gameState = window.gameState;
+    if (!gameState) return;
+    
+    const currentTasks = gameState.getValue('oneTimeTasks') || {};
+    currentTasks[taskId] = true;
+    
+    gameState.update({
+        oneTimeTasks: currentTasks,
+        gp: gameState.getValue('gp') + reward,
+        totalGPEarned: (gameState.getValue('totalGPEarned') || gameState.getValue('gp')) + reward
+    });
+    
+    if (window.showNotification) {
+        window.showNotification(`✅ Task completed! +${reward} GP`);
+    }
+    
+    if (window.backendManager) {
+        window.backendManager.saveProgress(gameState.get());
+    }
+    
+    closeSocialTaskModal();
+    if (window.TasksManager) {
+        window.TasksManager.renderContent();
+    }
+}
+
 function closeSocialTaskModal() {
     const modal = document.getElementById('socialTaskModal');
     if (modal) {
+        Object.values(socialTaskTimers).forEach(timer => clearInterval(timer));
+        socialTaskTimers = {};
         modal.classList.remove('active');
         setTimeout(() => modal.remove(), 300);
     }
 }
 
-function handleSocialTask(taskId, link, reward) {
-    const btn = document.getElementById('socialTaskBtn');
-    if (!btn) return;
+// Main Task Claim Function
+function claimMainTask(taskId) {
+    const gameState = window.gameState;
+    if (!gameState) return;
     
-    if (!socialTaskClicked[taskId]) {
-        window.open(link, '_blank');
-        socialTaskClicked[taskId] = true;
-        btn.innerHTML = '✅ Check';
-        btn.style.background = 'linear-gradient(135deg, var(--success-green), #00CC70)';
-    } else {
-        const gameState = window.gameState;
-        if (!gameState) return;
-        
-        const currentTasks = gameState.getValue('oneTimeTasks') || {};
-        currentTasks[taskId] = true;
-        
-        gameState.update({
-            oneTimeTasks: currentTasks,
-            gp: gameState.getValue('gp') + reward,
-            totalGPEarned: (gameState.getValue('totalGPEarned') || gameState.getValue('gp')) + reward
-        });
-        
+    const state = gameState.get();
+    const task = MAIN_TASKS.find(t => t.id === taskId);
+    
+    if (!task) return;
+    
+    const completedTasks = state.oneTimeTasks || {};
+    if (completedTasks[taskId]) {
         if (window.showNotification) {
-            window.showNotification(`✅ Task completed! +${reward} GP`);
+            window.showNotification('Task already completed!');
         }
-        
-        if (window.backendManager) {
-            window.backendManager.saveProgress(gameState.get());
+        return;
+    }
+    
+    const taskManager = new TasksManager();
+    const isUnlocked = taskManager.checkRequirement(task.requirement, state);
+    
+    if (!isUnlocked) {
+        if (window.showNotification) {
+            window.showNotification('Task requirements not met!');
         }
-        
-        closeSocialTaskModal();
-        if (window.TasksManager) {
-            window.TasksManager.renderContent();
-        }
+        return;
+    }
+    
+    completedTasks[taskId] = true;
+    
+    gameState.update({
+        oneTimeTasks: completedTasks,
+        gp: state.gp + task.reward,
+        totalGPEarned: (state.totalGPEarned || state.gp) + task.reward
+    });
+    
+    if (window.showNotification) {
+        window.showNotification(`${task.icon} ${task.title} completed! +${task.reward} GP`);
+    }
+    
+    if (window.backendManager) {
+        window.backendManager.saveProgress(gameState.get());
+    }
+    
+    if (window.TasksManager) {
+        window.TasksManager.renderContent();
     }
 }
 
@@ -1097,11 +1346,14 @@ if (typeof window !== 'undefined') {
     window.claimDailyReward = claimDailyReward;
     window.openSocialTaskModal = openSocialTaskModal;
     window.closeSocialTaskModal = closeSocialTaskModal;
-    window.handleSocialTask = handleSocialTask;
+    window.handleSocialTaskStep1 = handleSocialTaskStep1;
+    window.handleSocialTaskStep2 = handleSocialTaskStep2;
+    window.completeSocialTask = completeSocialTask;
     window.shareReferral = shareReferral;
     window.copyReferralCode = copyReferralCode;
     window.claimDailyTask = claimDailyTask;
     window.claimOneTimeTask = claimOneTimeTask;
+    window.claimMainTask = claimMainTask;
     window.inputComboDigit = inputComboDigit;
     window.clearCombo = clearCombo;
     window.submitCombo = submitCombo;
