@@ -1,4 +1,4 @@
-// premiumPrices.js - Premium Items with TON Prices
+// premiumPrices.js - Premium Items with TON Prices (Fixed)
 
 const PREMIUM_ITEMS = {
     starterBundle: {
@@ -12,8 +12,8 @@ const PREMIUM_ITEMS = {
         name: 'Auto Miner',
         price: 1,
         icon: '🤖',
-        description: 'Auto mine forever (persistent)',
-        benefits: ['Mines automatically 24/7', 'Never expires', 'Passive income']
+        description: 'Auto mine for 7 days (persistent)',
+        benefits: ['Mines automatically 24/7', 'Works for 7 days', 'Passive income']
     },
     vipPass: {
         name: 'VIP Pass',
@@ -42,13 +42,6 @@ const PREMIUM_ITEMS = {
         icon: '💰',
         description: 'Instant 50,000 GP',
         benefits: ['50,000 GP instantly', 'Best value for GP', 'No waiting']
-    },
-    cosmicSkinPack: {
-        name: 'Cosmic Skin Pack',
-        price: 4,
-        icon: '🎨',
-        description: '10 exclusive skins',
-        benefits: ['10 Unique Skins', 'Exclusive designs', 'Collector items']
     },
     legendaryShip: {
         name: 'Legendary Ship',
