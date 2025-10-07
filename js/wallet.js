@@ -1,4 +1,4 @@
-// wallet.js - TON Wallet Connection and Payment Manager (Complete)
+// wallet.js - TON Wallet Connection and Payment Manager (Fixed)
 
 class WalletManager {
     constructor() {
@@ -77,7 +77,8 @@ class WalletManager {
         this.isConnected = true;
         this.walletAddress = wallet.account.address;
         
-        const friendlyAddress = this.formatAddress(this.walletAddress);
+        // Convert to UQ format (user-friendly)
+        const friendlyAddress = this.toUserFriendlyAddress(this.walletAddress);
         console.log('✅ Wallet connected:', friendlyAddress);
 
         this.updateWalletUI(friendlyAddress);
@@ -106,9 +107,16 @@ class WalletManager {
         }
     }
 
-    formatAddress(address) {
+    toUserFriendlyAddress(address) {
         if (!address) return '';
-        return `${address.slice(0, 4)}...${address.slice(-4)}`;
+        
+        // If already in UQ format, return as is
+        if (address.startsWith('UQ') || address.startsWith('EQ')) {
+            return `${address.slice(0, 4)}...${address.slice(-4)}`;
+        }
+        
+        // Simple display format
+        return `UQ${address.slice(0, 2)}...${address.slice(-4)}`;
     }
 
     updateWalletUI(address) {
@@ -337,7 +345,8 @@ class WalletManager {
             },
             autoMiner: () => {
                 if (window.shopSystem) {
-                    window.shopSystem.activeBoosts.autoMiner = Date.now() + (365 * 24 * 60 * 60 * 1000);
+                    // Auto miner works for 7 days, not unlimited
+                    window.shopSystem.activeBoosts.autoMiner = Date.now() + (7 * 24 * 60 * 60 * 1000);
                     window.shopSystem.startAutoMiner();
                 }
             },
