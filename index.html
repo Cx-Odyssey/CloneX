@@ -245,27 +245,28 @@
             </div>
 
             <div id="shopContent">
-                <!-- Items Tab - FIXED: Removed Energy Tank, GP Multiplier, Boss Ticket from modals -->
+                <!-- Items Tab - FIXED: All items now use showShopItemModal -->
                 <div class="shop-grid" id="itemsShopContent">
-                    <div class="shop-item" onclick="buyUpgrade('speed')">
+                    <!-- FIXED: Changed onclick to showShopItemModal for upgrades -->
+                    <div class="shop-item" onclick="showShopItemModal('speedUpgrade')">
                         <div class="shop-icon">🚀</div>
                         <div class="shop-title">Speed Boost</div>
                         <div class="shop-cost" id="speedCost">50 GP</div>
                         <div class="shop-desc">+20% Mining Speed</div>
                     </div>
-                    <div class="shop-item" onclick="buyUpgrade('damage')">
+                    <div class="shop-item" onclick="showShopItemModal('damageUpgrade')">
                         <div class="shop-icon">⚔️</div>
                         <div class="shop-title">Damage Boost</div>
                         <div class="shop-cost" id="damageCost">75 GP</div>
                         <div class="shop-desc">+30% Battle Damage</div>
                     </div>
-                    <div class="shop-item" onclick="buyUpgrade('energy')">
+                    <div class="shop-item" onclick="showShopItemModal('energyUpgrade')">
                         <div class="shop-icon">⚡</div>
                         <div class="shop-title">Energy Tank</div>
                         <div class="shop-cost" id="energyCost">100 GP</div>
                         <div class="shop-desc">+25 Max Energy</div>
                     </div>
-                    <div class="shop-item" onclick="buyUpgrade('multiplier')">
+                    <div class="shop-item" onclick="showShopItemModal('multiplierUpgrade')">
                         <div class="shop-icon">💰</div>
                         <div class="shop-title">GP Multiplier</div>
                         <div class="shop-cost" id="multiplierCost">200 GP</div>
