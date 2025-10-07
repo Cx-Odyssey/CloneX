@@ -1,4 +1,4 @@
-// Shop System - Complete with Beautiful Modals (Fixed)
+// Shop System - Complete with Beautiful Modals (FIXED)
 
 class ShopSystem {
     constructor() {
@@ -17,6 +17,56 @@ class ShopSystem {
         };
         
         this.shopItems = {
+            // UPGRADES (permanent stat boosts)
+            speedUpgrade: {
+                name: 'Speed Boost',
+                cost: () => 50 * Math.pow(2, window.gameState.getValue('upgrades').speed),
+                icon: '🚀',
+                description: '+20% Mining Speed (Permanent)',
+                benefits: ['Faster mining', 'Permanent upgrade', 'Stacks with purchases'],
+                isUpgrade: true,
+                upgradeType: 'speed',
+                effect: () => {
+                    return window.miningSystem?.buyUpgrade('speed');
+                }
+            },
+            damageUpgrade: {
+                name: 'Damage Boost',
+                cost: () => 75 * Math.pow(2, window.gameState.getValue('upgrades').damage),
+                icon: '⚔️',
+                description: '+30% Battle Damage (Permanent)',
+                benefits: ['Stronger attacks', 'Permanent upgrade', 'Stacks with purchases'],
+                isUpgrade: true,
+                upgradeType: 'damage',
+                effect: () => {
+                    return window.miningSystem?.buyUpgrade('damage');
+                }
+            },
+            energyUpgrade: {
+                name: 'Energy Tank',
+                cost: () => 100 * Math.pow(2, window.gameState.getValue('upgrades').energy),
+                icon: '⚡',
+                description: '+25 Max Energy (Permanent)',
+                benefits: ['+25 Max Energy', 'Fully restored', 'Permanent upgrade'],
+                isUpgrade: true,
+                upgradeType: 'energy',
+                effect: () => {
+                    return window.miningSystem?.buyUpgrade('energy');
+                }
+            },
+            multiplierUpgrade: {
+                name: 'GP Multiplier',
+                cost: () => 200 * Math.pow(2, window.gameState.getValue('upgrades').multiplier),
+                icon: '💰',
+                description: '+50% GP Gain (Permanent)',
+                benefits: ['More GP per action', 'Permanent upgrade', 'Stacks with purchases'],
+                isUpgrade: true,
+                upgradeType: 'multiplier',
+                effect: () => {
+                    return window.miningSystem?.buyUpgrade('multiplier');
+                }
+            },
+            // CONSUMABLES & BOOSTERS
             energyPotion: {
                 name: 'Energy Potion',
                 cost: 150,
@@ -121,7 +171,10 @@ class ShopSystem {
         if (!item) return;
 
         const gameState = window.gameState?.get();
-        const canAfford = gameState && gameState.gp >= item.cost;
+        
+        // Get cost (handle function costs for upgrades)
+        const itemCost = typeof item.cost === 'function' ? item.cost() : item.cost;
+        const canAfford = gameState && gameState.gp >= itemCost;
 
         const modal = document.createElement('div');
         modal.className = 'modal active';
@@ -151,7 +204,7 @@ class ShopSystem {
 
                 <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 18px; margin: 20px 0; text-align: center; border: 2px solid ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">
                     <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Price</div>
-                    <div style="font-size: 28px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${item.cost} GP</div>
+                    <div style="font-size: 28px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${itemCost} GP</div>
                     ${!canAfford ? '<div style="font-size: 11px; color: var(--danger-red); margin-top: 5px;">Insufficient GP</div>' : ''}
                 </div>
 
@@ -193,15 +246,30 @@ class ShopSystem {
         const item = this.shopItems[itemType];
         if (!item) return;
 
+        // Handle upgrades differently
+        if (item.isUpgrade) {
+            const result = item.effect();
+            if (result && result.success) {
+                if (window.uiController) {
+                    window.uiController.showNotification(`${item.icon} ${item.name} upgraded!`);
+                }
+            }
+            closeShopItemModal();
+            return;
+        }
+
+        // Handle regular items
+        const itemCost = typeof item.cost === 'function' ? item.cost() : item.cost;
         const currentGP = gameState.getValue('gp');
-        if (currentGP < item.cost) {
+        
+        if (currentGP < itemCost) {
             if (window.uiController) {
                 window.uiController.showNotification('Not enough GP!');
             }
             return;
         }
 
-        gameState.setValue('gp', currentGP - item.cost);
+        gameState.setValue('gp', currentGP - itemCost);
         item.effect();
 
         if (window.uiController) {
@@ -349,12 +417,12 @@ function showPremiumItemModal(itemId) {
     modal.className = 'modal active';
     modal.id = 'premiumItemModal';
     
+    // FIXED: Using $ton image instead of text, proper styling
     modal.innerHTML = `
         <div class="modal-content" style="max-width: 440px; animation: modalSlideIn 0.3s ease; border: 2px solid var(--neon-blue); background: linear-gradient(135deg, rgba(0, 145, 234, 0.1), rgba(26, 26, 46, 0.95));">
             <button class="close-btn" onclick="closePremiumItemModal()">&times;</button>
             
             <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 60px; margin-bottom: 15px; animation: iconSpin 3s linear infinite;">💎</div>
                 <div style="font-size: 70px; margin-bottom: 15px; animation: iconBounce 0.6s ease;">${item.icon}</div>
                 <h2 style="color: var(--neon-blue); font-size: 24px; margin-bottom: 8px;">${item.name}</h2>
                 <p style="font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.5;">${item.description}</p>
@@ -376,7 +444,7 @@ function showPremiumItemModal(itemId) {
                 <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Price</div>
                 <div style="font-size: 32px; font-weight: bold; color: var(--neon-blue); display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <img src="https://ton.org/download/ton_symbol.svg" alt="TON" style="width: 32px; height: 32px; filter: brightness(0) saturate(100%) invert(64%) sepia(85%) saturate(2996%) hue-rotate(163deg) brightness(101%) contrast(101%);">
-                    <span>${item.price} TON</span>
+                    <span>${item.price}</span>
                 </div>
                 <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Blockchain payment required</div>
             </div>
@@ -392,9 +460,9 @@ function showPremiumItemModal(itemId) {
         </div>
 
         <style>
-            @keyframes iconSpin {
-                from { transform: rotate(0deg); }
-                to { transform: rotate(360deg); }
+            @keyframes iconBounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
             }
         </style>
     `;
