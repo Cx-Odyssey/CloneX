@@ -1,4 +1,4 @@
-// Shop System - Complete with Beautiful Modals (FIXED: Horizontal wide, vertical compact)
+// Shop System - Complete with Beautiful Modals (FIXED: Images + GP Icon)
 
 class ShopSystem {
     constructor() {
@@ -94,7 +94,7 @@ class ShopSystem {
             gpBooster: {
                 name: 'GP Booster',
                 cost: 400,
-                icon: '🎯',
+                icon: '💎',
                 description: 'Double GP gains for 1 hour',
                 benefits: ['2x GP rewards', '60 minutes duration', 'Affects all activities'],
                 effect: () => {
@@ -204,7 +204,10 @@ class ShopSystem {
 
                 <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px; margin: 15px 0; text-align: center; border: 2px solid ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">
                     <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 8px;">Price</div>
-                    <div style="font-size: 28px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${itemCost} GP</div>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span style="font-size: 28px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${itemCost}</span>
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 28px; height: 28px; object-fit: contain;">
+                    </div>
                     ${!canAfford ? '<div style="font-size: 10px; color: var(--danger-red); margin-top: 6px;">Insufficient GP</div>' : ''}
                 </div>
 
@@ -238,7 +241,7 @@ class ShopSystem {
         
         document.body.appendChild(modal);
     }
-
+    
     buyShopItem(itemType) {
         const gameState = window.gameState;
         if (!gameState) return;
@@ -417,7 +420,6 @@ function showPremiumItemModal(itemId) {
     modal.className = 'modal active';
     modal.id = 'premiumItemModal';
     
-    // FIXED: Horizontal wide, vertical compact with proper TON image
     modal.innerHTML = `
         <div class="modal-content" style="max-width: 500px; width: 90%; animation: modalSlideIn 0.3s ease; border: 2px solid var(--neon-blue); background: linear-gradient(135deg, rgba(0, 145, 234, 0.1), rgba(26, 26, 46, 0.95));">
             <button class="close-btn" onclick="closePremiumItemModal()">&times;</button>
