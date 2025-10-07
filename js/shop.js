@@ -1,4 +1,4 @@
-// Shop System - Complete with Beautiful Modals
+// Shop System - Complete with Beautiful Modals (Fixed)
 
 class ShopSystem {
     constructor() {
@@ -28,19 +28,6 @@ class ShopSystem {
                     const currentEnergy = gameState.getValue('energy');
                     const maxEnergy = gameState.getValue('maxEnergy');
                     gameState.setValue('energy', Math.min(maxEnergy, currentEnergy + 50));
-                }
-            },
-            bossTicket: {
-                name: 'Boss Ticket',
-                cost: 200,
-                icon: '🎫',
-                description: 'Get an extra boss raid ticket',
-                benefits: ['+1 Game Ticket', 'More boss battles', 'Extra GP rewards'],
-                effect: () => {
-                    const gameState = window.gameState;
-                    const currentTickets = gameState.getValue('gameTickets');
-                    const maxTickets = gameState.getValue('maxTickets') || 10;
-                    gameState.setValue('gameTickets', Math.min(maxTickets, currentTickets + 1));
                 }
             },
             shardBooster: {
@@ -387,7 +374,10 @@ function showPremiumItemModal(itemId) {
 
             <div style="background: rgba(0,245,255,0.1); border-radius: 12px; padding: 18px; margin: 20px 0; text-align: center; border: 2px solid var(--neon-blue);">
                 <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Price</div>
-                <div style="font-size: 32px; font-weight: bold; color: var(--neon-blue);">${item.price} TON</div>
+                <div style="font-size: 32px; font-weight: bold; color: var(--neon-blue); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <img src="https://ton.org/download/ton_symbol.svg" alt="TON" style="width: 32px; height: 32px; filter: brightness(0) saturate(100%) invert(64%) sepia(85%) saturate(2996%) hue-rotate(163deg) brightness(101%) contrast(101%);">
+                    <span>${item.price} TON</span>
+                </div>
                 <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Blockchain payment required</div>
             </div>
 
