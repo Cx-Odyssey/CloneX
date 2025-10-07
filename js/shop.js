@@ -184,31 +184,31 @@ class ShopSystem {
             <div class="modal-content" style="max-width: 420px; animation: modalSlideIn 0.3s ease;">
                 <button class="close-btn" onclick="closeShopItemModal()">&times;</button>
                 
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <div style="font-size: 70px; margin-bottom: 15px; animation: iconBounce 0.6s ease;">${item.icon}</div>
-                    <h2 style="color: var(--primary-gold); font-size: 22px; margin-bottom: 8px;">${item.name}</h2>
-                    <p style="font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.5;">${item.description}</p>
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="font-size: 60px; margin-bottom: 12px; animation: iconBounce 0.6s ease;">${item.icon}</div>
+                    <h2 style="color: var(--primary-gold); font-size: 20px; margin-bottom: 6px;">${item.name}</h2>
+                    <p style="font-size: 12px; color: rgba(255,255,255,0.8); line-height: 1.4;">${item.description}</p>
                 </div>
 
-                <div style="background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,53,0.05)); border-radius: 15px; padding: 20px; margin: 20px 0; border: 1px solid rgba(255,215,0,0.3);">
-                    <div style="font-size: 14px; font-weight: 600; color: var(--primary-gold); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <div style="background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,53,0.05)); border-radius: 15px; padding: 15px; margin: 15px 0; border: 1px solid rgba(255,215,0,0.3);">
+                    <div style="font-size: 13px; font-weight: 600; color: var(--primary-gold); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                         <span>✨</span> Benefits
                     </div>
                     ${item.benefits.map(b => `
-                        <div style="display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 13px; color: rgba(255,255,255,0.9);">
-                            <span style="color: var(--success-green); font-size: 16px;">•</span>
+                        <div style="display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 12px; color: rgba(255,255,255,0.9);">
+                            <span style="color: var(--success-green); font-size: 14px;">•</span>
                             <span>${b}</span>
                         </div>
                     `).join('')}
                 </div>
 
-                <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 18px; margin: 20px 0; text-align: center; border: 2px solid ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">
-                    <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Price</div>
+                <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px; margin: 15px 0; text-align: center; border: 2px solid ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">
+                    <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 8px;">Price</div>
                     <div style="font-size: 28px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${itemCost} GP</div>
-                    ${!canAfford ? '<div style="font-size: 11px; color: var(--danger-red); margin-top: 5px;">Insufficient GP</div>' : ''}
+                    ${!canAfford ? '<div style="font-size: 10px; color: var(--danger-red); margin-top: 6px;">Insufficient GP</div>' : ''}
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
                     <button onclick="closeShopItemModal()" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.3s;">
                         Cancel
                     </button>
@@ -417,39 +417,39 @@ function showPremiumItemModal(itemId) {
     modal.className = 'modal active';
     modal.id = 'premiumItemModal';
     
-    // FIXED: Using $ton image instead of text, proper styling
+    // FIXED: Using correct TON image, price before logo, symmetric design
     modal.innerHTML = `
-        <div class="modal-content" style="max-width: 440px; animation: modalSlideIn 0.3s ease; border: 2px solid var(--neon-blue); background: linear-gradient(135deg, rgba(0, 145, 234, 0.1), rgba(26, 26, 46, 0.95));">
+        <div class="modal-content" style="max-width: 420px; animation: modalSlideIn 0.3s ease; border: 2px solid var(--neon-blue); background: linear-gradient(135deg, rgba(0, 145, 234, 0.1), rgba(26, 26, 46, 0.95));">
             <button class="close-btn" onclick="closePremiumItemModal()">&times;</button>
             
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 70px; margin-bottom: 15px; animation: iconBounce 0.6s ease;">${item.icon}</div>
-                <h2 style="color: var(--neon-blue); font-size: 24px; margin-bottom: 8px;">${item.name}</h2>
-                <p style="font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.5;">${item.description}</p>
+            <div style="text-align: center; margin-bottom: 15px;">
+                <div style="font-size: 60px; margin-bottom: 12px; animation: iconBounce 0.6s ease;">${item.icon}</div>
+                <h2 style="color: var(--neon-blue); font-size: 20px; margin-bottom: 6px;">${item.name}</h2>
+                <p style="font-size: 12px; color: rgba(255,255,255,0.8); line-height: 1.4;">${item.description}</p>
             </div>
 
-            <div style="background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(0,145,234,0.05)); border-radius: 15px; padding: 20px; margin: 20px 0; border: 1px solid rgba(0,245,255,0.3);">
-                <div style="font-size: 14px; font-weight: 600; color: var(--neon-blue); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+            <div style="background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(0,145,234,0.05)); border-radius: 15px; padding: 15px; margin: 15px 0; border: 1px solid rgba(0,245,255,0.3);">
+                <div style="font-size: 13px; font-weight: 600; color: var(--neon-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
                     <span>✨</span> Premium Benefits
                 </div>
                 ${item.benefits.map(b => `
-                    <div style="display: flex; align-items: center; gap: 10px; margin: 8px 0; font-size: 13px; color: rgba(255,255,255,0.9);">
-                        <span style="color: var(--neon-blue); font-size: 16px;">•</span>
+                    <div style="display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 12px; color: rgba(255,255,255,0.9);">
+                        <span style="color: var(--neon-blue); font-size: 14px;">•</span>
                         <span>${b}</span>
                     </div>
                 `).join('')}
             </div>
 
-            <div style="background: rgba(0,245,255,0.1); border-radius: 12px; padding: 18px; margin: 20px 0; text-align: center; border: 2px solid var(--neon-blue);">
-                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Price</div>
-                <div style="font-size: 32px; font-weight: bold; color: var(--neon-blue); display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <img src="https://ton.org/download/ton_symbol.svg" alt="TON" style="width: 32px; height: 32px; filter: brightness(0) saturate(100%) invert(64%) sepia(85%) saturate(2996%) hue-rotate(163deg) brightness(101%) contrast(101%);">
+            <div style="background: rgba(0,245,255,0.1); border-radius: 12px; padding: 15px; margin: 15px 0; text-align: center; border: 2px solid var(--neon-blue);">
+                <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 8px;">Price</div>
+                <div style="font-size: 28px; font-weight: bold; color: var(--neon-blue); display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <span>${item.price}</span>
+                    <img src="https://cx-odyssey.github.io/CloneX/assets/ton.png" alt="TON" style="width: 28px; height: 28px;">
                 </div>
-                <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Blockchain payment required</div>
+                <div style="font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 6px;">Blockchain payment required</div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
                 <button onclick="closePremiumItemModal()" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.3s;">
                     Cancel
                 </button>
