@@ -1,4 +1,4 @@
-// wallet.js - TON Wallet Connection and Payment Manager (Fixed)
+// wallet.js - TON Wallet Connection and Payment Manager (FIXED: Persistent UI)
 
 class WalletManager {
     constructor() {
@@ -55,21 +55,29 @@ class WalletManager {
             if (currentWallet && currentWallet.account) {
                 this.handleWalletConnected(currentWallet);
             } else {
+                // Check gameState for saved wallet
                 const gameState = window.gameState?.get();
                 if (gameState?.walletConnected && gameState?.walletAddress) {
                     console.log('⚠️ Wallet was connected but session expired');
-                    if (window.gameState) {
-                        window.gameState.update({
-                            walletConnected: false,
-                            walletAddress: ''
-                        });
-                    }
+                    // Don't clear from gameState, just update UI
+                    this.walletAddress = gameState.walletAddress;
+                    this.isConnected = true;
+                    this.updateWalletUI(this.toUserFriendlyAddress(gameState.walletAddress));
+                } else {
+                    this.updateWalletUI(null);
                 }
-                this.updateWalletUI(null);
             }
         } catch (error) {
             console.error('Error checking wallet connection:', error);
-            this.updateWalletUI(null);
+            // Try to restore from gameState
+            const gameState = window.gameState?.get();
+            if (gameState?.walletConnected && gameState?.walletAddress) {
+                this.walletAddress = gameState.walletAddress;
+                this.isConnected = true;
+                this.updateWalletUI(this.toUserFriendlyAddress(gameState.walletAddress));
+            } else {
+                this.updateWalletUI(null);
+            }
         }
     }
 
@@ -77,7 +85,6 @@ class WalletManager {
         this.isConnected = true;
         this.walletAddress = wallet.account.address;
         
-        // Convert to UQ format (user-friendly)
         const friendlyAddress = this.toUserFriendlyAddress(this.walletAddress);
         console.log('✅ Wallet connected:', friendlyAddress);
 
@@ -110,12 +117,10 @@ class WalletManager {
     toUserFriendlyAddress(address) {
         if (!address) return '';
         
-        // If already in UQ format, return as is
         if (address.startsWith('UQ') || address.startsWith('EQ')) {
             return `${address.slice(0, 4)}...${address.slice(-4)}`;
         }
         
-        // Simple display format
         return `UQ${address.slice(0, 2)}...${address.slice(-4)}`;
     }
 
@@ -133,6 +138,18 @@ class WalletManager {
         } else if (connectBtn && walletInfo) {
             connectBtn.style.display = 'block';
             walletInfo.style.display = 'none';
+        }
+    }
+
+    // FIXED: Call this on every profile tab switch
+    refreshWalletUI() {
+        const gameState = window.gameState?.get();
+        if (gameState?.walletConnected && gameState?.walletAddress) {
+            this.walletAddress = gameState.walletAddress;
+            this.isConnected = true;
+            this.updateWalletUI(this.toUserFriendlyAddress(gameState.walletAddress));
+        } else {
+            this.updateWalletUI(null);
         }
     }
 
@@ -345,7 +362,6 @@ class WalletManager {
             },
             autoMiner: () => {
                 if (window.shopSystem) {
-                    // Auto miner works for 7 days, not unlimited
                     window.shopSystem.activeBoosts.autoMiner = Date.now() + (7 * 24 * 60 * 60 * 1000);
                     window.shopSystem.startAutoMiner();
                 }
@@ -368,11 +384,6 @@ class WalletManager {
             },
             gpMegaPack: () => {
                 gameState.update({ gp: gameState.getValue('gp') + 50000 });
-            },
-            cosmicSkinPack: () => {
-                const skins = gameState.getValue('skins') || [];
-                const newSkins = ['Nebula', 'Supernova', 'Quasar', 'Pulsar', 'BlackHole', 'WhiteDwarf', 'RedGiant', 'NeutronStar', 'Magnetar', 'Gamma'];
-                gameState.update({ skins: [...new Set([...skins, ...newSkins])] });
             },
             legendaryShip: () => {
                 if (window.shopSystem) {
