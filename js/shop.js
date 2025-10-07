@@ -1,4 +1,4 @@
-// Shop System - Complete with Fixed Modal Design & Asset Images
+// Shop System - Fixed GP/TON Image Display
 
 class ShopSystem {
     constructor() {
@@ -158,8 +158,10 @@ class ShopSystem {
                     <div class="shop-icon">${item.icon}</div>
                     <div class="shop-title">${item.name}</div>
                     <div class="shop-cost">
-                        <span style="font-size: 18px; font-weight: bold;">${item.price}</span>
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/ton.png" alt="TON" style="width: 20px; height: 20px; object-fit: contain; vertical-align: middle; margin-left: 4px;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <span style="font-size: 18px; font-weight: bold;">${item.price}</span>
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/ton.png" alt="TON" style="width: 20px; height: 20px; object-fit: contain;">
+                        </div>
                     </div>
                     <div class="shop-desc">${item.description}</div>
                 </div>
@@ -211,7 +213,7 @@ class ShopSystem {
 
                 <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px; margin: 12px 0; text-align: center; border: 2px solid ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">
                     <div style="font-size: 10px; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Price</div>
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
                         <span style="font-size: 24px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${itemCost}</span>
                         <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 24px; height: 24px; object-fit: contain;">
                     </div>
@@ -455,7 +457,7 @@ function showPremiumItemModal(itemId) {
 
             <div style="background: rgba(0,245,255,0.1); border-radius: 12px; padding: 12px; margin: 12px 0; text-align: center; border: 2px solid var(--neon-blue);">
                 <div style="font-size: 10px; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Price</div>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
                     <span style="font-size: 24px; font-weight: bold; color: var(--neon-blue);">${item.price}</span>
                     <img src="https://cx-odyssey.github.io/CloneX/assets/ton.png" alt="TON" style="width: 24px; height: 24px; object-fit: contain;">
                 </div>
