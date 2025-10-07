@@ -1,4 +1,4 @@
-// wallet.js - TON Wallet Connection and Payment Manager
+// wallet.js - TON Wallet Connection and Payment Manager (Complete)
 
 class WalletManager {
     constructor() {
@@ -19,13 +19,11 @@ class WalletManager {
             this.isInitializing = true;
             console.log('🔗 Initializing TON Connect UI...');
             
-            // Create TON Connect UI instance
             this.tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
                 manifestUrl: 'https://cx-odyssey.github.io/CloneX/tonconnect-manifest.json',
                 buttonRootId: null
             });
 
-            // Set up status change listener
             this.tonConnectUI.onStatusChange(wallet => {
                 console.log('Wallet status changed:', wallet);
                 if (wallet) {
@@ -35,7 +33,6 @@ class WalletManager {
                 }
             });
 
-            // Check for existing connection
             await this.checkExistingConnection();
 
             console.log('✅ TON Connect UI initialized');
@@ -50,7 +47,6 @@ class WalletManager {
 
     async checkExistingConnection() {
         try {
-            // Wait a bit for TON Connect to initialize
             await new Promise(resolve => setTimeout(resolve, 500));
             
             const currentWallet = this.tonConnectUI.wallet;
@@ -59,11 +55,9 @@ class WalletManager {
             if (currentWallet && currentWallet.account) {
                 this.handleWalletConnected(currentWallet);
             } else {
-                // Check gameState for previous connection
                 const gameState = window.gameState?.get();
                 if (gameState?.walletConnected && gameState?.walletAddress) {
                     console.log('⚠️ Wallet was connected but session expired');
-                    // Clear the saved state since connection is lost
                     if (window.gameState) {
                         window.gameState.update({
                             walletConnected: false,
@@ -94,10 +88,6 @@ class WalletManager {
                 walletConnected: true,
                 walletAddress: this.walletAddress
             });
-        }
-
-        if (window.showNotification) {
-            window.showNotification('Wallet connected successfully!');
         }
     }
 
@@ -163,10 +153,7 @@ class WalletManager {
 
         try {
             console.log('🔗 Opening wallet connection modal...');
-            
-            // Open the modal
             await this.tonConnectUI.openModal();
-            
         } catch (error) {
             console.error('❌ Connection error:', error);
             
