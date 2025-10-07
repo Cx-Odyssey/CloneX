@@ -1,4 +1,4 @@
-// Shop System - Complete with Beautiful Modals (FIXED: Images + GP Icon)
+// Shop System - Complete with Fixed Modal Design & Asset Images
 
 class ShopSystem {
     constructor() {
@@ -157,7 +157,10 @@ class ShopSystem {
                     <div class="premium-badge">💎</div>
                     <div class="shop-icon">${item.icon}</div>
                     <div class="shop-title">${item.name}</div>
-                    <div class="shop-cost">${item.price} TON</div>
+                    <div class="shop-cost">
+                        <span style="font-size: 18px; font-weight: bold;">${item.price}</span>
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/ton.png" alt="TON" style="width: 20px; height: 20px; object-fit: contain; vertical-align: middle; margin-left: 4px;">
+                    </div>
                     <div class="shop-desc">${item.description}</div>
                 </div>
             `;
@@ -184,38 +187,42 @@ class ShopSystem {
             <div class="modal-content" style="max-width: 420px; animation: modalSlideIn 0.3s ease;">
                 <button class="close-btn" onclick="closeShopItemModal()">&times;</button>
                 
-                <div style="text-align: center; margin-bottom: 15px;">
-                    <div style="font-size: 60px; margin-bottom: 12px; animation: iconBounce 0.6s ease;">${item.icon}</div>
-                    <h2 style="color: var(--primary-gold); font-size: 20px; margin-bottom: 6px;">${item.name}</h2>
-                    <p style="font-size: 12px; color: rgba(255,255,255,0.8); line-height: 1.4;">${item.description}</p>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <div style="font-size: 50px; animation: iconBounce 0.6s ease;">${item.icon}</div>
+                    <div style="flex: 1; text-align: left;">
+                        <h2 style="color: var(--primary-gold); font-size: 18px; margin: 0 0 4px 0;">${item.name}</h2>
+                        <p style="font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.3; margin: 0;">${item.description}</p>
+                    </div>
                 </div>
 
-                <div style="background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,53,0.05)); border-radius: 15px; padding: 15px; margin: 15px 0; border: 1px solid rgba(255,215,0,0.3);">
-                    <div style="font-size: 13px; font-weight: 600; color: var(--primary-gold); margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                <div style="background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,53,0.05)); border-radius: 12px; padding: 12px; margin: 12px 0; border: 1px solid rgba(255,215,0,0.3);">
+                    <div style="font-size: 12px; font-weight: 600; color: var(--primary-gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
                         <span>✨</span> Benefits
                     </div>
-                    ${item.benefits.map(b => `
-                        <div style="display: flex; align-items: center; gap: 8px; margin: 6px 0; font-size: 12px; color: rgba(255,255,255,0.9);">
-                            <span style="color: var(--success-green); font-size: 14px;">•</span>
-                            <span>${b}</span>
-                        </div>
-                    `).join('')}
-                </div>
-
-                <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 15px; margin: 15px 0; text-align: center; border: 2px solid ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">
-                    <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 8px;">Price</div>
-                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                        <span style="font-size: 28px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${itemCost}</span>
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 28px; height: 28px; object-fit: contain;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                        ${item.benefits.map(b => `
+                            <div style="display: flex; align-items: center; gap: 6px; font-size: 10px; color: rgba(255,255,255,0.9);">
+                                <span style="color: var(--success-green); font-size: 12px;">•</span>
+                                <span>${b}</span>
+                            </div>
+                        `).join('')}
                     </div>
-                    ${!canAfford ? '<div style="font-size: 10px; color: var(--danger-red); margin-top: 6px;">Insufficient GP</div>' : ''}
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;">
-                    <button onclick="closeShopItemModal()" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.3s;">
+                <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px; margin: 12px 0; text-align: center; border: 2px solid ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">
+                    <div style="font-size: 10px; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Price</div>
+                    <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                        <span style="font-size: 24px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${itemCost}</span>
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 24px; height: 24px; object-fit: contain;">
+                    </div>
+                    ${!canAfford ? '<div style="font-size: 9px; color: var(--danger-red); margin-top: 4px;">Insufficient GP</div>' : ''}
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                    <button onclick="closeShopItemModal()" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.3s;">
                         Cancel
                     </button>
-                    <button onclick="purchaseShopItem('${itemType}')" ${!canAfford ? 'disabled' : ''} style="background: ${canAfford ? 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))' : 'rgba(128,128,128,0.3)'}; color: ${canAfford ? '#000' : 'rgba(255,255,255,0.5)'}; border: none; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: ${canAfford ? 'pointer' : 'not-allowed'}; transition: all 0.3s;">
+                    <button onclick="purchaseShopItem('${itemType}')" ${!canAfford ? 'disabled' : ''} style="background: ${canAfford ? 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))' : 'rgba(128,128,128,0.3)'}; color: ${canAfford ? '#000' : 'rgba(255,255,255,0.5)'}; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: ${canAfford ? 'pointer' : 'not-allowed'}; transition: all 0.3s;">
                         Purchase
                     </button>
                 </div>
@@ -421,7 +428,7 @@ function showPremiumItemModal(itemId) {
     modal.id = 'premiumItemModal';
     
     modal.innerHTML = `
-        <div class="modal-content" style="max-width: 500px; width: 90%; animation: modalSlideIn 0.3s ease; border: 2px solid var(--neon-blue); background: linear-gradient(135deg, rgba(0, 145, 234, 0.1), rgba(26, 26, 46, 0.95));">
+        <div class="modal-content" style="max-width: 420px; animation: modalSlideIn 0.3s ease; border: 2px solid var(--neon-blue); background: linear-gradient(135deg, rgba(0, 145, 234, 0.1), rgba(26, 26, 46, 0.95));">
             <button class="close-btn" onclick="closePremiumItemModal()">&times;</button>
             
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
