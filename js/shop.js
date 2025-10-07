@@ -94,7 +94,7 @@ class ShopSystem {
             gpBooster: {
                 name: 'GP Booster',
                 cost: 400,
-                icon: '💎',
+                icon: '🎯',
                 description: 'Double GP gains for 1 hour',
                 benefits: ['2x GP rewards', '60 minutes duration', 'Affects all activities'],
                 effect: () => {
