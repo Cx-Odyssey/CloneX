@@ -455,6 +455,12 @@ class ProfileManager {
                 break;
             case 'wallet':
                 container.innerHTML = this.getWalletHTML();
+                // FIXED: Refresh wallet UI after rendering
+                setTimeout(() => {
+                    if (window.walletManager) {
+                        window.walletManager.refreshWalletUI();
+                    }
+                }, 100);
                 break;
         }
 
@@ -714,7 +720,7 @@ class ProfileManager {
                         <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
                             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(0, 245, 255, 0.1); border-radius: 8px;">
                                 <span style="font-size: 16px;">🤖</span>
-                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Auto Miner (0.5 TON)</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Auto Miner (1 TON)</span>
                             </div>
                             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(0, 245, 255, 0.1); border-radius: 8px;">
                                 <span style="font-size: 16px;">👑</span>
@@ -973,7 +979,7 @@ function showDailyRewardsModal() {
             ` : `
                 <div style="padding: 15px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 1px solid rgba(255,215,0,0.3); text-align: center;">
                     <div style="font-size: 13px; color: rgba(255,255,255,0.8);">✅ Already claimed today!</div>
-                    <div style="font-size: 11px; color: rgba(255,255, 255, 255, 0.6); margin-top: 5px;">Come back tomorrow for Day ${Math.min(currentStreak + 1, 7)}</div>
+                    <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Come back tomorrow for Day ${Math.min(currentStreak + 1, 7)}</div>
                 </div>
             `}
         </div>
