@@ -187,12 +187,10 @@ class ShopSystem {
             <div class="modal-content" style="max-width: 420px; animation: modalSlideIn 0.3s ease;">
                 <button class="close-btn" onclick="closeShopItemModal()">&times;</button>
                 
-                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                    <div style="font-size: 50px; animation: iconBounce 0.6s ease;">${item.icon}</div>
-                    <div style="flex: 1; text-align: left;">
-                        <h2 style="color: var(--primary-gold); font-size: 18px; margin: 0 0 4px 0;">${item.name}</h2>
-                        <p style="font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.3; margin: 0;">${item.description}</p>
-                    </div>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 80px; margin-bottom: 15px; animation: iconBounce 0.6s ease;">${item.icon}</div>
+                    <h2 style="color: var(--primary-gold); font-size: 20px; margin: 0 0 8px 0;">${item.name}</h2>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0;">${item.description}</p>
                 </div>
 
                 <div style="background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,53,0.05)); border-radius: 12px; padding: 12px; margin: 12px 0; border: 1px solid rgba(255,215,0,0.3);">
@@ -431,13 +429,11 @@ function showPremiumItemModal(itemId) {
         <div class="modal-content" style="max-width: 420px; animation: modalSlideIn 0.3s ease; border: 2px solid var(--neon-blue); background: linear-gradient(135deg, rgba(0, 145, 234, 0.1), rgba(26, 26, 46, 0.95));">
             <button class="close-btn" onclick="closePremiumItemModal()">&times;</button>
             
-            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <div style="font-size: 50px; animation: iconBounce 0.6s ease;">${item.icon}</div>
-                <div style="flex: 1; text-align: left;">
-                    <h2 style="color: var(--neon-blue); font-size: 18px; margin: 0 0 4px 0;">${item.name}</h2>
-                    <p style="font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.3; margin: 0;">${item.description}</p>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <div style="font-size: 80px; margin-bottom: 15px; animation: iconBounce 0.6s ease;">${item.icon}</div>
+                    <h2 style="color: var(--neon-blue); font-size: 20px; margin: 0 0 8px 0;">${item.name}</h2>
+                    <p style="font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0;">${item.description}</p>
                 </div>
-            </div>
 
             <div style="background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(0,145,234,0.05)); border-radius: 12px; padding: 12px; margin: 12px 0; border: 1px solid rgba(0,245,255,0.3);">
                 <div style="font-size: 12px; font-weight: 600; color: var(--neon-blue); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
