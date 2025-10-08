@@ -335,7 +335,7 @@ body {
 
 .resource {
     display: flex;
-    align-items: center;
+    align-items: center !important;
     gap: 6px;
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
     padding: 8px 12px;
@@ -963,6 +963,7 @@ body {
     flex-direction: column;
     gap: 8px;
     position: relative;
+    align-items: center !important;
 }
 
 .shop-item:hover {
@@ -971,13 +972,13 @@ body {
 }
 
 .premium-item {
-    border: 2px solid var(--neon-blue);
-    background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(0, 145, 234, 0.05));
+    border: 2px solid var(--neon-blue) !important;
+    background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(0, 145, 234, 0.05)) !important;
     box-shadow: 0 0 20px rgba(0, 245, 255, 0.3);
 }
 
 .premium-item:hover {
-    border-color: var(--neon-blue);
+    border-color: var(--neon-blue) !important;
     box-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
     transform: translateY(-5px);
 }
@@ -992,7 +993,7 @@ body {
     height: 30px;
     border-radius: 50%;
     display: flex;
-    align-items: center;
+    align-items: center !important;
     justify-content: center;
     font-size: 16px;
     font-weight: bold;
@@ -1009,10 +1010,22 @@ body {
     font-weight: 700;
 }
 
+/* FIXED: Shop cost alignment with icons */
 .shop-cost {
     color: var(--primary-gold);
     font-size: 14px;
     font-weight: 600;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+}
+
+.shop-cost img {
+    width: 20px !important;
+    height: 20px !important;
+    object-fit: contain !important;
+    vertical-align: middle !important;
 }
 
 .shop-desc {
@@ -1038,7 +1051,7 @@ body {
 
 .balance-display {
     display: flex;
-    align-items: center;
+    align-items: center !important;
     justify-content: center;
     gap: 10px;
 }
@@ -1049,7 +1062,7 @@ body {
     background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
     border-radius: 50%;
     display: flex;
-    align-items: center;
+    align-items: center !important;
     justify-content: center;
     font-size: 18px;
 }
@@ -1305,6 +1318,10 @@ body {
     cursor: pointer;
     font-size: 12px;
     flex-shrink: 0;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px;
 }
 
 .task-reward {
@@ -1394,6 +1411,11 @@ body {
     box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
     max-height: 90vh;
     overflow-y: auto;
+}
+
+/* FIXED: Modal price display alignment */
+.modal-content [style*="display: flex"][style*="justify-content: center"] {
+    align-items: center !important;
 }
 
 .close-btn {
@@ -1496,6 +1518,68 @@ body {
     15% { transform: translate(-50%, -50%) scale(1); }
     85% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
     100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+
+/* Wallet Info Display */
+#walletInfo {
+    text-align: center;
+}
+
+#connectedAddress {
+    word-break: break-all;
+    font-family: monospace;
+    font-size: 13px;
+    color: white;
+}
+
+/* FIXED: Ensure all GP/TON images are properly aligned */
+img[alt="GP"],
+img[alt="TON"],
+img[src*="gp.png"],
+img[src*="ton.png"] {
+    vertical-align: middle !important;
+    object-fit: contain !important;
+}
+
+/* FIXED: Ensure images in flex containers are centered */
+[style*="display: flex"] img {
+    vertical-align: middle !important;
+}
+
+/* Animation keyframes */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px) scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes iconBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes bossPulse {
+    0%, 100% { box-shadow: 0 0 30px rgba(255,7,58,0.4); transform: scale(1); }
+    50% { box-shadow: 0 0 50px rgba(255,7,58,0.8); transform: scale(1.02); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    75% { transform: translateX(2px); }
+}
+
+@keyframes bossDefeat {
+    0% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.1) rotate(-5deg); }
+    50% { transform: scale(0.9) rotate(5deg); }
+    75% { transform: scale(1.05) rotate(-2deg); }
+    100% { transform: scale(1) rotate(0deg); }
 }
 
 /* Mobile Responsiveness */
@@ -1603,5 +1687,19 @@ body {
     .combo-key {
         padding: 14px;
         font-size: 18px;
+    }
+    
+    /* Mobile icon size adjustments */
+    .shop-cost img,
+    img[alt="GP"],
+    img[alt="TON"] {
+        width: 18px !important;
+        height: 18px !important;
+    }
+    
+    .balance-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
     }
 }
