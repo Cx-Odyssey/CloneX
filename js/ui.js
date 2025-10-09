@@ -483,63 +483,173 @@ function completeTask(taskType) {
 }
 
 function showShopItemModal(itemType) {
-    const modal = document.getElementById('shopItemModal');
-    const title = document.getElementById('shopItemModalTitle');
-    const icon = document.getElementById('shopItemModalIcon');
-    const desc = document.getElementById('shopItemModalDesc');
-    const benefits = document.getElementById('shopItemBenefits');
-    const cost = document.getElementById('shopItemCost');
-    const purchaseBtn = document.getElementById('shopItemPurchaseBtn');
+    const gameState = window.gameState?.get();
+    
+    // Define all shop items including upgrades
     const items = {
+        // UPGRADES
+        speed: {
+            name: 'Speed Boost',
+            icon: '🚀',
+            desc: '+20% Mining Speed (Permanent)',
+            benefits: ['Faster mining', 'Permanent upgrade', 'Stacks with purchases'],
+            cost: () => 50 * Math.pow(2, gameState.upgrades.speed),
+            isUpgrade: true
+        },
+        damage: {
+            name: 'Damage Boost',
+            icon: '⚔️',
+            desc: '+30% Battle Damage (Permanent)',
+            benefits: ['Stronger attacks', 'Permanent upgrade', 'Stacks with purchases'],
+            cost: () => 75 * Math.pow(2, gameState.upgrades.damage),
+            isUpgrade: true
+        },
+        energy: {
+            name: 'Energy Tank',
+            icon: '⚡',
+            desc: '+25 Max Energy (Permanent)',
+            benefits: ['+25 Max Energy', 'Fully restored', 'Permanent upgrade'],
+            cost: () => 100 * Math.pow(2, gameState.upgrades.energy),
+            isUpgrade: true
+        },
+        multiplier: {
+            name: 'GP Multiplier',
+            icon: '💰',
+            desc: '+50% GP Gain (Permanent)',
+            benefits: ['More GP per action', 'Permanent upgrade', 'Stacks with purchases'],
+            cost: () => 200 * Math.pow(2, gameState.upgrades.multiplier),
+            isUpgrade: true
+        },
+        // CONSUMABLES
         energyPotion: {
             name: 'Energy Potion',
             icon: '🧪',
             desc: 'Instantly restore 50 energy points',
             benefits: ['Instant +50 Energy', 'No cooldown', 'Use anytime'],
-            cost: '150 GP'
-        },
-        bossTicket: {
-            name: 'Boss Ticket',
-            icon: '🎫',
-            desc: 'Get an extra boss raid ticket',
-            benefits: ['+1 Game Ticket', 'More boss battles', 'Extra GP rewards'],
-            cost: '200 GP'
+            cost: 150
         },
         shardBooster: {
             name: 'Shard Booster',
             icon: '💠',
             desc: 'Double shard gains for 1 hour',
             benefits: ['2x Shard rewards', '60 minutes duration', 'Stackable with other boosts'],
-            cost: '300 GP'
+            cost: 300
         },
         gpBooster: {
             name: 'GP Booster',
             icon: '🎯',
             desc: 'Double GP gains for 1 hour',
             benefits: ['2x GP rewards', '60 minutes duration', 'Affects all activities'],
-            cost: '400 GP'
+            cost: 400
         },
         luckyCharm: {
             name: 'Lucky Charm',
             icon: '🍀',
             desc: 'Increase drop rates by 50% for 1 hour',
             benefits: ['+50% Drop chance', '60 minutes duration', 'Better loot quality'],
-            cost: '500 GP'
+            cost: 500
         }
     };
+    
     const item = items[itemType];
-    title.textContent = item.name;
-    icon.textContent = item.icon;
-    desc.textContent = item.desc;
-    cost.textContent = item.cost;
-    benefits.innerHTML = item.benefits.map(b => `<div>• ${b}</div>`).join('');
-    purchaseBtn.onclick = () => {
-        if (window.shopSystem) {
-            window.shopSystem.buyShopItem(itemType);
-            closeModal('shopItemModal');
-        }
-    };
-    modal.classList.add('active');
+    if (!item) return;
+    
+    // Calculate cost (handle function costs for upgrades)
+    const itemCost = typeof item.cost === 'function' ? item.cost() : item.cost;
+    const canAfford = gameState && gameState.gp >= itemCost;
+
+    // Create modal
+    const modal = document.createElement('div');
+    modal.className = 'modal active';
+    modal.id = 'shopItemModal';
+    
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 420px; animation: modalSlideIn 0.3s ease;">
+            <button class="close-btn" onclick="closeShopItemModal()">&times;</button>
+            
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <div style="font-size: 50px; animation: iconBounce 0.6s ease;">${item.icon}</div>
+                <div style="flex: 1; text-align: left;">
+                    <h2 style="color: var(--primary-gold); font-size: 18px; margin: 0 0 4px 0;">${item.name}</h2>
+                    <p style="font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.3; margin: 0;">${item.desc}</p>
+                </div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,53,0.05)); border-radius: 12px; padding: 12px; margin: 12px 0; border: 1px solid rgba(255,215,0,0.3);">
+                <div style="font-size: 12px; font-weight: 600; color: var(--primary-gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                    <span>✨</span> Benefits
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    ${item.benefits.map(b => `
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 10px; color: rgba(255,255,255,0.9);">
+                            <span style="color: var(--success-green); font-size: 12px;">•</span>
+                            <span>${b}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px; margin: 12px 0; text-align: center; border: 2px solid ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">
+                <div style="font-size: 10px; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Price</div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span style="font-size: 24px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${itemCost}</span>
+                    <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 24px; height: 24px; object-fit: contain;">
+                </div>
+                ${!canAfford ? '<div style="font-size: 9px; color: var(--danger-red); margin-top: 4px;">Insufficient GP</div>' : ''}
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                <button onclick="closeShopItemModal()" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.3s;">
+                    Cancel
+                </button>
+                <button onclick="purchaseShopItem('${itemType}')" ${!canAfford ? 'disabled' : ''} style="background: ${canAfford ? 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))' : 'rgba(128,128,128,0.3)'}; color: ${canAfford ? '#000' : 'rgba(255,255,255,0.5)'}; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: ${canAfford ? 'pointer' : 'not-allowed'}; transition: all 0.3s;">
+                    Purchase
+                </button>
+            </div>
+        </div>
+
+        <style>
+            @keyframes modalSlideIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(-30px) scale(0.9);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+            @keyframes iconBounce {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-10px); }
+            }
+        </style>
+    `;
+    
+    document.body.appendChild(modal);
+}
+
+function closeShopItemModal() {
+    const modal = document.getElementById('shopItemModal');
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
+    }
+}
+
+function purchaseShopItem(itemType) {
+    // Check if it's an upgrade or consumable
+    const upgradeTypes = ['speed', 'damage', 'energy', 'multiplier'];
+    
+    if (upgradeTypes.includes(itemType)) {
+        // It's an upgrade - use buyUpgrade from mining system
+        window.miningSystem?.buyUpgrade(itemType);
+    } else {
+        // It's a consumable - use shop system
+        window.shopSystem?.buyShopItem(itemType);
+    }
+    
+    closeShopItemModal();
 }
 
 function buyPremiumItemTon(itemId) {
