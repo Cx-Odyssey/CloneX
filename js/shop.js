@@ -1,4 +1,4 @@
-// shop.js - Complete with Fixed Modal Design & Asset Images
+// shop.js - Complete with Fixed Modal Design & Upgrade Modals
 
 class ShopSystem {
     constructor() {
@@ -18,53 +18,41 @@ class ShopSystem {
         
         this.shopItems = {
             // UPGRADES (permanent stat boosts)
-            speedUpgrade: {
+            speed: {
                 name: 'Speed Boost',
                 cost: () => 50 * Math.pow(2, window.gameState.getValue('upgrades').speed),
                 icon: '🚀',
                 description: '+20% Mining Speed (Permanent)',
                 benefits: ['Faster mining', 'Permanent upgrade', 'Stacks with purchases'],
                 isUpgrade: true,
-                upgradeType: 'speed',
-                effect: () => {
-                    return window.miningSystem?.buyUpgrade('speed');
-                }
+                upgradeType: 'speed'
             },
-            damageUpgrade: {
+            damage: {
                 name: 'Damage Boost',
                 cost: () => 75 * Math.pow(2, window.gameState.getValue('upgrades').damage),
                 icon: '⚔️',
                 description: '+30% Battle Damage (Permanent)',
                 benefits: ['Stronger attacks', 'Permanent upgrade', 'Stacks with purchases'],
                 isUpgrade: true,
-                upgradeType: 'damage',
-                effect: () => {
-                    return window.miningSystem?.buyUpgrade('damage');
-                }
+                upgradeType: 'damage'
             },
-            energyUpgrade: {
+            energy: {
                 name: 'Energy Tank',
                 cost: () => 100 * Math.pow(2, window.gameState.getValue('upgrades').energy),
                 icon: '⚡',
                 description: '+25 Max Energy (Permanent)',
                 benefits: ['+25 Max Energy', 'Fully restored', 'Permanent upgrade'],
                 isUpgrade: true,
-                upgradeType: 'energy',
-                effect: () => {
-                    return window.miningSystem?.buyUpgrade('energy');
-                }
+                upgradeType: 'energy'
             },
-            multiplierUpgrade: {
+            multiplier: {
                 name: 'GP Multiplier',
                 cost: () => 200 * Math.pow(2, window.gameState.getValue('upgrades').multiplier),
                 icon: '💰',
                 description: '+50% GP Gain (Permanent)',
                 benefits: ['More GP per action', 'Permanent upgrade', 'Stacks with purchases'],
                 isUpgrade: true,
-                upgradeType: 'multiplier',
-                effect: () => {
-                    return window.miningSystem?.buyUpgrade('multiplier');
-                }
+                upgradeType: 'multiplier'
             },
             // CONSUMABLES & BOOSTERS
             energyPotion: {
@@ -187,10 +175,12 @@ class ShopSystem {
             <div class="modal-content" style="max-width: 420px; animation: modalSlideIn 0.3s ease;">
                 <button class="close-btn" onclick="closeShopItemModal()">&times;</button>
                 
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <div style="font-size: 80px; margin-bottom: 15px; animation: iconBounce 0.6s ease;">${item.icon}</div>
-                    <h2 style="color: var(--primary-gold); font-size: 20px; margin: 0 0 8px 0;">${item.name}</h2>
-                    <p style="font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0;">${item.description}</p>
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                    <div style="font-size: 50px; animation: iconBounce 0.6s ease;">${item.icon}</div>
+                    <div style="flex: 1; text-align: left;">
+                        <h2 style="color: var(--primary-gold); font-size: 18px; margin: 0 0 4px 0;">${item.name}</h2>
+                        <p style="font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.3; margin: 0;">${item.description}</p>
+                    </div>
                 </div>
 
                 <div style="background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,53,0.05)); border-radius: 12px; padding: 12px; margin: 12px 0; border: 1px solid rgba(255,215,0,0.3);">
@@ -256,13 +246,12 @@ class ShopSystem {
 
         // Handle upgrades differently
         if (item.isUpgrade) {
-            const result = item.effect();
+            const result = window.miningSystem?.buyUpgrade(item.upgradeType);
             if (result && result.success) {
                 if (window.uiController) {
                     window.uiController.showNotification(`${item.icon} ${item.name} upgraded!`);
                 }
             }
-            closeShopItemModal();
             return;
         }
 
@@ -287,8 +276,6 @@ class ShopSystem {
         if (window.backendManager) {
             window.backendManager.saveProgress(gameState.get());
         }
-
-        closeShopItemModal();
     }
 
     startBoostTimer(boostType) {
@@ -397,10 +384,6 @@ function switchShopTab(tab) {
     window.shopSystem?.switchTab(tab);
 }
 
-function buyShopItem(itemType) {
-    window.shopSystem?.buyShopItem(itemType);
-}
-
 function showShopItemModal(itemType) {
     window.shopSystem?.showShopItemModal(itemType);
 }
@@ -415,6 +398,7 @@ function closeShopItemModal() {
 
 function purchaseShopItem(itemType) {
     window.shopSystem?.buyShopItem(itemType);
+    closeShopItemModal();
 }
 
 function showPremiumItemModal(itemId) {
@@ -429,11 +413,13 @@ function showPremiumItemModal(itemId) {
         <div class="modal-content" style="max-width: 420px; animation: modalSlideIn 0.3s ease; border: 2px solid var(--neon-blue); background: linear-gradient(135deg, rgba(0, 145, 234, 0.1), rgba(26, 26, 46, 0.95));">
             <button class="close-btn" onclick="closePremiumItemModal()">&times;</button>
             
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <div style="font-size: 80px; margin-bottom: 15px; animation: iconBounce 0.6s ease;">${item.icon}</div>
-                    <h2 style="color: var(--neon-blue); font-size: 20px; margin: 0 0 8px 0;">${item.name}</h2>
-                    <p style="font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; margin: 0;">${item.description}</p>
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+                <div style="font-size: 50px; animation: iconBounce 0.6s ease;">${item.icon}</div>
+                <div style="flex: 1; text-align: left;">
+                    <h2 style="color: var(--neon-blue); font-size: 18px; margin: 0 0 4px 0;">${item.name}</h2>
+                    <p style="font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.3; margin: 0;">${item.description}</p>
                 </div>
+            </div>
 
             <div style="background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(0,145,234,0.05)); border-radius: 12px; padding: 12px; margin: 12px 0; border: 1px solid rgba(0,245,255,0.3);">
                 <div style="font-size: 12px; font-weight: 600; color: var(--neon-blue); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
