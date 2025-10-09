@@ -1,4 +1,5 @@
 // Main UI Controller
+
 class UIController {
     constructor() {
         this.currentScreen = 'galaxyScreen';
@@ -193,6 +194,7 @@ class UIController {
         }
     }
 
+    // FIXED: Update only numbers, not the entire cost element (images stay)
     updateShopCosts(gameState) {
         const costs = {
             speed: 50 * Math.pow(2, gameState.upgrades.speed),
@@ -200,10 +202,12 @@ class UIController {
             energy: 100 * Math.pow(2, gameState.upgrades.energy),
             multiplier: 200 * Math.pow(2, gameState.upgrades.multiplier)
         };
+        
+        // Update ONLY the number span, not the entire cost div
         Object.keys(costs).forEach(upgrade => {
             const costEl = document.getElementById(`${upgrade}Cost`);
             if (costEl) {
-                costEl.textContent = costs[upgrade] + ' GP';
+                costEl.textContent = costs[upgrade]; // Just the number
             }
         });
     }
