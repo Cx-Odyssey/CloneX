@@ -225,7 +225,7 @@
             </div>
         </div>
 
-        <!-- Shop Screen - FIXED -->
+        <!-- Shop Screen - FIXED with GP images -->
         <div class="screen" id="shopScreen">
             <div class="header">
                 <div class="logo">SHOP & UPGRADES</div>
@@ -245,56 +245,79 @@
             </div>
 
             <div id="shopContent">
-                <!-- Items Tab - FIXED: All items now use showShopItemModal -->
+                <!-- Items Tab - FIXED: Added GP images -->
                 <div class="shop-grid" id="itemsShopContent">
-                    <!-- FIXED: Changed onclick to showShopItemModal for upgrades -->
-                    <div class="shop-item" onclick="showShopItemModal('speedUpgrade')">
+                    <div class="shop-item" onclick="buyUpgrade('speed')">
                         <div class="shop-icon">🚀</div>
                         <div class="shop-title">Speed Boost</div>
-                        <div class="shop-cost" id="speedCost">50 GP</div>
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <span id="speedCost" style="font-size: 14px; font-weight: 600;">50</span>
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
+                        </div>
                         <div class="shop-desc">+20% Mining Speed</div>
                     </div>
-                    <div class="shop-item" onclick="showShopItemModal('damageUpgrade')">
+                    <div class="shop-item" onclick="buyUpgrade('damage')">
                         <div class="shop-icon">⚔️</div>
                         <div class="shop-title">Damage Boost</div>
-                        <div class="shop-cost" id="damageCost">75 GP</div>
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <span id="damageCost" style="font-size: 14px; font-weight: 600;">75</span>
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
+                        </div>
                         <div class="shop-desc">+30% Battle Damage</div>
                     </div>
-                    <div class="shop-item" onclick="showShopItemModal('energyUpgrade')">
+                    <div class="shop-item" onclick="buyUpgrade('energy')">
                         <div class="shop-icon">⚡</div>
                         <div class="shop-title">Energy Tank</div>
-                        <div class="shop-cost" id="energyCost">100 GP</div>
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <span id="energyCost" style="font-size: 14px; font-weight: 600;">100</span>
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
+                        </div>
                         <div class="shop-desc">+25 Max Energy</div>
                     </div>
-                    <div class="shop-item" onclick="showShopItemModal('multiplierUpgrade')">
+                    <div class="shop-item" onclick="buyUpgrade('multiplier')">
                         <div class="shop-icon">💰</div>
                         <div class="shop-title">GP Multiplier</div>
-                        <div class="shop-cost" id="multiplierCost">200 GP</div>
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <span id="multiplierCost" style="font-size: 14px; font-weight: 600;">200</span>
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
+                        </div>
                         <div class="shop-desc">+50% GP Gain</div>
                     </div>
                     
                     <div class="shop-item" onclick="showShopItemModal('energyPotion')">
                         <div class="shop-icon">🧪</div>
                         <div class="shop-title">Energy Potion</div>
-                        <div class="shop-cost">150 GP</div>
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <span style="font-size: 14px; font-weight: 600;">150</span>
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
+                        </div>
                         <div class="shop-desc">Instant +50 Energy</div>
                     </div>
                     <div class="shop-item" onclick="showShopItemModal('shardBooster')">
                         <div class="shop-icon">💠</div>
                         <div class="shop-title">Shard Booster</div>
-                        <div class="shop-cost">300 GP</div>
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <span style="font-size: 14px; font-weight: 600;">300</span>
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
+                        </div>
                         <div class="shop-desc">2x Shards (1 hour)</div>
                     </div>
                     <div class="shop-item" onclick="showShopItemModal('gpBooster')">
                         <div class="shop-icon">🎯</div>
                         <div class="shop-title">GP Booster</div>
-                        <div class="shop-cost">400 GP</div>
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <span style="font-size: 14px; font-weight: 600;">400</span>
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
+                        </div>
                         <div class="shop-desc">2x GP (1 hour)</div>
                     </div>
                     <div class="shop-item" onclick="showShopItemModal('luckyCharm')">
                         <div class="shop-icon">🍀</div>
                         <div class="shop-title">Lucky Charm</div>
-                        <div class="shop-cost">500 GP</div>
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                            <span style="font-size: 14px; font-weight: 600;">500</span>
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
+                        </div>
                         <div class="shop-desc">+50% Drop Rate (1 hour)</div>
                     </div>
                 </div>
@@ -304,7 +327,7 @@
             </div>
         </div>
 
-        <!-- Tasks Screen with Daily Rewards Banner -->
+        <!-- Tasks Screen -->
         <div class="screen" id="tasksScreen">
             <div class="header">
                 <div class="logo">TASKS & MISSIONS</div>
@@ -313,7 +336,6 @@
                 </div>
             </div>
 
-            <!-- Daily Rewards Banner (Pinned at Top) -->
             <div class="daily-rewards-banner" onclick="showDailyRewardsModal()">
                 <div class="banner-icon">📅</div>
                 <div class="banner-content">
@@ -332,18 +354,14 @@
             </div>
 
             <div class="task-tabs">
-                <button class="task-tab active" id="tasksTab" onclick="switchTaskTab('tasks')">
-                    Tasks
-                </button>
-                <button class="task-tab" id="mainTasksTab" onclick="switchTaskTab('main')">
-                    Main Tasks
-                </button>
+                <button class="task-tab active" id="tasksTab" onclick="switchTaskTab('tasks')">Tasks</button>
+                <button class="task-tab" id="mainTasksTab" onclick="switchTaskTab('main')">Main Tasks</button>
             </div>
 
             <div id="taskContent"></div>
         </div>
 
-        <!-- Mini-Games Screen (Enhanced) -->
+        <!-- Mini-Games Screen -->
         <div class="screen" id="minigamesScreen">
             <div class="header">
                 <div class="logo">MINI-GAMES HUB</div>
@@ -416,18 +434,10 @@
             </div>
 
             <div class="profile-tabs">
-                <button class="profile-tab active" id="referralTab" onclick="switchProfileTab('referral')">
-                    Referral
-                </button>
-                <button class="profile-tab" id="achievementsTab" onclick="switchProfileTab('achievements')">
-                    Achievements
-                </button>
-                <button class="profile-tab" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">
-                    Leaderboard
-                </button>
-                <button class="profile-tab" id="walletTab" onclick="switchProfileTab('wallet')">
-                    Wallet
-                </button>
+                <button class="profile-tab active" id="referralTab" onclick="switchProfileTab('referral')">Referral</button>
+                <button class="profile-tab" id="achievementsTab" onclick="switchProfileTab('achievements')">Achievements</button>
+                <button class="profile-tab" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">Leaderboard</button>
+                <button class="profile-tab" id="walletTab" onclick="switchProfileTab('wallet')">Wallet</button>
             </div>
 
             <div id="profileContent"></div>
