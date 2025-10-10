@@ -380,28 +380,50 @@ class ShopSystem {
 
 window.shopSystem = new ShopSystem();
 
-function switchShopTab(tab) {
+// GLOBAL FUNCTIONS - Must be on window object for HTML onclick to work
+window.switchShopTab = function(tab) {
+    console.log('🛒 Switching shop tab to:', tab);
     window.shopSystem?.switchTab(tab);
-}
+};
 
-function showShopItemModal(itemType) {
-    window.shopSystem?.showShopItemModal(itemType);
-}
+window.showShopItemModal = function(itemType) {
+    console.log('🛒 Opening modal for:', itemType);
+    if (!window.shopSystem) {
+        console.error('❌ Shop system not initialized!');
+        return;
+    }
+    window.shopSystem.showShopItemModal(itemType);
+};
 
-function closeShopItemModal() {
+window.closeShopItemModal = function() {
+    console.log('🛒 Closing shop modal');
     const modal = document.getElementById('shopItemModal');
     if (modal) {
         modal.classList.remove('active');
         setTimeout(() => modal.remove(), 300);
     }
-}
+};
 
-function purchaseShopItem(itemType) {
-    window.shopSystem?.buyShopItem(itemType);
-    closeShopItemModal();
-}
+window.purchaseShopItem = function(itemType) {
+    console.log('🛒 Purchasing:', itemType);
+    if (!window.shopSystem) {
+        console.error('❌ Shop system not initialized!');
+        return;
+    }
+    window.shopSystem.buyShopItem(itemType);
+    window.closeShopItemModal();
+};
 
-function showPremiumItemModal(itemId) {
+// For backwards compatibility
+function switchShopTab(tab) { window.switchShopTab(tab); }
+function showShopItemModal(itemType) { window.showShopItemModal(itemType); }
+function closeShopItemModal() { window.closeShopItemModal(); }
+function purchaseShopItem(itemType) { window.purchaseShopItem(itemType); }
+
+console.log('✅ Shop system initialized with global functions');
+
+window.showPremiumItemModal = function(itemId) {
+    console.log('💎 Opening premium modal for:', itemId);
     const item = window.PREMIUM_ITEMS?.[itemId];
     if (!item) return;
 
@@ -463,18 +485,20 @@ function showPremiumItemModal(itemId) {
     `;
     
     document.body.appendChild(modal);
-}
+};
 
-function closePremiumItemModal() {
+window.closePremiumItemModal = function() {
+    console.log('💎 Closing premium modal');
     const modal = document.getElementById('premiumItemModal');
     if (modal) {
         modal.classList.remove('active');
         setTimeout(() => modal.remove(), 300);
     }
-}
+};
 
-async function purchasePremiumItem(itemId) {
-    closePremiumItemModal();
+window.purchasePremiumItem = async function(itemId) {
+    console.log('💎 Purchasing premium item:', itemId);
+    window.closePremiumItemModal();
     if (window.walletManager) {
         await window.walletManager.purchasePremiumItem(itemId);
     } else {
@@ -482,4 +506,9 @@ async function purchasePremiumItem(itemId) {
             window.showNotification('Wallet system not available');
         }
     }
-}
+};
+
+// For backwards compatibility
+function showPremiumItemModal(itemId) { window.showPremiumItemModal(itemId); }
+function closePremiumItemModal() { window.closePremiumItemModal(); }
+function purchasePremiumItem(itemId) { window.purchasePremiumItem(itemId); }
