@@ -22,7 +22,7 @@
 
 body {
     font-family: 'Exo 2', sans-serif;
-    background: radial-gradient(ellipse at center, var(--space-blue) 0%, var(--deep-space) 50%, #000 100%);
+    background: #000;
     color: #ffffff;
     overflow: hidden;
     height: 100vh;
@@ -31,7 +31,7 @@ body {
     margin: 0;
 }
 
-/* NEW: Background image layer */
+/* FIXED: Background image layer - higher opacity and proper layering */
 body::before {
     content: '';
     position: fixed;
@@ -43,7 +43,20 @@ body::before {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.4;
+    opacity: 0.8;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Dark overlay for better readability */
+body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(26, 26, 46, 0.6) 0%, rgba(10, 10, 10, 0.7) 50%, rgba(0, 0, 0, 0.8) 100%);
     z-index: 0;
     pointer-events: none;
 }
@@ -1037,7 +1050,7 @@ body::before {
     font-weight: 700;
 }
 
-/* UPDATED: Shop cost with images */
+/* UPDATED: Shop cost with LARGER images */
 .shop-cost {
     color: var(--primary-gold);
     font-size: 14px;
@@ -1049,10 +1062,11 @@ body::before {
 }
 
 .shop-cost img {
-    width: 20px !important;
-    height: 20px !important;
+    width: 24px !important;
+    height: 24px !important;
     object-fit: contain !important;
     vertical-align: middle !important;
+    flex-shrink: 0;
 }
 
 .shop-desc {
@@ -1084,14 +1098,18 @@ body::before {
 }
 
 .balance-icon {
-    width: 35px;
-    height: 35px;
-    background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
-    border-radius: 50%;
+    width: 45px;
+    height: 45px;
     display: flex;
     align-items: center !important;
     justify-content: center;
-    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.balance-icon img {
+    width: 45px !important;
+    height: 45px !important;
+    object-fit: contain !important;
 }
 
 .balance-amount {
@@ -1563,20 +1581,22 @@ body::before {
     color: white;
 }
 
-/* UPDATED: Ensure all GP/TON/Shards images are properly aligned */
+/* UPDATED: Ensure all GP/TON/Shards images are properly aligned and sized */
 img[alt="GP"],
 img[alt="TON"],
 img[alt="Shards"],
-img[src*="gp.png"],
+img[src*="gp1.png"],
 img[src*="ton.png"],
 img[src*="shards.png"] {
     vertical-align: middle !important;
     object-fit: contain !important;
+    flex-shrink: 0;
 }
 
 /* UPDATED: Ensure images in flex containers are centered */
 [style*="display: flex"] img {
     vertical-align: middle !important;
+    flex-shrink: 0;
 }
 
 /* Animation keyframes */
@@ -1673,12 +1693,22 @@ img[src*="shards.png"] {
     }
     
     .resource img {
-        width: 16px !important;
-        height: 16px !important;
+        width: 20px !important;
+        height: 20px !important;
     }
     
     .balance-amount {
         font-size: 28px;
+    }
+    
+    .balance-icon {
+        width: 38px;
+        height: 38px;
+    }
+    
+    .balance-icon img {
+        width: 38px !important;
+        height: 38px !important;
     }
     
     .shop-grid {
@@ -1732,13 +1762,17 @@ img[src*="shards.png"] {
     img[alt="GP"],
     img[alt="TON"],
     img[alt="Shards"] {
-        width: 18px !important;
-        height: 18px !important;
+        width: 20px !important;
+        height: 20px !important;
     }
     
     .balance-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 16px;
+        width: 38px;
+        height: 38px;
+    }
+    
+    .balance-icon img {
+        width: 38px !important;
+        height: 38px !important;
     }
 }
