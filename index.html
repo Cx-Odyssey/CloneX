@@ -247,41 +247,41 @@
             <div id="shopContent">
                 <!-- Items Tab - FIXED: Added GP images -->
                 <div class="shop-grid" id="itemsShopContent">
-                    <div class="shop-item" onclick="buyUpgrade('speed')">
+                    <div class="shop-item" onclick="window.showShopItemModal('speed'); return false;">
                         <div class="shop-icon">🚀</div>
                         <div class="shop-title">Speed Boost</div>
-                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: none;">
                             <span id="speedCost" style="font-size: 14px; font-weight: 600;">50</span>
                             <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-                        <div class="shop-desc">+20% Mining Speed</div>
+                        <div class="shop-desc" style="pointer-events: none;">+20% Mining Speed</div>
                     </div>
-                    <div class="shop-item" onclick="buyUpgrade('damage')">
+                    <div class="shop-item" onclick="window.showShopItemModal('damage'); return false;">
                         <div class="shop-icon">⚔️</div>
                         <div class="shop-title">Damage Boost</div>
-                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: none;">
                             <span id="damageCost" style="font-size: 14px; font-weight: 600;">75</span>
                             <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-                        <div class="shop-desc">+30% Battle Damage</div>
+                        <div class="shop-desc" style="pointer-events: none;">+30% Battle Damage</div>
                     </div>
-                    <div class="shop-item" onclick="buyUpgrade('energy')">
+                    <div class="shop-item" onclick="window.showShopItemModal('energy'); return false;">
                         <div class="shop-icon">⚡</div>
                         <div class="shop-title">Energy Tank</div>
-                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: none;">
                             <span id="energyCost" style="font-size: 14px; font-weight: 600;">100</span>
                             <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-                        <div class="shop-desc">+25 Max Energy</div>
+                        <div class="shop-desc" style="pointer-events: none;">+25 Max Energy</div>
                     </div>
-                    <div class="shop-item" onclick="buyUpgrade('multiplier')">
+                    <div class="shop-item" onclick="window.showShopItemModal('multiplier'); return false;">
                         <div class="shop-icon">💰</div>
                         <div class="shop-title">GP Multiplier</div>
-                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
+                        <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: none;">
                             <span id="multiplierCost" style="font-size: 14px; font-weight: 600;">200</span>
                             <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-                        <div class="shop-desc">+50% GP Gain</div>
+                        <div class="shop-desc" style="pointer-events: none;">+50% GP Gain</div>
                     </div>
                     
                     <div class="shop-item" onclick="showShopItemModal('energyPotion')">
