@@ -31,20 +31,39 @@ body {
     margin: 0;
 }
 
+/* NEW: Background image layer */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://cx-odyssey.github.io/CloneX/assets/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.4;
+    z-index: 0;
+    pointer-events: none;
+}
+
 .game-container {
     position: relative;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    z-index: 1;
 }
 
-/* Enhanced Stars Animation */
+/* Enhanced Stars Animation - KEPT */
 .stars {
     position: absolute;
     width: 100%;
     height: 100%;
     background: transparent;
     z-index: 1;
+    pointer-events: none;
 }
 
 .star {
@@ -333,15 +352,23 @@ body {
     flex-wrap: wrap;
 }
 
+/* UPDATED: Resource display with images */
 .resource {
     display: flex;
     align-items: center !important;
-    gap: 6px;
+    gap: 4px;
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
     padding: 8px 12px;
     border-radius: 25px;
     font-size: 12px;
     font-weight: 600;
+}
+
+.resource img {
+    width: 18px !important;
+    height: 18px !important;
+    object-fit: contain !important;
+    vertical-align: middle !important;
 }
 
 /* User Info */
@@ -1010,7 +1037,7 @@ body {
     font-weight: 700;
 }
 
-/* FIXED: Shop cost alignment with icons */
+/* UPDATED: Shop cost with images */
 .shop-cost {
     color: var(--primary-gold);
     font-size: 14px;
@@ -1413,9 +1440,13 @@ body {
     overflow-y: auto;
 }
 
-/* FIXED: Modal price display alignment */
+/* UPDATED: Modal price display alignment */
 .modal-content [style*="display: flex"][style*="justify-content: center"] {
     align-items: center !important;
+}
+
+.modal-content img {
+    vertical-align: middle !important;
 }
 
 .close-btn {
@@ -1532,16 +1563,18 @@ body {
     color: white;
 }
 
-/* FIXED: Ensure all GP/TON images are properly aligned */
+/* UPDATED: Ensure all GP/TON/Shards images are properly aligned */
 img[alt="GP"],
 img[alt="TON"],
+img[alt="Shards"],
 img[src*="gp.png"],
-img[src*="ton.png"] {
+img[src*="ton.png"],
+img[src*="shards.png"] {
     vertical-align: middle !important;
     object-fit: contain !important;
 }
 
-/* FIXED: Ensure images in flex containers are centered */
+/* UPDATED: Ensure images in flex containers are centered */
 [style*="display: flex"] img {
     vertical-align: middle !important;
 }
@@ -1639,6 +1672,11 @@ img[src*="ton.png"] {
         font-size: 11px; 
     }
     
+    .resource img {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    
     .balance-amount {
         font-size: 28px;
     }
@@ -1692,7 +1730,8 @@ img[src*="ton.png"] {
     /* Mobile icon size adjustments */
     .shop-cost img,
     img[alt="GP"],
-    img[alt="TON"] {
+    img[alt="TON"],
+    img[alt="Shards"] {
         width: 18px !important;
         height: 18px !important;
     }
