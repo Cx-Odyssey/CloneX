@@ -742,6 +742,85 @@
     }
     </style>
 
+    <!-- Image Preloader Script - Loads before game initializes -->
+    <script>
+        // Preload all critical images during loading screen
+        window.imagePreloader = {
+            images: [
+                'https://cx-odyssey.github.io/CloneX/assets/background.png',
+                'https://cx-odyssey.github.io/CloneX/assets/load.png',
+                'https://cx-odyssey.github.io/CloneX/assets/bgpyrion.png',
+                'https://cx-odyssey.github.io/CloneX/assets/bgaqueous.png',
+                'https://cx-odyssey.github.io/CloneX/assets/bgvoidex.png',
+                'https://cx-odyssey.github.io/CloneX/assets/bgchloros.png',
+                'https://cx-odyssey.github.io/CloneX/assets/bgaurelia.png',
+                'https://cx-odyssey.github.io/CloneX/assets/bgcrimson.png',
+                'https://cx-odyssey.github.io/CloneX/assets/shards.png',
+                'https://cx-odyssey.github.io/CloneX/assets/gp1.png',
+                'https://cx-odyssey.github.io/CloneX/assets/ton.png'
+            ],
+            loaded: 0,
+            total: 0,
+            
+            init: function() {
+                this.total = this.images.length;
+                console.log(`🖼️ Preloading ${this.total} images...`);
+                
+                this.images.forEach(src => {
+                    const img = new Image();
+                    img.onload = () => this.onImageLoad(src);
+                    img.onerror = () => this.onImageError(src);
+                    img.src = src;
+                });
+            },
+            
+            onImageLoad: function(src) {
+                this.loaded++;
+                console.log(`✅ Loaded: ${src} (${this.loaded}/${this.total})`);
+                this.updateProgress();
+            },
+            
+            onImageError: function(src) {
+                this.loaded++;
+                console.warn(`⚠️ Failed to load: ${src}`);
+                this.updateProgress();
+            },
+            
+            updateProgress: function() {
+                const progressBar = document.getElementById('loadingProgressBar');
+                const loadingText = document.getElementById('loadingText');
+                
+                if (progressBar && loadingText) {
+                    const percent = Math.floor((this.loaded / this.total) * 100);
+                    progressBar.style.width = percent + '%';
+                    
+                    if (this.loaded < this.total) {
+                        loadingText.textContent = `Loading assets... ${this.loaded}/${this.total}`;
+                    } else {
+                        loadingText.textContent = 'Assets loaded! Initializing game...';
+                        console.log('✅ All images preloaded successfully!');
+                        
+                        // Small delay to ensure everything is ready
+                        setTimeout(() => {
+                            if (window.gameInitializer) {
+                                window.gameInitializer.initialize();
+                            }
+                        }, 500);
+                    }
+                }
+            }
+        };
+        
+        // Start preloading immediately
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                window.imagePreloader.init();
+            });
+        } else {
+            window.imagePreloader.init();
+        }
+    </script>
+
     <script src="js/gameState.js"></script>
     <script src="js/backend.js"></script>
     <script src="js/premiumPrices.js"></script>
