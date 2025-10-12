@@ -7,6 +7,16 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        .resource img {
+            width: 20px !important;
+            height: 20px !important;
+            object-fit: contain !important;
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 1;
+        }
+    </style>
 </head>
 <body>
     <!-- Enhanced Loading Screen -->
@@ -476,80 +486,3 @@
             <button class="nav-btn active" onclick="showScreen('galaxyScreen')">
                 <div class="nav-icon">🌌</div>
                 <div class="nav-label">Galaxy</div>
-            </button>
-            <button class="nav-btn" onclick="showScreen('shopScreen')">
-                <div class="nav-icon">🛒</div>
-                <div class="nav-label">Shop</div>
-            </button>
-            <button class="nav-btn" onclick="showScreen('minigamesScreen')">
-                <div class="nav-icon">🎮</div>
-                <div class="nav-label">Games</div>
-            </button>
-            <button class="nav-btn" onclick="showScreen('tasksScreen')">
-                <div class="nav-icon">📋</div>
-                <div class="nav-label">Tasks</div>
-            </button>
-            <button class="nav-btn" onclick="showScreen('profileScreen')">
-                <div class="nav-icon">👤</div>
-                <div class="nav-label">Profile</div>
-            </button>
-        </div>
-
-        <!-- Modals -->
-        <div class="modal" id="adModal">
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal('adModal')">&times;</button>
-                <h2 class="modal-title">🎬 Watch Ad</h2>
-                <p class="modal-text">Watch this short video to get your reward!</p>
-                <div class="ad-video">📺</div>
-                <div class="ad-progress-section">
-                    <div class="ad-progress-bar">
-                        <div id="adProgress" class="ad-progress-fill"></div>
-                    </div>
-                    <div class="ad-time-text">Ad progress: <span id="adTime">0</span>/5 seconds</div>
-                </div>
-                <button class="action-btn" onclick="skipAd()" id="skipBtn" style="display: none;">✅ Claim Reward</button>
-            </div>
-        </div>
-
-        <div class="modal" id="rewardModal">
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal('rewardModal')">&times;</button>
-                <h2 class="modal-title">🎉 Reward Earned!</h2>
-                <div class="reward-icon" id="rewardIcon">💎</div>
-                <div class="reward-text" id="rewardText">+25 GP</div>
-                <p class="modal-text">Keep collecting to unlock more rewards!</p>
-                <button class="action-btn" onclick="closeModal('rewardModal')">Continue</button>
-            </div>
-        </div>
-
-        <div class="modal" id="upgradeModal">
-            <div class="modal-content">
-                <button class="close-btn" onclick="closeModal('upgradeModal')">&times;</button>
-                <h2 class="modal-title">🚀 Upgrade Complete!</h2>
-                <div class="upgrade-icon" id="upgradeIcon">⚡</div>
-                <div class="upgrade-text" id="upgradeText">Speed boost activated!</div>
-                <p class="modal-text">Your ship is now more powerful!</p>
-                <button class="action-btn" onclick="closeModal('upgradeModal')">Awesome!</button>
-            </div>
-        </div>
-    </div>
-
-    <style>
-    @keyframes bossPulse {
-        0%, 100% { box-shadow: 0 0 30px rgba(255,7,58,0.4); transform: scale(1); }
-        50% { box-shadow: 0 0 50px rgba(255,7,58,0.8); transform: scale(1.02); }
-    }
-    </style>
-
-    <script src="js/gameState.js"></script>
-    <script src="js/backend.js"></script>
-    <script src="js/premiumPrices.js"></script>
-    <script src="js/wallet.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/mining.js"></script>
-    <script src="js/tasks.js"></script>
-    <script src="js/shop.js"></script>
-    <script src="js/main.js"></script>
-</body>
-</html>
