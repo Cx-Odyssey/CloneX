@@ -22,7 +22,8 @@
 
 body {
     font-family: 'Exo 2', sans-serif;
-    background: #000;
+    background: #0A0A0A url('https://cx-odyssey.github.io/CloneX/assets/galaxy-bg.png') center center fixed;
+    background-size: cover;
     color: #ffffff;
     overflow: hidden;
     height: 100vh;
@@ -31,45 +32,15 @@ body {
     margin: 0;
 }
 
-/* FIXED: Background image layer - higher opacity and proper layering */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('https://cx-odyssey.github.io/CloneX/assets/background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0.8;
-    z-index: 0;
-    pointer-events: none;
-}
-
-/* Dark overlay for better readability */
-body::after {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(ellipse at center, rgba(26, 26, 46, 0.6) 0%, rgba(10, 10, 10, 0.7) 50%, rgba(0, 0, 0, 0.8) 100%);
-    z-index: 0;
-    pointer-events: none;
-}
-
 .game-container {
     position: relative;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
-    z-index: 1;
+    background: transparent;
 }
 
-/* Enhanced Stars Animation - KEPT */
+/* Enhanced Stars Animation */
 .stars {
     position: absolute;
     width: 100%;
@@ -365,23 +336,15 @@ body::after {
     flex-wrap: wrap;
 }
 
-/* UPDATED: Resource display with images */
 .resource {
     display: flex;
     align-items: center !important;
-    gap: 4px;
+    gap: 6px;
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
     padding: 8px 12px;
     border-radius: 25px;
     font-size: 12px;
     font-weight: 600;
-}
-
-.resource img {
-    width: 18px !important;
-    height: 18px !important;
-    object-fit: contain !important;
-    vertical-align: middle !important;
 }
 
 /* User Info */
@@ -1050,7 +1013,7 @@ body::after {
     font-weight: 700;
 }
 
-/* UPDATED: Shop cost with LARGER images */
+/* FIXED: Shop cost alignment with icons */
 .shop-cost {
     color: var(--primary-gold);
     font-size: 14px;
@@ -1062,11 +1025,10 @@ body::after {
 }
 
 .shop-cost img {
-    width: 24px !important;
-    height: 24px !important;
+    width: 20px !important;
+    height: 20px !important;
     object-fit: contain !important;
     vertical-align: middle !important;
-    flex-shrink: 0;
 }
 
 .shop-desc {
@@ -1098,18 +1060,14 @@ body::after {
 }
 
 .balance-icon {
-    width: 45px;
-    height: 45px;
+    width: 35px;
+    height: 35px;
+    background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
+    border-radius: 50%;
     display: flex;
     align-items: center !important;
     justify-content: center;
-    flex-shrink: 0;
-}
-
-.balance-icon img {
-    width: 45px !important;
-    height: 45px !important;
-    object-fit: contain !important;
+    font-size: 18px;
 }
 
 .balance-amount {
@@ -1458,13 +1416,9 @@ body::after {
     overflow-y: auto;
 }
 
-/* UPDATED: Modal price display alignment */
+/* FIXED: Modal price display alignment */
 .modal-content [style*="display: flex"][style*="justify-content: center"] {
     align-items: center !important;
-}
-
-.modal-content img {
-    vertical-align: middle !important;
 }
 
 .close-btn {
@@ -1581,22 +1535,18 @@ body::after {
     color: white;
 }
 
-/* UPDATED: Ensure all GP/TON/Shards images are properly aligned and sized */
+/* FIXED: Ensure all GP/TON images are properly aligned */
 img[alt="GP"],
 img[alt="TON"],
-img[alt="Shards"],
-img[src*="gp1.png"],
-img[src*="ton.png"],
-img[src*="shards.png"] {
+img[src*="gp.png"],
+img[src*="ton.png"] {
     vertical-align: middle !important;
     object-fit: contain !important;
-    flex-shrink: 0;
 }
 
-/* UPDATED: Ensure images in flex containers are centered */
+/* FIXED: Ensure images in flex containers are centered */
 [style*="display: flex"] img {
     vertical-align: middle !important;
-    flex-shrink: 0;
 }
 
 /* Animation keyframes */
@@ -1692,23 +1642,8 @@ img[src*="shards.png"] {
         font-size: 11px; 
     }
     
-    .resource img {
-        width: 20px !important;
-        height: 20px !important;
-    }
-    
     .balance-amount {
         font-size: 28px;
-    }
-    
-    .balance-icon {
-        width: 38px;
-        height: 38px;
-    }
-    
-    .balance-icon img {
-        width: 38px !important;
-        height: 38px !important;
     }
     
     .shop-grid {
@@ -1760,19 +1695,14 @@ img[src*="shards.png"] {
     /* Mobile icon size adjustments */
     .shop-cost img,
     img[alt="GP"],
-    img[alt="TON"],
-    img[alt="Shards"] {
-        width: 20px !important;
-        height: 20px !important;
+    img[alt="TON"] {
+        width: 18px !important;
+        height: 18px !important;
     }
     
     .balance-icon {
-        width: 38px;
-        height: 38px;
-    }
-    
-    .balance-icon img {
-        width: 38px !important;
-        height: 38px !important;
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
     }
 }
