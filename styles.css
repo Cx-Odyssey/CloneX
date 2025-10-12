@@ -22,7 +22,7 @@
 
 body {
     font-family: 'Exo 2', sans-serif;
-    background: radial-gradient(ellipse at center, var(--space-blue) 0%, var(--deep-space) 50%, #000 100%);
+    background: #0A0A0A;
     color: #ffffff;
     overflow: hidden;
     height: 100vh;
@@ -38,45 +38,26 @@ body {
     overflow: hidden;
 }
 
-/* Enhanced Stars Animation */
+/* Galaxy Background Image */
 .stars {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: transparent;
+    background: url('https://cx-odyssey.github.io/CloneX/assets/background.png') center/cover no-repeat fixed;
     z-index: 1;
+    background-attachment: fixed;
 }
 
-.star {
+/* Overlay for better text readability */
+.stars::after {
+    content: '';
     position: absolute;
-    border-radius: 50%;
-    animation: twinkle 3s infinite ease-in-out;
-}
-
-.star-small {
-    width: 1px;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 2px rgba(255, 255, 255, 0.5);
-}
-
-.star-medium {
-    width: 2px;
-    height: 2px;
-    background: var(--neon-blue);
-    box-shadow: 0 0 4px var(--neon-blue);
-}
-
-.star-large {
-    width: 3px;
-    height: 3px;
-    background: var(--primary-gold);
-    box-shadow: 0 0 6px var(--primary-gold);
-}
-
-@keyframes twinkle {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.2); }
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at center, rgba(10, 10, 10, 0.3) 0%, rgba(0, 0, 0, 0.6) 100%);
+    pointer-events: none;
 }
 
 /* Enhanced Loading Screen */
@@ -335,7 +316,7 @@ body {
 
 .resource {
     display: flex;
-    align-items: center !important;
+    align-items: center;
     gap: 6px;
     background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.1));
     padding: 8px 12px;
@@ -963,7 +944,7 @@ body {
     flex-direction: column;
     gap: 8px;
     position: relative;
-    align-items: center !important;
+    align-items: center;
 }
 
 .shop-item:hover {
@@ -993,7 +974,7 @@ body {
     height: 30px;
     border-radius: 50%;
     display: flex;
-    align-items: center !important;
+    align-items: center;
     justify-content: center;
     font-size: 16px;
     font-weight: bold;
@@ -1051,7 +1032,7 @@ body {
 
 .balance-display {
     display: flex;
-    align-items: center !important;
+    align-items: center;
     justify-content: center;
     gap: 10px;
 }
@@ -1062,7 +1043,7 @@ body {
     background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
     border-radius: 50%;
     display: flex;
-    align-items: center !important;
+    align-items: center;
     justify-content: center;
     font-size: 18px;
 }
@@ -1318,9 +1299,9 @@ body {
     cursor: pointer;
     font-size: 12px;
     flex-shrink: 0;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     gap: 4px;
 }
 
