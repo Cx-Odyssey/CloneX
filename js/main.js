@@ -1,32 +1,39 @@
-// main.js - Game Initialization and Core Logic
+// main.js - Game Initialization with Image Preloading
 
 class GameInitializer {
     constructor() {
         this.tg = window.Telegram?.WebApp;
         this.tgUser = null;
         this.isInitialized = false;
+        this.imagesPreloaded = false;
     }
 
     async initialize() {
         try {
             console.log('=== GAME INITIALIZATION START ===');
             
+            // Wait for images to be preloaded
+            if (!this.imagesPreloaded) {
+                console.log('⏳ Waiting for image preloading...');
+                await this.waitForImages();
+            }
+            
             this.updateLoadingProgress(10, 'Checking Telegram...');
             await this.initializeTelegram();
             
-            this.updateLoadingProgress(25, 'Initializing backend...');
+            this.updateLoadingProgress(30, 'Initializing backend...');
             await this.initializeBackend();
             
-            this.updateLoadingProgress(40, 'Loading game state...');
+            this.updateLoadingProgress(50, 'Loading game state...');
             await this.loadGameState();
             
-            this.updateLoadingProgress(55, 'Initializing wallet...');
+            this.updateLoadingProgress(65, 'Initializing wallet...');
             await this.initializeWallet();
             
-            this.updateLoadingProgress(70, 'Setting up UI...');
+            this.updateLoadingProgress(80, 'Setting up UI...');
             this.initializeUI();
             
-            this.updateLoadingProgress(85, 'Starting game systems...');
+            this.updateLoadingProgress(90, 'Starting game systems...');
             this.startGameSystems();
             
             this.updateLoadingProgress(100, 'Ready!');
@@ -50,6 +57,21 @@ class GameInitializer {
             this.updateLoadingProgress(100, 'Error: ' + error.message);
             setTimeout(() => this.hideLoadingScreen(), 2000);
         }
+    }
+
+    async waitForImages() {
+        return new Promise((resolve) => {
+            const checkImages = () => {
+                if (window.imagePreloader && window.imagePreloader.loaded >= window.imagePreloader.total) {
+                    console.log('✅ All images preloaded');
+                    this.imagesPreloaded = true;
+                    resolve();
+                } else {
+                    setTimeout(checkImages, 100);
+                }
+            };
+            checkImages();
+        });
     }
 
     updateLoadingProgress(percent, text) {
@@ -208,9 +230,8 @@ class GameInitializer {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('DOM loaded, starting game initialization...');
-    
-    window.gameInitializer = new GameInitializer();
-    window.gameInitializer.initialize();
-});
+// DO NOT auto-initialize on DOMContentLoaded
+// Let the image preloader trigger initialization
+window.gameInitializer = new GameInitializer();
+
+console.log('✅ GameInitializer created, waiting for image preloading...');
