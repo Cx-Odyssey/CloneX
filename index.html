@@ -7,11 +7,213 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Loading Screen Override Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://cx-odyssey.github.io/CloneX/assets/load.png') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .loading-overlay.hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Remove the old stars background */
+        .loading-stars-bg {
+            display: none;
+        }
+
+        .loading-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .loading-logo-container {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .loading-logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 42px;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange), var(--primary-gold));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: logoShine 3s ease-in-out infinite, logoFloat 3s ease-in-out infinite alternate;
+            letter-spacing: 4px;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .loading-subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 10px;
+            letter-spacing: 2px;
+            animation: subtitleFade 2s ease-in-out infinite;
+        }
+
+        @keyframes logoShine {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes logoFloat {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-10px); }
+        }
+
+        @keyframes subtitleFade {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .loading-spinner-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 30px 0;
+        }
+
+        .spinner-orbit {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(255, 215, 0, 0.2);
+            border-radius: 50%;
+            animation: orbit 3s linear infinite;
+        }
+
+        .spinner-orbit.orbit-2 {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-color: rgba(0, 245, 255, 0.3);
+            animation-duration: 2s;
+            animation-direction: reverse;
+        }
+
+        .spinner-orbit.orbit-3 {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            border-color: rgba(255, 107, 53, 0.3);
+            animation-duration: 1.5s;
+        }
+
+        .spinner-planet {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
+            border-radius: 50%;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px var(--primary-gold);
+        }
+
+        .spinner-planet.planet-2 {
+            background: linear-gradient(135deg, var(--neon-blue), #0091EA);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .spinner-planet.planet-3 {
+            background: linear-gradient(135deg, var(--secondary-orange), #D84315);
+            box-shadow: 0 0 15px var(--secondary-orange);
+        }
+
+        @keyframes orbit {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 15px;
+            color: var(--primary-gold);
+            margin: 20px 0 10px;
+            animation: textPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        .loading-progress {
+            width: 100%;
+            max-width: 300px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary-orange), var(--primary-gold), var(--secondary-orange));
+            background-size: 200% 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progressShine 1.5s linear infinite;
+        }
+
+        @keyframes progressShine {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Mobile optimization */
+        @media (max-width: 450px) {
+            .loading-logo {
+                font-size: 36px;
+            }
+            
+            .loading-subtitle {
+                font-size: 11px;
+            }
+            
+            .loading-spinner-wrapper {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .loading-text {
+                font-size: 13px;
+            }
+            
+            .loading-progress {
+                max-width: 250px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Enhanced Loading Screen -->
+    <!-- Enhanced Loading Screen with load.png Background -->
     <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-stars-bg"></div>
         <div class="loading-content">
             <div class="loading-logo-container">
                 <div class="loading-logo">CX ODYSSEY</div>
@@ -237,7 +439,7 @@
             </div>
         </div>
 
-        <!-- Shop Screen -->
+        <!-- Shop Screen (continuing from previous code...) -->
         <div class="screen" id="shopScreen">
             <div class="header">
                 <div class="logo">SHOP & UPGRADES</div>
@@ -263,7 +465,6 @@
             </div>
 
             <div id="shopContent">
-                <!-- Items Tab -->
                 <div class="shop-grid" id="itemsShopContent">
                     <div class="shop-item" onclick="window.showShopItemModal('speed'); return false;">
                         <div class="shop-icon">🚀</div>
@@ -340,7 +541,6 @@
                     </div>
                 </div>
 
-                <!-- Premium Tab -->
                 <div class="shop-grid" id="premiumShopContent" style="display: none;"></div>
             </div>
         </div>
