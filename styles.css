@@ -1,9 +1,3 @@
-I'll analyze the issue and fix the shard image size inconsistency. Looking at the images, the shard icon is displaying much larger than the energy and GP icons.
-
-The issue is in the CSS - the shard image needs consistent sizing like the GP image. Let me provide the fixed files:
-
-```css
-<artifact identifier="fixed-styles-css" type="application/vnd.ant.code" language="css" title="Fixed styles.css - Consistent Resource Icons">
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600;800&display=swap');
 
 * {
@@ -1726,3 +1720,4 @@ img[src*="shards.png"] {
         height: 22px !important;
     }
 }
+
