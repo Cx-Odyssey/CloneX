@@ -5,60 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CX Odyssey: Rise of the Collectors</title>
     
-    <!-- CRITICAL: Inline styles for INSTANT loading screen (no external CSS needed) -->
+    <!-- CRITICAL: Inline styles for INSTANT black screen -->
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; overflow: hidden; }
+        html, body { 
+            background: #000 !important; 
+            overflow: hidden; 
+            width: 100%;
+            height: 100%;
+        }
         
+        /* Instant black loader - shows IMMEDIATELY */
         #instant-loader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
+            background: #000;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 9999;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-        
-        .instant-logo {
-            font-size: 48px;
-            font-weight: 900;
-            background: linear-gradient(45deg, #FFD700, #FF6B35, #FFD700);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: logoShine 2s ease-in-out infinite;
-            letter-spacing: 4px;
-            margin-bottom: 10px;
-        }
-        
-        .instant-subtitle {
-            color: rgba(255, 255, 255, 0.7);
-            font-size: 14px;
-            letter-spacing: 2px;
-            margin-bottom: 40px;
+            z-index: 10000;
         }
         
         .instant-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 215, 0, 0.2);
-            border-top: 4px solid #FFD700;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 215, 0, 0.2);
+            border-top: 3px solid #FFD700;
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        .instant-text {
-            color: #FFD700;
-            font-size: 14px;
-            animation: pulse 1.5s ease-in-out infinite;
+            animation: spin 0.8s linear infinite;
         }
         
         @keyframes spin {
@@ -66,33 +44,18 @@
             100% { transform: rotate(360deg); }
         }
         
-        @keyframes logoShine {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.6; }
-            50% { opacity: 1; }
-        }
-        
-        .game-container { display: none; }
-        .loading-overlay { display: none; }
+        /* Hide everything else initially */
+        .loading-overlay { display: none !important; }
+        .game-container { display: none !important; }
     </style>
-    
-    <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js" defer></script>
 </head>
 <body>
-    <!-- INSTANT LOADING SCREEN -->
+    <!-- INSTANT BLACK SCREEN - Shows in 0ms -->
     <div id="instant-loader">
-        <div class="instant-logo">CX ODYSSEY</div>
-        <div class="instant-subtitle">Rise of the Collectors</div>
         <div class="instant-spinner"></div>
-        <div class="instant-text">Loading...</div>
     </div>
 
-    <!-- Main loading overlay -->
+    <!-- Enhanced Loading Screen with load.png Background -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <div class="loading-logo-container">
@@ -100,9 +63,15 @@
                 <div class="loading-subtitle">Rise of the Collectors</div>
             </div>
             <div class="loading-spinner-wrapper">
-                <div class="spinner-orbit"><div class="spinner-planet"></div></div>
-                <div class="spinner-orbit orbit-2"><div class="spinner-planet planet-2"></div></div>
-                <div class="spinner-orbit orbit-3"><div class="spinner-planet planet-3"></div></div>
+                <div class="spinner-orbit">
+                    <div class="spinner-planet"></div>
+                </div>
+                <div class="spinner-orbit orbit-2">
+                    <div class="spinner-planet planet-2"></div>
+                </div>
+                <div class="spinner-orbit orbit-3">
+                    <div class="spinner-planet planet-3"></div>
+                </div>
             </div>
             <div class="loading-text" id="loadingText">Initializing Game...</div>
             <div class="loading-progress">
@@ -484,6 +453,9 @@
                     <p class="minigame-description">Crack today's secret 4-digit code!</p>
                 </div>
                 <div class="combo-display">
+                    <input type="text" class="combo-digit" maxlength="1" id="combo1" readonly>
+                    <input type="text" class="combo-digit" maxlength="1" id="combo2" readonly>
+                    <input type="text" class="combo-digit" maxlength="1" id="combo3" readonly>
                     <input type="text" class="combo-digit" maxlength="1" id="combo4" readonly>
                 </div>
                 <div class="combo-keypad">
@@ -613,38 +585,59 @@
     }
     </style>
 
-    <!-- Load external CSS AFTER instant loader -->
+    <!-- Load external CSS -->
     <link rel="stylesheet" href="styles.css">
 
-    <!-- CRITICAL: Transition from instant loader to fancy loader -->
+    <!-- Load Telegram & TON scripts -->
+    <script src="https://telegram.org/js/telegram-web-app.js" async></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js" async></script>
+
+    <!-- CRITICAL: Fast transition script -->
     <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            console.log('🚀 DOM Content Loaded - Starting transition');
+        (function() {
+            console.log('⚡ Starting instant load...');
             
-            setTimeout(function() {
-                const instantLoader = document.getElementById('instant-loader');
-                const fancyLoader = document.getElementById('loadingOverlay');
-                const gameContainer = document.querySelector('.game-container');
-                
-                fancyLoader.style.display = 'flex';
-                gameContainer.style.display = 'block';
-                
-                instantLoader.style.transition = 'opacity 0.3s';
-                instantLoader.style.opacity = '0';
-                
+            // Transition as soon as DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initTransition);
+            } else {
+                initTransition();
+            }
+            
+            function initTransition() {
                 setTimeout(function() {
-                    instantLoader.style.display = 'none';
+                    const instant = document.getElementById('instant-loader');
+                    const fancy = document.getElementById('loadingOverlay');
+                    const game = document.querySelector('.game-container');
+                    
+                    if (!fancy || !game) {
+                        console.error('Loading elements not found');
+                        return;
+                    }
+                    
+                    // Show fancy loader and game container
+                    fancy.style.display = 'flex';
+                    game.style.display = 'block';
+                    
+                    // Fade out instant loader
+                    if (instant) {
+                        instant.style.transition = 'opacity 0.2s';
+                        instant.style.opacity = '0';
+                        setTimeout(() => instant.remove(), 200);
+                    }
+                    
                     console.log('✅ Transitioned to fancy loader');
-                }, 300);
-                
-                if (window.imagePreloader) {
-                    window.imagePreloader.init();
-                }
-            }, 100);
-        });
+                    
+                    // Start preloading
+                    if (window.imagePreloader) {
+                        window.imagePreloader.init();
+                    }
+                }, 50);
+            }
+        })();
     </script>
 
-    <!-- Image Preloader Script -->
+    <!-- Image Preloader -->
     <script>
         window.imagePreloader = {
             images: [
@@ -700,7 +693,7 @@
                         loadingText.textContent = `Loading assets... ${this.loaded}/${this.total}`;
                     } else {
                         loadingText.textContent = 'Assets loaded! Initializing game...';
-                        console.log('✅ All images preloaded successfully!');
+                        console.log('✅ All images preloaded');
                         
                         setTimeout(() => {
                             if (window.gameInitializer) {
@@ -723,7 +716,4 @@
     <script src="js/shop.js"></script>
     <script src="js/main.js"></script>
 </body>
-</html>" class="combo-digit" maxlength="1" id="combo1" readonly>
-                    <input type="text" class="combo-digit" maxlength="1" id="combo2" readonly>
-                    <input type="text" class="combo-digit" maxlength="1" id="combo3" readonly>
-                    <input type="text
+</html>
