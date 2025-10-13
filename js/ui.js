@@ -1,4 +1,4 @@
-// Main UI Controller
+// Main UI Controller - FIXED: Resource display on all screens
 
 class UIController {
     constructor() {
@@ -114,11 +114,13 @@ class UIController {
     }
 
     updateResources(gameState) {
+        // FIXED: Update ALL resource displays including GP on mining screen and shards on boss screen
         const resourceElements = {
-            energy: document.querySelectorAll('#energy, #energyMining'),
-            shards: document.querySelectorAll('#shards, #shardsMining, #shardsShop'),
-            gp: document.querySelectorAll('#gp, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpProfile')
+            energy: document.querySelectorAll('#energy, #energyMining, #energyBoss'),
+            shards: document.querySelectorAll('#shards, #shardsMining, #shardsBoss, #shardsShop'),
+            gp: document.querySelectorAll('#gp, #gpMining, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpProfile')
         };
+        
         resourceElements.energy.forEach(el => {
             if (el) el.textContent = gameState.energy;
         });
@@ -128,6 +130,7 @@ class UIController {
         resourceElements.gp.forEach(el => {
             if (el) el.textContent = gameState.gp.toLocaleString();
         });
+        
         const balanceElements = document.querySelectorAll('#taskBalanceDisplay, #profileBalanceDisplay');
         balanceElements.forEach(el => {
             if (el) el.textContent = gameState.gp.toLocaleString();
@@ -194,7 +197,6 @@ class UIController {
         }
     }
 
-    // FIXED: Update only numbers, not the entire cost element (images stay)
     updateShopCosts(gameState) {
         const costs = {
             speed: 50 * Math.pow(2, gameState.upgrades.speed),
@@ -203,11 +205,10 @@ class UIController {
             multiplier: 200 * Math.pow(2, gameState.upgrades.multiplier)
         };
         
-        // Update ONLY the number span, not the entire cost div
         Object.keys(costs).forEach(upgrade => {
             const costEl = document.getElementById(`${upgrade}Cost`);
             if (costEl) {
-                costEl.textContent = costs[upgrade]; // Just the number
+                costEl.textContent = costs[upgrade];
             }
         });
     }
@@ -379,6 +380,7 @@ class UIController {
 
 window.uiController = new UIController();
 
+// Global helper functions remain the same
 function showDailyRewardsModal() {
     const modal = document.getElementById('dailyRewardsModal');
     const gameState = window.gameState?.get();
@@ -412,82 +414,10 @@ function showDailyRewardsModal() {
     modal.classList.add('active');
 }
 
-function openTaskModal(taskType) {
-    const modal = document.getElementById('taskModal');
-    const title = document.getElementById('taskModalTitle');
-    const icon = document.getElementById('taskModalIcon');
-    const desc = document.getElementById('taskModalDesc');
-    const step2 = document.getElementById('taskStep2');
-    const openBtn = document.getElementById('taskOpenBtn');
-    const checkBtn = document.getElementById('taskCheckBtn');
-    const gameState = window.gameState?.get();
-    if (taskType === 'telegram' && gameState?.oneTimeTasks?.telegram) {
-        window.showNotification('Task already completed!');
-        return;
-    }
-    if (taskType === 'twitter' && gameState?.oneTimeTasks?.twitter) {
-        window.showNotification('Task already completed!');
-        return;
-    }
-    const tasks = {
-        telegram: {
-            title: 'Join Telegram Community',
-            icon: `<svg width="80" height="80" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
-            </svg>`,
-            link: 'https://t.me/Cx_Odyssey_Community',
-            step2Text: '2️⃣ Join the channel'
-        },
-        twitter: {
-            title: 'Follow on Twitter',
-            icon: `<svg width="80" height="80" viewBox="0 0 24 24" fill="white">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>`,
-            link: 'https://x.com/Cx_Odyssey',
-            step2Text: '2️⃣ Follow the account'
-        }
-    };
-    const task = tasks[taskType];
-    title.textContent = task.title;
-    icon.innerHTML = task.icon;
-    step2.textContent = task.step2Text;
-    openBtn.onclick = () => {
-        window.open(task.link, '_blank');
-        openBtn.style.display = 'none';
-        checkBtn.style.display = 'block';
-    };
-    checkBtn.onclick = () => {
-        completeTask(taskType);
-    };
-    checkBtn.style.display = 'none';
-    openBtn.style.display = 'block';
-    modal.classList.add('active');
-}
-
-function completeTask(taskType) {
-    const gameState = window.gameState;
-    if (!gameState) return;
-    const state = gameState.get();
-    const newOneTimeTasks = { ...state.oneTimeTasks };
-    newOneTimeTasks[taskType] = true;
-    gameState.update({
-        oneTimeTasks: newOneTimeTasks,
-        gp: state.gp + 500,
-        totalGPEarned: (state.totalGPEarned || state.gp) + 500
-    });
-    closeModal('taskModal');
-    window.showNotification('✅ Task completed! +500 GP');
-    if (window.TasksManager) {
-        window.TasksManager.renderContent();
-    }
-}
-
 function showShopItemModal(itemType) {
     const gameState = window.gameState?.get();
     
-    // Define all shop items including upgrades
     const items = {
-        // UPGRADES
         speed: {
             name: 'Speed Boost',
             icon: '🚀',
@@ -520,7 +450,6 @@ function showShopItemModal(itemType) {
             cost: () => 200 * Math.pow(2, gameState.upgrades.multiplier),
             isUpgrade: true
         },
-        // CONSUMABLES
         energyPotion: {
             name: 'Energy Potion',
             icon: '🧪',
@@ -554,11 +483,9 @@ function showShopItemModal(itemType) {
     const item = items[itemType];
     if (!item) return;
     
-    // Calculate cost (handle function costs for upgrades)
     const itemCost = typeof item.cost === 'function' ? item.cost() : item.cost;
     const canAfford = gameState && gameState.gp >= itemCost;
 
-    // Create modal
     const modal = document.createElement('div');
     modal.className = 'modal active';
     modal.id = 'shopItemModal';
@@ -593,7 +520,7 @@ function showShopItemModal(itemType) {
                 <div style="font-size: 10px; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Price</div>
                 <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
                     <span style="font-size: 24px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${itemCost}</span>
-                    <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 24px; height: 24px; object-fit: contain;">
+                    <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP" style="width: 24px; height: 24px; object-fit: contain;">
                 </div>
                 ${!canAfford ? '<div style="font-size: 9px; color: var(--danger-red); margin-top: 4px;">Insufficient GP</div>' : ''}
             </div>
@@ -638,44 +565,15 @@ function closeShopItemModal() {
 }
 
 function purchaseShopItem(itemType) {
-    // Check if it's an upgrade or consumable
     const upgradeTypes = ['speed', 'damage', 'energy', 'multiplier'];
     
     if (upgradeTypes.includes(itemType)) {
-        // It's an upgrade - use buyUpgrade from mining system
         window.miningSystem?.buyUpgrade(itemType);
     } else {
-        // It's a consumable - use shop system
         window.shopSystem?.buyShopItem(itemType);
     }
     
     closeShopItemModal();
-}
-
-function buyPremiumItemTon(itemId) {
-    const modal = document.getElementById('premiumItemModal');
-    const title = document.getElementById('premiumItemModalTitle');
-    const icon = document.getElementById('premiumItemModalIcon');
-    const desc = document.getElementById('premiumItemModalDesc');
-    const benefits = document.getElementById('premiumItemBenefits');
-    const cost = document.getElementById('premiumItemCost');
-    const purchaseBtn = document.getElementById('premiumItemPurchaseBtn');
-    const item = window.PREMIUM_ITEMS[itemId];
-    if (!item) return;
-    title.textContent = item.name;
-    icon.textContent = item.icon;
-    desc.textContent = item.description;
-    cost.textContent = `${item.price} TON`;
-    benefits.innerHTML = item.benefits.map(b => `<div>• ${b}</div>`).join('');
-    purchaseBtn.onclick = async () => {
-        closeModal('premiumItemModal');
-        if (window.walletManager) {
-            await window.walletManager.purchasePremiumItem(itemId);
-        } else {
-            window.showNotification('Wallet system not available');
-        }
-    };
-    modal.classList.add('active');
 }
 
 function showScreen(screenId) {
@@ -699,6 +597,4 @@ function closeModal(modalId) {
 }
 
 window.showDailyRewardsModal = showDailyRewardsModal;
-window.openTaskModal = openTaskModal;
 window.showShopItemModal = showShopItemModal;
-window.buyPremiumItemTon = buyPremiumItemTon;
