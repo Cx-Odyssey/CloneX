@@ -4,215 +4,95 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CX Odyssey: Rise of the Collectors</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    
+    <!-- CRITICAL: Inline styles for INSTANT loading screen (no external CSS needed) -->
     <style>
-        /* Loading Screen Override Styles */
-        .loading-overlay {
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; overflow: hidden; }
+        
+        #instant-loader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://cx-odyssey.github.io/CloneX/assets/load.png') center/cover no-repeat;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            z-index: 1000;
-            transition: opacity 0.5s ease;
-            padding: 20px;
-            box-sizing: border-box;
+            z-index: 9999;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
-
-        .loading-overlay.hide {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Remove the old stars background */
-        .loading-stars-bg {
-            display: none;
-        }
-
-        .loading-content {
-            position: relative;
-            z-index: 2;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .loading-logo-container {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .loading-logo {
-            font-family: 'Orbitron', monospace;
-            font-size: 42px;
+        
+        .instant-logo {
+            font-size: 48px;
             font-weight: 900;
-            background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange), var(--primary-gold));
+            background: linear-gradient(45deg, #FFD700, #FF6B35, #FFD700);
             background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: logoShine 3s ease-in-out infinite, logoFloat 3s ease-in-out infinite alternate;
+            background-clip: text;
+            animation: logoShine 2s ease-in-out infinite;
             letter-spacing: 4px;
-            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            margin-bottom: 10px;
         }
-
-        .loading-subtitle {
-            font-size: 13px;
+        
+        .instant-subtitle {
             color: rgba(255, 255, 255, 0.7);
-            margin-top: 10px;
+            font-size: 14px;
             letter-spacing: 2px;
-            animation: subtitleFade 2s ease-in-out infinite;
+            margin-bottom: 40px;
         }
-
+        
+        .instant-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 215, 0, 0.2);
+            border-top: 4px solid #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        .instant-text {
+            color: #FFD700;
+            font-size: 14px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
         @keyframes logoShine {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
-
-        @keyframes logoFloat {
-            0% { transform: translateY(0px); }
-            100% { transform: translateY(-10px); }
-        }
-
-        @keyframes subtitleFade {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
-        }
-
-        .loading-spinner-wrapper {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 30px 0;
-        }
-
-        .spinner-orbit {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 2px solid rgba(255, 215, 0, 0.2);
-            border-radius: 50%;
-            animation: orbit 3s linear infinite;
-        }
-
-        .spinner-orbit.orbit-2 {
-            width: 80%;
-            height: 80%;
-            top: 10%;
-            left: 10%;
-            border-color: rgba(0, 245, 255, 0.3);
-            animation-duration: 2s;
-            animation-direction: reverse;
-        }
-
-        .spinner-orbit.orbit-3 {
-            width: 60%;
-            height: 60%;
-            top: 20%;
-            left: 20%;
-            border-color: rgba(255, 107, 53, 0.3);
-            animation-duration: 1.5s;
-        }
-
-        .spinner-planet {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
-            border-radius: 50%;
-            top: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            box-shadow: 0 0 15px var(--primary-gold);
-        }
-
-        .spinner-planet.planet-2 {
-            background: linear-gradient(135deg, var(--neon-blue), #0091EA);
-            box-shadow: 0 0 15px var(--neon-blue);
-        }
-
-        .spinner-planet.planet-3 {
-            background: linear-gradient(135deg, var(--secondary-orange), #D84315);
-            box-shadow: 0 0 15px var(--secondary-orange);
-        }
-
-        @keyframes orbit {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-text {
-            font-size: 15px;
-            color: var(--primary-gold);
-            margin: 20px 0 10px;
-            animation: textPulse 1.5s ease-in-out infinite;
-        }
-
-        @keyframes textPulse {
+        
+        @keyframes pulse {
             0%, 100% { opacity: 0.6; }
             50% { opacity: 1; }
         }
-
-        .loading-progress {
-            width: 100%;
-            max-width: 300px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 20px;
-            box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-        }
-
-        .loading-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--secondary-orange), var(--primary-gold), var(--secondary-orange));
-            background-size: 200% 100%;
-            width: 0%;
-            transition: width 0.3s ease;
-            animation: progressShine 1.5s linear infinite;
-        }
-
-        @keyframes progressShine {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* Mobile optimization */
-        @media (max-width: 450px) {
-            .loading-logo {
-                font-size: 36px;
-            }
-            
-            .loading-subtitle {
-                font-size: 11px;
-            }
-            
-            .loading-spinner-wrapper {
-                width: 100px;
-                height: 100px;
-            }
-            
-            .loading-text {
-                font-size: 13px;
-            }
-            
-            .loading-progress {
-                max-width: 250px;
-            }
-        }
+        
+        .game-container { display: none; }
+        .loading-overlay { display: none; }
     </style>
+    
+    <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js" defer></script>
 </head>
 <body>
-    <!-- Enhanced Loading Screen with load.png Background -->
+    <!-- INSTANT LOADING SCREEN -->
+    <div id="instant-loader">
+        <div class="instant-logo">CX ODYSSEY</div>
+        <div class="instant-subtitle">Rise of the Collectors</div>
+        <div class="instant-spinner"></div>
+        <div class="instant-text">Loading...</div>
+    </div>
+
+    <!-- Main loading overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-content">
             <div class="loading-logo-container">
@@ -220,15 +100,9 @@
                 <div class="loading-subtitle">Rise of the Collectors</div>
             </div>
             <div class="loading-spinner-wrapper">
-                <div class="spinner-orbit">
-                    <div class="spinner-planet"></div>
-                </div>
-                <div class="spinner-orbit orbit-2">
-                    <div class="spinner-planet planet-2"></div>
-                </div>
-                <div class="spinner-orbit orbit-3">
-                    <div class="spinner-planet planet-3"></div>
-                </div>
+                <div class="spinner-orbit"><div class="spinner-planet"></div></div>
+                <div class="spinner-orbit orbit-2"><div class="spinner-planet planet-2"></div></div>
+                <div class="spinner-orbit orbit-3"><div class="spinner-planet planet-3"></div></div>
             </div>
             <div class="loading-text" id="loadingText">Initializing Game...</div>
             <div class="loading-progress">
@@ -245,7 +119,10 @@
             <div class="header">
                 <div class="logo">CX ODYSSEY</div>
                 <div class="resources">
-                    <div class="resource">⚡ <span id="energy">100</span></div>
+                    <div class="resource">
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/energy.png" alt="Energy">
+                        <span id="energy">100</span>
+                    </div>
                     <div class="resource">
                         <img src="https://cx-odyssey.github.io/CloneX/assets/shards.png" alt="Shards">
                         <span id="shards">0</span>
@@ -320,7 +197,10 @@
             <div class="header">
                 <div class="logo">MINING: <span id="currentPlanet">Planet</span></div>
                 <div class="resources">
-                    <div class="resource">⚡ <span id="energyMining">100</span></div>
+                    <div class="resource">
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/energy.png" alt="Energy">
+                        <span id="energyMining">100</span>
+                    </div>
                     <div class="resource">
                         <img src="https://cx-odyssey.github.io/CloneX/assets/shards.png" alt="Shards">
                         <span id="shardsMining">0</span>
@@ -385,7 +265,10 @@
             <div class="header">
                 <div class="logo">BOSS RAID</div>
                 <div class="resources">
-                    <div class="resource">⚡ <span id="energyBoss">100</span></div>
+                    <div class="resource">
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/energy.png" alt="Energy">
+                        <span id="energyBoss">100</span>
+                    </div>
                     <div class="resource">
                         <img src="https://cx-odyssey.github.io/CloneX/assets/shards.png" alt="Shards">
                         <span id="shardsBoss">0</span>
@@ -447,7 +330,7 @@
             </div>
         </div>
 
-        <!-- Shop Screen (continuing from previous code...) -->
+        <!-- Shop Screen -->
         <div class="screen" id="shopScreen">
             <div class="header">
                 <div class="logo">SHOP & UPGRADES</div>
@@ -464,12 +347,8 @@
             </div>
 
             <div class="shop-tabs">
-                <button class="shop-tab active" id="itemsShopTab" onclick="switchShopTab('items')">
-                    Items & Upgrades
-                </button>
-                <button class="shop-tab premium-tab" id="premiumShopTab" onclick="switchShopTab('premium')">
-                    Premium (TON)
-                </button>
+                <button class="shop-tab active" id="itemsShopTab" onclick="switchShopTab('items')">Items & Upgrades</button>
+                <button class="shop-tab premium-tab" id="premiumShopTab" onclick="switchShopTab('premium')">Premium (TON)</button>
             </div>
 
             <div id="shopContent">
@@ -510,7 +389,6 @@
                         </div>
                         <div class="shop-desc" style="pointer-events: none;">+50% GP Gain</div>
                     </div>
-                    
                     <div class="shop-item" onclick="showShopItemModal('energyPotion')">
                         <div class="shop-icon">🧪</div>
                         <div class="shop-title">Energy Potion</div>
@@ -548,7 +426,6 @@
                         <div class="shop-desc">+50% Drop Rate (1 hour)</div>
                     </div>
                 </div>
-
                 <div class="shop-grid" id="premiumShopContent" style="display: none;"></div>
             </div>
         </div>
@@ -561,7 +438,6 @@
                     <div class="resource">✅ <span id="completedTasks">0</span>/8</div>
                 </div>
             </div>
-
             <div class="daily-rewards-banner" onclick="showDailyRewardsModal()">
                 <div class="banner-icon">📅</div>
                 <div class="banner-content">
@@ -570,7 +446,6 @@
                 </div>
                 <div class="banner-arrow">→</div>
             </div>
-
             <div class="balance-section">
                 <div class="balance-label">Your balance</div>
                 <div class="balance-display">
@@ -580,12 +455,10 @@
                     <div class="balance-amount" id="taskBalanceDisplay">0</div>
                 </div>
             </div>
-
             <div class="task-tabs">
                 <button class="task-tab active" id="tasksTab" onclick="switchTaskTab('tasks')">Tasks</button>
                 <button class="task-tab" id="mainTasksTab" onclick="switchTaskTab('main')">Main Tasks</button>
             </div>
-
             <div id="taskContent"></div>
         </div>
 
@@ -604,21 +477,15 @@
                     </div>
                 </div>
             </div>
-
             <div class="minigame-container">
                 <div class="minigame-header">
                     <div class="minigame-icon">🔮</div>
                     <h3 class="minigame-title">Daily Combo Code</h3>
                     <p class="minigame-description">Crack today's secret 4-digit code!</p>
                 </div>
-
                 <div class="combo-display">
-                    <input type="text" class="combo-digit" maxlength="1" id="combo1" readonly>
-                    <input type="text" class="combo-digit" maxlength="1" id="combo2" readonly>
-                    <input type="text" class="combo-digit" maxlength="1" id="combo3" readonly>
                     <input type="text" class="combo-digit" maxlength="1" id="combo4" readonly>
                 </div>
-
                 <div class="combo-keypad">
                     <button class="combo-key" onclick="inputComboDigit('1')">1</button>
                     <button class="combo-key" onclick="inputComboDigit('2')">2</button>
@@ -633,7 +500,6 @@
                     <button class="combo-key" onclick="inputComboDigit('0')">0</button>
                     <button class="combo-key submit-btn" onclick="submitCombo()">Submit</button>
                 </div>
-
                 <div class="combo-info">
                     <div class="info-row">
                         <span>Attempts:</span>
@@ -658,7 +524,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="balance-section">
                 <div class="balance-label">Your balance</div>
                 <div class="balance-display">
@@ -668,14 +533,12 @@
                     <div class="balance-amount" id="profileBalanceDisplay">0</div>
                 </div>
             </div>
-
             <div class="profile-tabs">
                 <button class="profile-tab active" id="referralTab" onclick="switchProfileTab('referral')">Referral</button>
                 <button class="profile-tab" id="achievementsTab" onclick="switchProfileTab('achievements')">Achievements</button>
                 <button class="profile-tab" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">Leaderboard</button>
                 <button class="profile-tab" id="walletTab" onclick="switchProfileTab('wallet')">Wallet</button>
             </div>
-
             <div id="profileContent"></div>
         </div>
 
@@ -750,9 +613,39 @@
     }
     </style>
 
-    <!-- Image Preloader Script - Loads before game initializes -->
+    <!-- Load external CSS AFTER instant loader -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- CRITICAL: Transition from instant loader to fancy loader -->
     <script>
-        // Preload all critical images during loading screen
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 DOM Content Loaded - Starting transition');
+            
+            setTimeout(function() {
+                const instantLoader = document.getElementById('instant-loader');
+                const fancyLoader = document.getElementById('loadingOverlay');
+                const gameContainer = document.querySelector('.game-container');
+                
+                fancyLoader.style.display = 'flex';
+                gameContainer.style.display = 'block';
+                
+                instantLoader.style.transition = 'opacity 0.3s';
+                instantLoader.style.opacity = '0';
+                
+                setTimeout(function() {
+                    instantLoader.style.display = 'none';
+                    console.log('✅ Transitioned to fancy loader');
+                }, 300);
+                
+                if (window.imagePreloader) {
+                    window.imagePreloader.init();
+                }
+            }, 100);
+        });
+    </script>
+
+    <!-- Image Preloader Script -->
+    <script>
         window.imagePreloader = {
             images: [
                 'https://cx-odyssey.github.io/CloneX/assets/background.png',
@@ -765,7 +658,8 @@
                 'https://cx-odyssey.github.io/CloneX/assets/bgcrimson.png',
                 'https://cx-odyssey.github.io/CloneX/assets/shards.png',
                 'https://cx-odyssey.github.io/CloneX/assets/gp1.png',
-                'https://cx-odyssey.github.io/CloneX/assets/ton.png'
+                'https://cx-odyssey.github.io/CloneX/assets/ton.png',
+                'https://cx-odyssey.github.io/CloneX/assets/energy.png'
             ],
             loaded: 0,
             total: 0,
@@ -808,7 +702,6 @@
                         loadingText.textContent = 'Assets loaded! Initializing game...';
                         console.log('✅ All images preloaded successfully!');
                         
-                        // Small delay to ensure everything is ready
                         setTimeout(() => {
                             if (window.gameInitializer) {
                                 window.gameInitializer.initialize();
@@ -818,15 +711,6 @@
                 }
             }
         };
-        
-        // Start preloading immediately
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                window.imagePreloader.init();
-            });
-        } else {
-            window.imagePreloader.init();
-        }
     </script>
 
     <script src="js/gameState.js"></script>
@@ -839,4 +723,7 @@
     <script src="js/shop.js"></script>
     <script src="js/main.js"></script>
 </body>
-</html>
+</html>" class="combo-digit" maxlength="1" id="combo1" readonly>
+                    <input type="text" class="combo-digit" maxlength="1" id="combo2" readonly>
+                    <input type="text" class="combo-digit" maxlength="1" id="combo3" readonly>
+                    <input type="text
