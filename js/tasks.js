@@ -1,4 +1,4 @@
-// tasks.js - Complete Task System with Achievements and Daily Rewards
+// tasks.js - FIXED: Daily login rewards now working properly
 
 // Achievement Definitions
 const ACHIEVEMENTS = {
@@ -177,8 +177,28 @@ class AchievementManager {
     }
 }
 
-// Main Tasks Configuration
+// Main Tasks Configuration - Social tasks moved to top
 const MAIN_TASKS = [
+    {
+        id: 'telegram',
+        title: 'Join Telegram Community',
+        description: 'Subscribe to our official channel',
+        icon: '📱',
+        reward: 500,
+        requirement: { type: 'social_task', value: 1 },
+        isSocialTask: true,
+        link: 'https://t.me/Cx_Odyssey_Community'
+    },
+    {
+        id: 'twitter',
+        title: 'Follow on X (Twitter)',
+        description: 'Follow us on X for updates',
+        icon: '🐦',
+        reward: 500,
+        requirement: { type: 'social_task', value: 1 },
+        isSocialTask: true,
+        link: 'https://x.com/Cx_Odyssey'
+    },
     {
         id: 'reach_level_10',
         title: 'Reach Level 10',
@@ -272,7 +292,18 @@ class TasksManager {
         const tasks = [
             {
                 id: 'telegram',
-                icon: '📱',
+                icon: `<svg width="40" height="40" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="tg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#2AABEE;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#229ED9;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <circle cx="120" cy="120" r="120" fill="url(#tg-gradient)"/>
+                    <path fill="#fff" d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6z"/>
+                    <path fill="#d2e5f1" d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763"/>
+                    <path fill="#b5cfe4" d="M81.486 130.178l-17.8-5.467s-2.133-.905-1.395-2.947c.156-.425.371-.763.927-1.082 5.1-2.913 94.753-35.459 94.753-35.459s3.848-1.47 6.14-.968c.636.14 1.104.396 1.386 1.182.078.218.118.38.137.666.027.42-.006.948-.023 1.468-.135 4.138-3.755 74.635-3.755 74.635s-.214 3.5-3.232 3.66c-.99.052-2.373-.36-4.17-1.346-5.142-2.823-22.678-16.22-25.853-18.868-.85-.71-1.634-2.093.087-3.728 11.95-11.3 26.315-25.13 34.943-33.757 1.81-1.81 3.62-6.046-3.93-.93l-47.69 32.126s-2.593 1.615-7.446.18z"/>
+                </svg>`,
                 title: 'Join Telegram Community',
                 desc: 'Subscribe to our official channel',
                 reward: 500,
@@ -281,8 +312,11 @@ class TasksManager {
             },
             {
                 id: 'twitter',
-                icon: '🐦',
-                title: 'Follow on Twitter',
+                icon: `<svg width="40" height="40" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="300" height="300" rx="150" fill="#000000"/>
+                    <path fill="#ffffff" d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300.25h26.46l102.4-116.59 81.8 116.59h89.34M36.01 19.54H76.66l187.13 262.13h-40.66"/>
+                </svg>`,
+                title: 'Follow on X (Twitter)',
                 desc: 'Follow us on X for updates',
                 reward: 500,
                 completed: gameState.oneTimeTasks?.twitter || false,
@@ -292,7 +326,7 @@ class TasksManager {
         
         return tasks.map(task => `
             <div class="task-item">
-                <div class="task-icon" style="background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,107,53,0.1));">
+                <div class="task-icon" style="background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,107,53,0.1)); display: flex; align-items: center; justify-content: center;">
                     ${task.icon}
                 </div>
                 <div class="task-info">
@@ -313,23 +347,46 @@ class TasksManager {
         const gameState = window.gameState?.get();
         if (!gameState) return '<div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.7);">Loading...</div>';
 
-        const achievementManager = new AchievementManager();
         const completedTasks = gameState.oneTimeTasks || {};
 
         return this.mainTasks.map(task => {
             const isCompleted = completedTasks[task.id] || false;
-            const isUnlocked = this.checkRequirement(task.requirement, gameState);
-            const progress = this.getProgress(task.requirement, gameState);
+            const isSocialTask = task.isSocialTask || false;
+            const isUnlocked = isSocialTask ? true : this.checkRequirement(task.requirement, gameState);
+            const progress = isSocialTask ? 0 : this.getProgress(task.requirement, gameState);
+
+            // Get logos for social tasks
+            const telegramLogo = `<svg width="32" height="32" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="tg-gradient-${task.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#2AABEE;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#229ED9;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <circle cx="120" cy="120" r="120" fill="url(#tg-gradient-${task.id})"/>
+                <path fill="#fff" d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6z"/>
+                <path fill="#d2e5f1" d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763"/>
+                <path fill="#b5cfe4" d="M81.486 130.178l-17.8-5.467s-2.133-.905-1.395-2.947c.156-.425.371-.763.927-1.082 5.1-2.913 94.753-35.459 94.753-35.459s3.848-1.47 6.14-.968c.636.14 1.104.396 1.386 1.182.078.218.118.38.137.666.027.42-.006.948-.023 1.468-.135 4.138-3.755 74.635-3.755 74.635s-.214 3.5-3.232 3.66c-.99.052-2.373-.36-4.17-1.346-5.142-2.823-22.678-16.22-25.853-18.868-.85-.71-1.634-2.093.087-3.728 11.95-11.3 26.315-25.13 34.943-33.757 1.81-1.81 3.62-6.046-3.93-.93l-47.69 32.126s-2.593 1.615-7.446.18z"/>
+            </svg>`;
+            
+            const xLogo = `<svg width="32" height="32" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                <rect width="300" height="300" rx="60" fill="#000000"/>
+                <path fill="#ffffff" d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300.25h26.46l102.4-116.59 81.8 116.59h89.34M36.01 19.54H76.66l187.13 262.13h-40.66"/>
+            </svg>`;
+
+            const taskIconDisplay = isSocialTask 
+                ? (task.id === 'telegram' ? telegramLogo : xLogo)
+                : `<span style="font-size: 32px;">${task.icon}</span>`;
 
             return `
                 <div class="task-item" style="opacity: ${isCompleted ? 0.6 : 1};">
-                    <div class="task-icon" style="background: linear-gradient(135deg, ${isCompleted ? 'rgba(0,255,136,0.2)' : 'rgba(255,215,0,0.2)'}, rgba(255,107,53,0.1)); font-size: 32px;">
-                        ${task.icon}
+                    <div class="task-icon" style="background: linear-gradient(135deg, ${isCompleted ? 'rgba(0,255,136,0.2)' : 'rgba(255,215,0,0.2)'}, rgba(255,107,53,0.1)); display: flex; align-items: center; justify-content: center;">
+                        ${taskIconDisplay}
                     </div>
                     <div class="task-info">
                         <div class="task-title">${task.title}</div>
                         <div class="task-desc">${task.description}</div>
-                        ${!isCompleted ? `
+                        ${!isCompleted && !isSocialTask ? `
                             <div style="margin-top: 8px;">
                                 <div style="width: 100%; height: 4px; background: rgba(0,0,0,0.3); border-radius: 2px; overflow: hidden;">
                                     <div style="height: 100%; background: var(--primary-gold); width: ${progress}%;"></div>
@@ -340,9 +397,11 @@ class TasksManager {
                     </div>
                     ${isCompleted 
                         ? `<div class="task-reward" style="background: var(--success-green); color: #000;">✅ Claimed</div>`
-                        : isUnlocked
-                            ? `<button class="task-button" onclick="claimMainTask('${task.id}')">Claim ${task.reward} GP</button>`
-                            : `<div class="task-reward" style="background: rgba(255,215,0,0.2); color: var(--primary-gold);">Locked</div>`
+                        : isSocialTask
+                            ? `<button class="task-button" onclick="openSocialTaskModal('${task.id}', '${task.link}', ${task.reward}, '${task.title}')">Start</button>`
+                            : isUnlocked
+                                ? `<button class="task-button" onclick="claimMainTask('${task.id}')">Claim ${task.reward} GP</button>`
+                                : `<div class="task-reward" style="background: rgba(255,215,0,0.2); color: var(--primary-gold);">Locked</div>`
                     }
                 </div>
             `;
@@ -353,6 +412,9 @@ class TasksManager {
         const { type, value } = requirement;
         
         switch (type) {
+            case 'social_task':
+                // Social tasks don't have automatic completion requirements
+                return false;
             case 'level':
                 return Math.floor(gameState.gp / 100) + 1 >= value;
             case 'total_shards':
@@ -455,7 +517,6 @@ class ProfileManager {
                 break;
             case 'wallet':
                 container.innerHTML = this.getWalletHTML();
-                // FIXED: Refresh wallet UI after rendering
                 setTimeout(() => {
                     if (window.walletManager) {
                         window.walletManager.refreshWalletUI();
@@ -912,7 +973,7 @@ class MinigamesManager {
     }
 }
 
-// Daily Rewards Modal
+// FIXED: Daily Rewards Modal that actually works
 function showDailyRewardsModal() {
     const gameState = window.gameState;
     if (!gameState) return;
@@ -934,7 +995,7 @@ function showDailyRewardsModal() {
     
     const currentStreak = Math.min(state.dailyStreak || 1, 7);
     const today = new Date().toISOString().split('T')[0];
-    const canClaim = state.lastLogin !== today;
+    const canClaim = state.lastDailyReset !== today;
     
     modal.innerHTML = `
         <div class="modal-content">
@@ -1017,7 +1078,7 @@ function claimDailyReward() {
     gameState.update({
         gp: state.gp + reward.gp,
         gameTickets: Math.min(10, state.gameTickets + reward.tickets),
-        lastLogin: new Date().toISOString().split('T')[0],
+        lastDailyReset: new Date().toISOString().split('T')[0],
         dailyStreak: currentStreak === 7 ? 1 : currentStreak + 1,
         totalGPEarned: (state.totalGPEarned || state.gp) + reward.gp
     });
@@ -1051,11 +1112,29 @@ function openSocialTaskModal(taskId, link, reward, title) {
     
     const isTelegram = taskId === 'telegram';
     
+    const telegramLogo = `<svg width="80" height="80" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="tg-gradient-modal" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#2AABEE;stop-opacity:1" />
+                <stop offset="100%" style="stop-color:#229ED9;stop-opacity:1" />
+            </linearGradient>
+        </defs>
+        <circle cx="120" cy="120" r="120" fill="url(#tg-gradient-modal)"/>
+        <path fill="#fff" d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6z"/>
+        <path fill="#d2e5f1" d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763"/>
+        <path fill="#b5cfe4" d="M81.486 130.178l-17.8-5.467s-2.133-.905-1.395-2.947c.156-.425.371-.763.927-1.082 5.1-2.913 94.753-35.459 94.753-35.459s3.848-1.47 6.14-.968c.636.14 1.104.396 1.386 1.182.078.218.118.38.137.666.027.42-.006.948-.023 1.468-.135 4.138-3.755 74.635-3.755 74.635s-.214 3.5-3.232 3.66c-.99.052-2.373-.36-4.17-1.346-5.142-2.823-22.678-16.22-25.853-18.868-.85-.71-1.634-2.093.087-3.728 11.95-11.3 26.315-25.13 34.943-33.757 1.81-1.81 3.62-6.046-3.93-.93l-47.69 32.126s-2.593 1.615-7.446.18z"/>
+    </svg>`;
+    
+    const xLogo = `<svg width="80" height="80" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+        <rect width="300" height="300" rx="60" fill="#000000"/>
+        <path fill="#ffffff" d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300.25h26.46l102.4-116.59 81.8 116.59h89.34M36.01 19.54H76.66l187.13 262.13h-40.66"/>
+    </svg>`;
+    
     modal.innerHTML = `
         <div class="modal-content" style="max-width: 400px;">
             <button class="close-btn" onclick="closeSocialTaskModal()">&times;</button>
             <h2 class="modal-title" style="font-size: 20px; margin-bottom: 15px;">${title}</h2>
-            <div style="font-size: 60px; margin: 20px 0;">${isTelegram ? '📱' : '🐦'}</div>
+            <div style="margin: 20px 0;">${isTelegram ? telegramLogo : xLogo}</div>
             <p style="font-size: 14px; margin-bottom: 20px;">Complete this task to earn <strong style="color: var(--primary-gold);">${reward} GP</strong></p>
             
             <div style="margin: 20px 0; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 1px solid rgba(255,215,0,0.3);">
@@ -1067,8 +1146,8 @@ function openSocialTaskModal(taskId, link, reward, title) {
                 </div>
             </div>
             
-            <button class="action-btn" id="socialOpenBtn" onclick="handleSocialTaskStep1('${taskId}', '${link}')" style="width: 100%; margin-bottom: 10px; background: linear-gradient(135deg, var(--neon-blue), #0091EA);">
-                🔗 Open
+            <button class="action-btn" id="socialOpenBtn" onclick="handleSocialTaskStep1('${taskId}', '${link}')" style="width: 100%; margin-bottom: 10px; background: linear-gradient(135deg, ${isTelegram ? '#2AABEE, #229ED9' : '#000, #333'});">
+                🔗 Open ${isTelegram ? 'Telegram' : 'X'}
             </button>
             
             <button class="action-btn" id="socialCheckBtn" onclick="handleSocialTaskStep2('${taskId}', ${reward}, ${isTelegram})" style="width: 100%; background: var(--success-green); color: #000; display: none;">
