@@ -1,1683 +1,837 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>CX Odyssey: Rise of the Collectors</title>
-
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-
     <link rel="stylesheet" href="styles.css">
-
     <style>
-
         /* Loading Screen Override Styles */
-
         .loading-overlay {
-
             position: fixed;
-
             top: 0;
-
             left: 0;
-
             width: 100%;
-
             height: 100%;
-
             background: url('https://cx-odyssey.github.io/CloneX/assets/load.png') center/cover no-repeat;
-
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             justify-content: center;
-
             z-index: 1000;
-
             transition: opacity 0.5s ease;
-
             padding: 20px;
-
             box-sizing: border-box;
-
         }
-
-
 
         .loading-overlay.hide {
-
             opacity: 0;
-
             pointer-events: none;
-
         }
-
-
-
-        /* Remove the old stars background */
-
-        .loading-stars-bg {
-
-            display: none;
-
-        }
-
-
 
         .loading-content {
-
             position: relative;
-
             z-index: 2;
-
             display: flex;
-
             flex-direction: column;
-
             align-items: center;
-
             width: 100%;
-
             max-width: 400px;
-
         }
-
-
 
         .loading-logo-container {
-
             text-align: center;
-
             margin-bottom: 40px;
-
         }
-
-
 
         .loading-logo {
-
             font-family: 'Orbitron', monospace;
-
             font-size: 42px;
-
             font-weight: 900;
-
             background: linear-gradient(45deg, var(--primary-gold), var(--secondary-orange), var(--primary-gold));
-
             background-size: 200% 200%;
-
             -webkit-background-clip: text;
-
             -webkit-text-fill-color: transparent;
-
             animation: logoShine 3s ease-in-out infinite, logoFloat 3s ease-in-out infinite alternate;
-
             letter-spacing: 4px;
-
             text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
-
         }
-
-
 
         .loading-subtitle {
-
             font-size: 13px;
-
             color: rgba(255, 255, 255, 0.7);
-
             margin-top: 10px;
-
             letter-spacing: 2px;
-
             animation: subtitleFade 2s ease-in-out infinite;
-
         }
-
-
 
         @keyframes logoShine {
-
             0%, 100% { background-position: 0% 50%; }
-
             50% { background-position: 100% 50%; }
-
         }
-
-
 
         @keyframes logoFloat {
-
             0% { transform: translateY(0px); }
-
             100% { transform: translateY(-10px); }
-
         }
-
-
 
         @keyframes subtitleFade {
-
             0%, 100% { opacity: 0.5; }
-
             50% { opacity: 1; }
-
         }
-
-
 
         .loading-spinner-wrapper {
-
             position: relative;
-
             width: 120px;
-
             height: 120px;
-
             margin: 30px 0;
-
         }
-
-
 
         .spinner-orbit {
-
             position: absolute;
-
             width: 100%;
-
             height: 100%;
-
             border: 2px solid rgba(255, 215, 0, 0.2);
-
             border-radius: 50%;
-
             animation: orbit 3s linear infinite;
-
         }
-
-
 
         .spinner-orbit.orbit-2 {
-
             width: 80%;
-
             height: 80%;
-
             top: 10%;
-
             left: 10%;
-
             border-color: rgba(0, 245, 255, 0.3);
-
             animation-duration: 2s;
-
             animation-direction: reverse;
-
         }
-
-
 
         .spinner-orbit.orbit-3 {
-
             width: 60%;
-
             height: 60%;
-
             top: 20%;
-
             left: 20%;
-
             border-color: rgba(255, 107, 53, 0.3);
-
             animation-duration: 1.5s;
-
         }
-
-
 
         .spinner-planet {
-
             position: absolute;
-
             width: 12px;
-
             height: 12px;
-
             background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));
-
             border-radius: 50%;
-
             top: -6px;
-
             left: 50%;
-
             transform: translateX(-50%);
-
             box-shadow: 0 0 15px var(--primary-gold);
-
         }
-
-
 
         .spinner-planet.planet-2 {
-
             background: linear-gradient(135deg, var(--neon-blue), #0091EA);
-
             box-shadow: 0 0 15px var(--neon-blue);
-
         }
-
-
 
         .spinner-planet.planet-3 {
-
             background: linear-gradient(135deg, var(--secondary-orange), #D84315);
-
             box-shadow: 0 0 15px var(--secondary-orange);
-
         }
-
-
 
         @keyframes orbit {
-
             0% { transform: rotate(0deg); }
-
             100% { transform: rotate(360deg); }
-
         }
-
-
 
         .loading-text {
-
             font-size: 15px;
-
             color: var(--primary-gold);
-
             margin: 20px 0 10px;
-
             animation: textPulse 1.5s ease-in-out infinite;
-
         }
-
-
 
         @keyframes textPulse {
-
             0%, 100% { opacity: 0.6; }
-
             50% { opacity: 1; }
-
         }
-
-
 
         .loading-progress {
-
             width: 100%;
-
             max-width: 300px;
-
             height: 6px;
-
             background: rgba(255, 255, 255, 0.1);
-
             border-radius: 3px;
-
             overflow: hidden;
-
             margin-top: 20px;
-
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
-
         }
-
-
 
         .loading-progress-bar {
-
             height: 100%;
-
             background: linear-gradient(90deg, var(--secondary-orange), var(--primary-gold), var(--secondary-orange));
-
             background-size: 200% 100%;
-
             width: 0%;
-
             transition: width 0.3s ease;
-
             animation: progressShine 1.5s linear infinite;
-
         }
-
-
 
         @keyframes progressShine {
-
             0% { background-position: 200% 0; }
-
             100% { background-position: -200% 0; }
-
         }
-
-
 
         /* Mobile optimization */
-
         @media (max-width: 450px) {
-
             .loading-logo {
-
                 font-size: 36px;
-
             }
-
             
-
             .loading-subtitle {
-
                 font-size: 11px;
-
             }
-
             
-
             .loading-spinner-wrapper {
-
                 width: 100px;
-
                 height: 100px;
-
             }
-
             
-
             .loading-text {
-
                 font-size: 13px;
-
             }
-
             
-
             .loading-progress {
-
                 max-width: 250px;
-
             }
-
         }
-
     </style>
-
 </head>
-
 <body>
-
     <!-- Enhanced Loading Screen with load.png Background -->
-
     <div class="loading-overlay" id="loadingOverlay">
-
         <div class="loading-content">
-
             <div class="loading-logo-container">
-
                 <div class="loading-logo">CX ODYSSEY</div>
-
                 <div class="loading-subtitle">Rise of the Collectors</div>
-
             </div>
-
             <div class="loading-spinner-wrapper">
-
                 <div class="spinner-orbit">
-
                     <div class="spinner-planet"></div>
-
                 </div>
-
                 <div class="spinner-orbit orbit-2">
-
                     <div class="spinner-planet planet-2"></div>
-
                 </div>
-
                 <div class="spinner-orbit orbit-3">
-
                     <div class="spinner-planet planet-3"></div>
-
                 </div>
-
             </div>
-
             <div class="loading-text" id="loadingText">Initializing Game...</div>
-
             <div class="loading-progress">
-
                 <div class="loading-progress-bar" id="loadingProgressBar"></div>
-
             </div>
-
         </div>
-
     </div>
 
-
-
     <div class="game-container">
-
         <div class="stars" id="starfield"></div>
 
-
-
         <!-- Galaxy Screen -->
-
         <div class="screen" id="galaxyScreen">
-
             <div class="header">
-
                 <div class="logo">CX ODYSSEY</div>
-
                 <div class="resources">
-
-                    <div class="resource">⚡ <span id="energy">100</span></div>
-
                     <div class="resource">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/energy.png" alt="Energy" style="width: 20px; height: 20px;">
+                        <span id="energy">100</span>
+                    </div>
+                    <div class="resource">
                         <img src="https://cx-odyssey.github.io/CloneX/assets/shards.png" alt="Shards">
-
                         <span id="shards">0</span>
-
                     </div>
-
                     <div class="resource">
-
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP">
                         <span id="gp">0</span>
-
                     </div>
-
                 </div>
-
             </div>
-
             
-
             <div class="tg-user-info" id="tgUserInfo">
-
                 <img class="tg-avatar" id="tgAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23FFD700'/%3E%3Ctext x='50' y='65' text-anchor='middle' font-size='40' fill='%23000'%3E👤%3C/text%3E%3C/svg%3E">
-
                 <div>
-
                     <div id="tgUserName" style="font-weight: 700; font-size: 16px;">Explorer</div>
-
                     <div style="font-size: 12px; opacity: 0.8;">Level <span id="tgUserLevel">1</span></div>
-
                 </div>
-
             </div>
-
-
 
             <div class="galaxy-map">
-
                 <div class="planet planet-pyrion" onclick="selectPlanet('Pyrion', 1)" data-planet="pyrion">
-
                     <div class="planet-overlay"></div>
-
                     <div class="planet-info">
-
                         <div class="planet-name">🔥 Pyrion</div>
-
                         <div class="planet-desc">Fire World</div>
-
                     </div>
-
                 </div>
-
                 <div class="planet planet-aqueos" onclick="selectPlanet('Aqueos', 2)" data-planet="aqueos">
-
                     <div class="planet-overlay"></div>
-
                     <div class="planet-info">
-
                         <div class="planet-name">🌊 Aqueos</div>
-
                         <div class="planet-desc">Ocean World</div>
-
                     </div>
-
                 </div>
-
                 <div class="planet planet-voidex" onclick="selectPlanet('Voidex', 3)" data-planet="voidex">
-
                     <div class="planet-overlay"></div>
-
                     <div class="planet-info">
-
                         <div class="planet-name">🌌 Voidex</div>
-
                         <div class="planet-desc">Dark Matter</div>
-
                     </div>
-
                 </div>
-
                 <div class="planet planet-chloros" onclick="selectPlanet('Chloros', 4)" data-planet="chloros">
-
                     <div class="planet-overlay"></div>
-
                     <div class="planet-info">
-
                         <div class="planet-name">🌿 Chloros</div>
-
                         <div class="planet-desc">Bio World</div>
-
                     </div>
-
                 </div>
-
                 <div class="planet planet-aurelia" onclick="selectPlanet('Aurelia', 5)" data-planet="aurelia">
-
                     <div class="planet-overlay"></div>
-
                     <div class="planet-info">
-
                         <div class="planet-name">✨ Aurelia</div>
-
                         <div class="planet-desc">Gold Planet</div>
-
                     </div>
-
                 </div>
-
                 <div class="planet planet-crimson" onclick="selectPlanet('Crimson', 6)" data-planet="crimson">
-
                     <div class="planet-overlay"></div>
-
                     <div class="planet-info">
-
                         <div class="planet-name">⚔️ Crimson</div>
-
                         <div class="planet-desc">War Zone</div>
-
                     </div>
-
                 </div>
-
             </div>
-
-
 
             <div class="action-buttons">
-
                 <button class="action-btn" onclick="showScreen('bossScreen')">🐉 Boss Raid</button>
-
             </div>
-
         </div>
-
-
 
         <!-- Mining Screen -->
-
         <div class="screen" id="miningScreen">
-
             <div class="header">
-
                 <div class="logo">MINING: <span id="currentPlanet">Planet</span></div>
-
                 <div class="resources">
-
-                    <div class="resource">⚡ <span id="energyMining">100</span></div>
-
                     <div class="resource">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/energy.png" alt="Energy" style="width: 20px; height: 20px;">
+                        <span id="energyMining">100</span>
+                    </div>
+                    <div class="resource">
                         <img src="https://cx-odyssey.github.io/CloneX/assets/shards.png" alt="Shards">
-
                         <span id="shardsMining">0</span>
-
                     </div>
-
                     <div class="resource">
-
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP">
                         <span id="gpMining">0</span>
-
                     </div>
-
                 </div>
-
             </div>
-
-
 
             <div class="mining-container">
-
                 <div class="mining-planet" id="miningPlanet" onclick="minePlanet()">
-
                     <div class="mining-overlay">
-
                         <div class="mine-text">
-
                             <div class="mine-icon">⛏️</div>
-
                             <div class="mine-title">TAP TO MINE</div>
-
                             <div class="mine-reward">+<span id="mineReward">5</span> Shards</div>
-
                         </div>
-
                     </div>
-
                 </div>
-
-
 
                 <div class="energy-section">
-
                     <div class="energy-info">Energy: <span id="energyText">100/100</span></div>
-
                     <div class="energy-bar">
-
                         <div class="energy-fill" id="energyFill" style="width: 100%"></div>
-
                     </div>
-
                 </div>
-
-
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 400px; margin: 20px auto;">
-
                     <button class="action-btn" onclick="watchAdForEnergy()" id="adBtn" style="grid-column: 1 / -1; background: linear-gradient(135deg, #FF6B35, #FF073A); border: 2px solid #FFD700; position: relative; padding: 15px;">
-
                         <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-
                             <span style="font-size: 20px;">📺</span>
-
                             <div style="text-align: left;">
-
                                 <div style="font-size: 14px; font-weight: bold;">Watch Ad</div>
-
                                 <div style="font-size: 10px; opacity: 0.9;">+25 Energy + 2x Rewards (5min)</div>
-
                             </div>
-
                         </div>
-
                         <div style="position: absolute; top: 5px; right: 10px; background: var(--primary-gold); color: #000; padding: 2px 8px; border-radius: 10px; font-size: 9px; font-weight: bold;">BONUS!</div>
-
                     </button>
-
-
 
                     <button class="action-btn" onclick="battleAliens()" style="background: linear-gradient(135deg, #9C27B0, #6A1B9A);">
-
                         <span style="font-size: 16px;">⚔️</span> Battle
-
                         <div style="font-size: 10px; opacity: 0.8;">+30 GP</div>
-
                     </button>
-
-
 
                     <button class="action-btn" onclick="showScreen('galaxyScreen')" style="background: linear-gradient(135deg, #1A1A2E, #16213E);">
-
                         <span style="font-size: 16px;">🌌</span> Galaxy
-
                     </button>
-
                 </div>
-
-
 
                 <div style="text-align: center; margin-top: 15px; padding: 12px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 1px solid rgba(255,215,0,0.3);">
-
                     <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">⚡ Energy Recovery</div>
-
                     <div style="font-size: 13px; color: var(--primary-gold); font-weight: 600;">+1 Energy every 30 seconds</div>
-
                     <div style="font-size: 10px; color: var(--success-green); margin-top: 5px;">💡 Watch ads for instant +25 energy + temporary 2x boost!</div>
-
                 </div>
-
             </div>
-
         </div>
 
-
-
         <!-- Boss Screen -->
-
         <div class="screen" id="bossScreen">
-
             <div class="header">
-
                 <div class="logo">BOSS RAID</div>
-
                 <div class="resources">
-
-                    <div class="resource">⚡ <span id="energyBoss">100</span></div>
-
                     <div class="resource">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/energy.png" alt="Energy" style="width: 20px; height: 20px;">
+                        <span id="energyBoss">100</span>
+                    </div>
+                    <div class="resource">
                         <img src="https://cx-odyssey.github.io/CloneX/assets/shards.png" alt="Shards">
-
                         <span id="shardsBoss">0</span>
-
                     </div>
-
                     <div class="resource">
-
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP">
                         <span id="gpBoss">0</span>
-
                     </div>
-
                 </div>
-
             </div>
 
-
-
             <div class="boss-container">
-
                 <h2 class="boss-title" style="background: linear-gradient(135deg, var(--danger-red), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 24px; margin-bottom: 10px;">🐉 COSMIC OVERLORD 🐉</h2>
-
                 
-
                 <div style="background: rgba(255,7,58,0.1); border: 2px solid var(--danger-red); border-radius: 15px; padding: 15px; margin-bottom: 20px; text-align: center;">
-
                     <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Current Boss</div>
-
                     <div style="font-size: 18px; font-weight: bold; color: var(--danger-red);">Level 1 Overlord</div>
-
                     <div style="font-size: 11px; color: var(--primary-gold); margin-top: 5px;">Defeat for 150-250 GP!</div>
-
                 </div>
-
-
 
                 <div class="boss-image" onclick="attackBoss()" style="border: 4px solid var(--danger-red); box-shadow: 0 0 30px rgba(255,7,58,0.4); animation: bossPulse 2s ease-in-out infinite;">👹</div>
 
-
-
                 <div class="boss-health-section">
-
                     <div class="boss-health-text">Boss Health: <span id="bossHealthText">500/500</span></div>
-
                     <div class="boss-health">
-
                         <div class="boss-health-fill" id="bossHealthFill" style="width: 100%"></div>
-
                     </div>
-
                 </div>
-
-
 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; max-width: 400px; margin: 20px auto;">
-
                     <button class="action-btn" onclick="attackBoss()" style="grid-column: 1 / -1; background: linear-gradient(135deg, var(--danger-red), #B71C1C); font-size: 16px; padding: 18px;">
-
                         ⚔️ ATTACK BOSS!
-
                     </button>
-
-
 
                     <button class="action-btn" onclick="watchAdForDamage()" style="background: linear-gradient(135deg, #FF6B35, #FF073A); border: 2px solid var(--primary-gold); position: relative;">
-
                         📺 Ad
-
                         <div style="font-size: 10px; opacity: 0.9;">2x Damage (3 hits)</div>
-
                         <div style="position: absolute; top: 3px; right: 5px; background: var(--primary-gold); color: #000; padding: 1px 5px; border-radius: 8px; font-size: 8px; font-weight: bold;">BOOST</div>
-
                     </button>
-
-
 
                     <button class="action-btn" onclick="showScreen('galaxyScreen')" style="background: linear-gradient(135deg, #1A1A2E, #16213E);">
-
                         🌌 Galaxy
-
                     </button>
-
                 </div>
-
-
 
                 <div class="player-damage-display" style="background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,107,53,0.1)); border: 2px solid var(--primary-gold); padding: 15px;">
-
                     <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Your Total Damage</div>
-
                     <div style="font-size: 28px; font-weight: bold; color: var(--primary-gold);"><span id="playerDamage">0</span></div>
-
                 </div>
-
-
 
                 <div style="margin-top: 20px; padding: 12px; background: rgba(114,9,183,0.1); border-radius: 12px; border: 1px solid var(--accent-purple);">
-
                     <div style="font-size: 11px; color: rgba(255,255,255,0.7); margin-bottom: 8px;">💡 Boss Tips</div>
-
                     <div style="font-size: 10px; color: rgba(255,255,255,0.8); line-height: 1.5;">
-
                         • Watch ads for 2x damage (3 attacks)<br>
-
                         • Upgrade damage in shop for stronger attacks<br>
-
                         • Defeat bosses for massive GP rewards!
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
 
-
-
-        <!-- Shop Screen (continuing from previous code...) -->
-
+        <!-- Shop Screen -->
         <div class="screen" id="shopScreen">
-
             <div class="header">
-
                 <div class="logo">SHOP & UPGRADES</div>
-
                 <div class="resources">
-
                     <div class="resource">
-
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP">
                         <span id="gpShop">0</span>
-
                     </div>
-
                     <div class="resource">
-
                         <img src="https://cx-odyssey.github.io/CloneX/assets/shards.png" alt="Shards">
-
                         <span id="shardsShop">0</span>
-
                     </div>
-
                 </div>
-
             </div>
-
-
 
             <div class="shop-tabs">
-
                 <button class="shop-tab active" id="itemsShopTab" onclick="switchShopTab('items')">
-
                     Items & Upgrades
-
                 </button>
-
                 <button class="shop-tab premium-tab" id="premiumShopTab" onclick="switchShopTab('premium')">
-
                     Premium (TON)
-
                 </button>
-
             </div>
-
-
 
             <div id="shopContent">
-
                 <div class="shop-grid" id="itemsShopContent">
-
                     <div class="shop-item" onclick="window.showShopItemModal('speed'); return false;">
-
                         <div class="shop-icon">🚀</div>
-
                         <div class="shop-title">Speed Boost</div>
-
                         <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: none;">
-
                             <span id="speedCost" style="font-size: 14px; font-weight: 600;">50</span>
-
-                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
-
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-
                         <div class="shop-desc" style="pointer-events: none;">+20% Mining Speed</div>
-
                     </div>
-
                     <div class="shop-item" onclick="window.showShopItemModal('damage'); return false;">
-
                         <div class="shop-icon">⚔️</div>
-
                         <div class="shop-title">Damage Boost</div>
-
                         <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: none;">
-
                             <span id="damageCost" style="font-size: 14px; font-weight: 600;">75</span>
-
-                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
-
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-
                         <div class="shop-desc" style="pointer-events: none;">+30% Battle Damage</div>
-
                     </div>
-
                     <div class="shop-item" onclick="window.showShopItemModal('energy'); return false;">
-
                         <div class="shop-icon">⚡</div>
-
                         <div class="shop-title">Energy Tank</div>
-
                         <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: none;">
-
                             <span id="energyCost" style="font-size: 14px; font-weight: 600;">100</span>
-
-                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
-
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-
                         <div class="shop-desc" style="pointer-events: none;">+25 Max Energy</div>
-
                     </div>
-
                     <div class="shop-item" onclick="window.showShopItemModal('multiplier'); return false;">
-
                         <div class="shop-icon">💰</div>
-
                         <div class="shop-title">GP Multiplier</div>
-
                         <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px; pointer-events: none;">
-
                             <span id="multiplierCost" style="font-size: 14px; font-weight: 600;">200</span>
-
-                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
-
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-
                         <div class="shop-desc" style="pointer-events: none;">+50% GP Gain</div>
-
                     </div>
-
                     
-
                     <div class="shop-item" onclick="showShopItemModal('energyPotion')">
-
                         <div class="shop-icon">🧪</div>
-
                         <div class="shop-title">Energy Potion</div>
-
                         <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-
                             <span style="font-size: 14px; font-weight: 600;">150</span>
-
-                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
-
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-
                         <div class="shop-desc">Instant +50 Energy</div>
-
                     </div>
-
                     <div class="shop-item" onclick="showShopItemModal('shardBooster')">
-
                         <div class="shop-icon">💠</div>
-
                         <div class="shop-title">Shard Booster</div>
-
                         <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-
                             <span style="font-size: 14px; font-weight: 600;">300</span>
-
-                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
-
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-
                         <div class="shop-desc">2x Shards (1 hour)</div>
-
                     </div>
-
                     <div class="shop-item" onclick="showShopItemModal('gpBooster')">
-
                         <div class="shop-icon">🎯</div>
-
                         <div class="shop-title">GP Booster</div>
-
                         <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-
                             <span style="font-size: 14px; font-weight: 600;">400</span>
-
-                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
-
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-
                         <div class="shop-desc">2x GP (1 hour)</div>
-
                     </div>
-
                     <div class="shop-item" onclick="showShopItemModal('luckyCharm')">
-
                         <div class="shop-icon">🍀</div>
-
                         <div class="shop-title">Lucky Charm</div>
-
                         <div class="shop-cost" style="display: flex; align-items: center; justify-content: center; gap: 4px;">
-
                             <span style="font-size: 14px; font-weight: 600;">500</span>
-
-                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
-
+                            <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 20px; height: 20px; object-fit: contain;">
                         </div>
-
                         <div class="shop-desc">+50% Drop Rate (1 hour)</div>
-
                     </div>
-
                 </div>
-
-
 
                 <div class="shop-grid" id="premiumShopContent" style="display: none;"></div>
-
             </div>
-
         </div>
-
-
 
         <!-- Tasks Screen -->
-
         <div class="screen" id="tasksScreen">
-
             <div class="header">
-
                 <div class="logo">TASKS & MISSIONS</div>
-
                 <div class="resources">
-
                     <div class="resource">✅ <span id="completedTasks">0</span>/8</div>
-
                 </div>
-
             </div>
-
-
 
             <div class="daily-rewards-banner" onclick="showDailyRewardsModal()">
-
                 <div class="banner-icon">📅</div>
-
                 <div class="banner-content">
-
                     <div class="banner-title">Daily Rewards</div>
-
                     <div class="banner-desc">Claim your streak bonus!</div>
-
                 </div>
-
                 <div class="banner-arrow">→</div>
-
             </div>
-
-
 
             <div class="balance-section">
-
                 <div class="balance-label">Your balance</div>
-
                 <div class="balance-display">
-
                     <div class="balance-icon">
-
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP">
                     </div>
-
                     <div class="balance-amount" id="taskBalanceDisplay">0</div>
-
                 </div>
-
             </div>
-
-
 
             <div class="task-tabs">
-
                 <button class="task-tab active" id="tasksTab" onclick="switchTaskTab('tasks')">Tasks</button>
-
                 <button class="task-tab" id="mainTasksTab" onclick="switchTaskTab('main')">Main Tasks</button>
-
             </div>
-
-
 
             <div id="taskContent"></div>
-
         </div>
-
-
 
         <!-- Mini-Games Screen -->
-
         <div class="screen" id="minigamesScreen">
-
             <div class="header">
-
                 <div class="logo">MINI-GAMES HUB</div>
-
                 <div class="resources">
-
                     <div class="resource">
-
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP">
                         <span id="gpMinigames">0</span>
-
                     </div>
-
                     <div class="resource">
-
                         🎫 <span id="gameTickets">3</span>
-
                         <div class="ticket-cooldown" id="ticketCooldown"></div>
-
                     </div>
-
                 </div>
-
             </div>
-
-
 
             <div class="minigame-container">
-
                 <div class="minigame-header">
-
                     <div class="minigame-icon">🔮</div>
-
                     <h3 class="minigame-title">Daily Combo Code</h3>
-
                     <p class="minigame-description">Crack today's secret 4-digit code!</p>
-
                 </div>
-
-
 
                 <div class="combo-display">
-
                     <input type="text" class="combo-digit" maxlength="1" id="combo1" readonly>
-
                     <input type="text" class="combo-digit" maxlength="1" id="combo2" readonly>
-
                     <input type="text" class="combo-digit" maxlength="1" id="combo3" readonly>
-
                     <input type="text" class="combo-digit" maxlength="1" id="combo4" readonly>
-
                 </div>
-
-
 
                 <div class="combo-keypad">
-
                     <button class="combo-key" onclick="inputComboDigit('1')">1</button>
-
                     <button class="combo-key" onclick="inputComboDigit('2')">2</button>
-
                     <button class="combo-key" onclick="inputComboDigit('3')">3</button>
-
                     <button class="combo-key" onclick="inputComboDigit('4')">4</button>
-
                     <button class="combo-key" onclick="inputComboDigit('5')">5</button>
-
                     <button class="combo-key" onclick="inputComboDigit('6')">6</button>
-
                     <button class="combo-key" onclick="inputComboDigit('7')">7</button>
-
                     <button class="combo-key" onclick="inputComboDigit('8')">8</button>
-
                     <button class="combo-key" onclick="inputComboDigit('9')">9</button>
-
                     <button class="combo-key clear-btn" onclick="clearCombo()">Clear</button>
-
                     <button class="combo-key" onclick="inputComboDigit('0')">0</button>
-
                     <button class="combo-key submit-btn" onclick="submitCombo()">Submit</button>
-
                 </div>
-
-
 
                 <div class="combo-info">
-
                     <div class="info-row">
-
                         <span>Attempts:</span>
-
                         <span class="info-value"><span id="comboAttempts">3</span>/3</span>
-
                     </div>
-
                     <div class="info-row">
-
                         <span>Reward:</span>
-
                         <span class="info-value gold">100 GP</span>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
-
 
         <!-- Profile Screen -->
-
         <div class="screen" id="profileScreen">
-
             <div class="header">
-
                 <div class="logo">COMMAND CENTER</div>
-
                 <div class="resources">
-
                     <div class="resource">
-
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP">
                         <span id="profileGP">0</span>
-
                     </div>
-
                 </div>
-
             </div>
-
-
 
             <div class="balance-section">
-
                 <div class="balance-label">Your balance</div>
-
                 <div class="balance-display">
-
                     <div class="balance-icon">
-
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp1.png" alt="GP">
-
+                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP">
                     </div>
-
                     <div class="balance-amount" id="profileBalanceDisplay">0</div>
-
                 </div>
-
             </div>
-
-
 
             <div class="profile-tabs">
-
                 <button class="profile-tab active" id="referralTab" onclick="switchProfileTab('referral')">Referral</button>
-
                 <button class="profile-tab" id="achievementsTab" onclick="switchProfileTab('achievements')">Achievements</button>
-
                 <button class="profile-tab" id="leaderboardTab" onclick="switchProfileTab('leaderboard')">Leaderboard</button>
-
                 <button class="profile-tab" id="walletTab" onclick="switchProfileTab('wallet')">Wallet</button>
-
             </div>
-
-
 
             <div id="profileContent"></div>
-
         </div>
-
-
 
         <!-- Navigation Bar -->
-
         <div class="nav-bar">
-
             <button class="nav-btn active" onclick="showScreen('galaxyScreen')">
-
                 <div class="nav-icon">🌌</div>
-
                 <div class="nav-label">Galaxy</div>
-
             </button>
-
             <button class="nav-btn" onclick="showScreen('shopScreen')">
-
                 <div class="nav-icon">🛒</div>
-
                 <div class="nav-label">Shop</div>
-
             </button>
-
             <button class="nav-btn" onclick="showScreen('minigamesScreen')">
-
                 <div class="nav-icon">🎮</div>
-
                 <div class="nav-label">Games</div>
-
             </button>
-
             <button class="nav-btn" onclick="showScreen('tasksScreen')">
-
                 <div class="nav-icon">📋</div>
-
                 <div class="nav-label">Tasks</div>
-
             </button>
-
             <button class="nav-btn" onclick="showScreen('profileScreen')">
-
                 <div class="nav-icon">👤</div>
-
                 <div class="nav-label">Profile</div>
-
             </button>
-
         </div>
-
-
 
         <!-- Modals -->
-
         <div class="modal" id="adModal">
-
             <div class="modal-content">
-
                 <button class="close-btn" onclick="closeModal('adModal')">&times;</button>
-
                 <h2 class="modal-title">🎬 Watch Ad</h2>
-
                 <p class="modal-text">Watch this short video to get your reward!</p>
-
                 <div class="ad-video">📺</div>
-
                 <div class="ad-progress-section">
-
                     <div class="ad-progress-bar">
-
                         <div id="adProgress" class="ad-progress-fill"></div>
-
                     </div>
-
                     <div class="ad-time-text">Ad progress: <span id="adTime">0</span>/5 seconds</div>
-
                 </div>
-
                 <button class="action-btn" onclick="skipAd()" id="skipBtn" style="display: none;">✅ Claim Reward</button>
-
             </div>
-
         </div>
-
-
 
         <div class="modal" id="rewardModal">
-
             <div class="modal-content">
-
                 <button class="close-btn" onclick="closeModal('rewardModal')">&times;</button>
-
                 <h2 class="modal-title">🎉 Reward Earned!</h2>
-
                 <div class="reward-icon" id="rewardIcon">💎</div>
-
                 <div class="reward-text" id="rewardText">+25 GP</div>
-
                 <p class="modal-text">Keep collecting to unlock more rewards!</p>
-
                 <button class="action-btn" onclick="closeModal('rewardModal')">Continue</button>
-
             </div>
-
         </div>
-
-
 
         <div class="modal" id="upgradeModal">
-
             <div class="modal-content">
-
                 <button class="close-btn" onclick="closeModal('upgradeModal')">&times;</button>
-
                 <h2 class="modal-title">🚀 Upgrade Complete!</h2>
-
                 <div class="upgrade-icon" id="upgradeIcon">⚡</div>
-
                 <div class="upgrade-text" id="upgradeText">Speed boost activated!</div>
-
                 <p class="modal-text">Your ship is now more powerful!</p>
-
                 <button class="action-btn" onclick="closeModal('upgradeModal')">Awesome!</button>
-
             </div>
-
         </div>
-
     </div>
 
-
-
     <style>
-
     @keyframes bossPulse {
-
         0%, 100% { box-shadow: 0 0 30px rgba(255,7,58,0.4); transform: scale(1); }
-
         50% { box-shadow: 0 0 50px rgba(255,7,58,0.8); transform: scale(1.02); }
-
     }
-
     </style>
 
-
-
-    <!-- Image Preloader Script - Loads before game initializes -->
-
+    <!-- Image Preloader Script -->
     <script>
-
-        // Preload all critical images during loading screen
-
         window.imagePreloader = {
-
             images: [
-
-                'https://cx-odyssey.github.io/CloneX/assets/background.png',
-
                 'https://cx-odyssey.github.io/CloneX/assets/load.png',
-
-                'https://cx-odyssey.github.io/CloneX/assets/bgpyrion.png',
-
-                'https://cx-odyssey.github.io/CloneX/assets/bgaqueous.png',
-
-                'https://cx-odyssey.github.io/CloneX/assets/bgvoidex.png',
-
-                'https://cx-odyssey.github.io/CloneX/assets/bgchloros.png',
-
-                'https://cx-odyssey.github.io/CloneX/assets/bgaurelia.png',
-
-                'https://cx-odyssey.github.io/CloneX/assets/bgcrimson.png',
-
+                'https://cx-odyssey.github.io/CloneX/assets/background.png',
+                'https://cx-odyssey.github.io/CloneX/assets/gp.png',
                 'https://cx-odyssey.github.io/CloneX/assets/shards.png',
-
-                'https://cx-odyssey.github.io/CloneX/assets/gp1.png',
-
-                'https://cx-odyssey.github.io/CloneX/assets/ton.png'
-
+                'https://cx-odyssey.github.io/CloneX/assets/energy.png'
             ],
-
             loaded: 0,
-
             total: 0,
-
             
-
             init: function() {
-
                 this.total = this.images.length;
-
                 console.log(`🖼️ Preloading ${this.total} images...`);
-
                 
-
                 this.images.forEach(src => {
-
                     const img = new Image();
-
                     img.onload = () => this.onImageLoad(src);
-
                     img.onerror = () => this.onImageError(src);
-
                     img.src = src;
-
                 });
-
             },
-
             
-
             onImageLoad: function(src) {
-
                 this.loaded++;
-
                 console.log(`✅ Loaded: ${src} (${this.loaded}/${this.total})`);
-
                 this.updateProgress();
-
             },
-
             
-
             onImageError: function(src) {
-
                 this.loaded++;
-
                 console.warn(`⚠️ Failed to load: ${src}`);
-
                 this.updateProgress();
-
             },
-
             
-
             updateProgress: function() {
-
                 const progressBar = document.getElementById('loadingProgressBar');
-
                 const loadingText = document.getElementById('loadingText');
-
                 
-
                 if (progressBar && loadingText) {
-
                     const percent = Math.floor((this.loaded / this.total) * 100);
-
                     progressBar.style.width = percent + '%';
-
                     
-
                     if (this.loaded < this.total) {
-
                         loadingText.textContent = `Loading assets... ${this.loaded}/${this.total}`;
-
                     } else {
-
                         loadingText.textContent = 'Assets loaded! Initializing game...';
-
                         console.log('✅ All images preloaded successfully!');
-
                         
-
-                        // Small delay to ensure everything is ready
-
                         setTimeout(() => {
-
                             if (window.gameInitializer) {
-
                                 window.gameInitializer.initialize();
-
                             }
-
                         }, 500);
-
                     }
-
                 }
-
             }
-
         };
-
         
-
-        // Start preloading immediately
-
         if (document.readyState === 'loading') {
-
             document.addEventListener('DOMContentLoaded', () => {
-
                 window.imagePreloader.init();
-
             });
-
         } else {
-
             window.imagePreloader.init();
-
         }
-
     </script>
 
-
-
     <script src="js/gameState.js"></script>
-
     <script src="js/backend.js"></script>
-
     <script src="js/premiumPrices.js"></script>
-
     <script src="js/wallet.js"></script>
-
     <script src="js/ui.js"></script>
-
     <script src="js/mining.js"></script>
-
     <script src="js/tasks.js"></script>
-
     <script src="js/shop.js"></script>
-
     <script src="js/main.js"></script>
-
 </body>
-
 </html>
