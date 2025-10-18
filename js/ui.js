@@ -1,4 +1,4 @@
-// Main UI Controller
+// ui.js - FIXED: Removed task counter, fixed resource display on all screens
 
 class UIController {
     constructor() {
@@ -114,11 +114,13 @@ class UIController {
     }
 
     updateResources(gameState) {
+        // FIXED: Update ALL screen resources properly
         const resourceElements = {
-            energy: document.querySelectorAll('#energy, #energyMining'),
-            shards: document.querySelectorAll('#shards, #shardsMining, #shardsShop'),
-            gp: document.querySelectorAll('#gp, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpProfile')
+            energy: document.querySelectorAll('#energy, #energyMining, #energyBoss'),
+            shards: document.querySelectorAll('#shards, #shardsMining, #shardsBoss'),
+            gp: document.querySelectorAll('#gp, #gpMining, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpProfile')
         };
+        
         resourceElements.energy.forEach(el => {
             if (el) el.textContent = gameState.energy;
         });
@@ -128,6 +130,7 @@ class UIController {
         resourceElements.gp.forEach(el => {
             if (el) el.textContent = gameState.gp.toLocaleString();
         });
+
         const balanceElements = document.querySelectorAll('#taskBalanceDisplay, #profileBalanceDisplay');
         balanceElements.forEach(el => {
             if (el) el.textContent = gameState.gp.toLocaleString();
@@ -194,7 +197,6 @@ class UIController {
         }
     }
 
-    // FIXED: Update only numbers, not the entire cost element (images stay)
     updateShopCosts(gameState) {
         const costs = {
             speed: 50 * Math.pow(2, gameState.upgrades.speed),
@@ -203,11 +205,10 @@ class UIController {
             multiplier: 200 * Math.pow(2, gameState.upgrades.multiplier)
         };
         
-        // Update ONLY the number span, not the entire cost div
         Object.keys(costs).forEach(upgrade => {
             const costEl = document.getElementById(`${upgrade}Cost`);
             if (costEl) {
-                costEl.textContent = costs[upgrade]; // Just the number
+                costEl.textContent = costs[upgrade];
             }
         });
     }
@@ -379,37 +380,12 @@ class UIController {
 
 window.uiController = new UIController();
 
+// Modal functions remain the same...
 function showDailyRewardsModal() {
-    const modal = document.getElementById('dailyRewardsModal');
-    const gameState = window.gameState?.get();
-    if (!gameState) return;
-    const streak = gameState.dailyStreak || 1;
-    document.getElementById('currentStreak').textContent = streak;
-    const rewardDays = document.querySelectorAll('.reward-day');
-    rewardDays.forEach((day, index) => {
-        const dayNum = index + 1;
-        day.classList.remove('claimed', 'current');
-        if (dayNum < streak) {
-            day.classList.add('claimed');
-        } else if (dayNum === streak) {
-            day.classList.add('current');
-        }
-    });
-    const claimStatus = document.getElementById('claimStatus');
-    if (gameState.dailyTasks?.login) {
-        claimStatus.innerHTML = `
-            <div class="status-icon">✅</div>
-            <div class="status-text">Already claimed today!</div>
-            <div class="status-subtext">Come back tomorrow for Day ${streak + 1}</div>
-        `;
-    } else {
-        claimStatus.innerHTML = `
-            <div class="status-icon">🎁</div>
-            <div class="status-text">Reward Available!</div>
-            <div class="status-subtext">Your daily reward has been automatically claimed</div>
-        `;
+    // This function is now in tasks.js
+    if (window.showDailyRewardsModal) {
+        window.showDailyRewardsModal();
     }
-    modal.classList.add('active');
 }
 
 function openTaskModal(taskType) {
@@ -484,10 +460,7 @@ function completeTask(taskType) {
 
 function showShopItemModal(itemType) {
     const gameState = window.gameState?.get();
-    
-    // Define all shop items including upgrades
     const items = {
-        // UPGRADES
         speed: {
             name: 'Speed Boost',
             icon: '🚀',
@@ -520,7 +493,6 @@ function showShopItemModal(itemType) {
             cost: () => 200 * Math.pow(2, gameState.upgrades.multiplier),
             isUpgrade: true
         },
-        // CONSUMABLES
         energyPotion: {
             name: 'Energy Potion',
             icon: '🧪',
@@ -554,11 +526,9 @@ function showShopItemModal(itemType) {
     const item = items[itemType];
     if (!item) return;
     
-    // Calculate cost (handle function costs for upgrades)
     const itemCost = typeof item.cost === 'function' ? item.cost() : item.cost;
     const canAfford = gameState && gameState.gp >= itemCost;
 
-    // Create modal
     const modal = document.createElement('div');
     modal.className = 'modal active';
     modal.id = 'shopItemModal';
@@ -638,14 +608,11 @@ function closeShopItemModal() {
 }
 
 function purchaseShopItem(itemType) {
-    // Check if it's an upgrade or consumable
     const upgradeTypes = ['speed', 'damage', 'energy', 'multiplier'];
     
     if (upgradeTypes.includes(itemType)) {
-        // It's an upgrade - use buyUpgrade from mining system
         window.miningSystem?.buyUpgrade(itemType);
     } else {
-        // It's a consumable - use shop system
         window.shopSystem?.buyShopItem(itemType);
     }
     
