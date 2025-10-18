@@ -557,41 +557,41 @@
             </div>
         </div>
 
-        <!-- Tasks Screen -->
-        <div class="screen" id="tasksScreen">
-            <div class="header">
-                <div class="logo">TASKS & MISSIONS</div>
-                <div class="resources">
-                    <div class="resource">✅ <span id="completedTasks">0</span>/8</div>
-                </div>
-            </div>
-
-            <div class="daily-rewards-banner" onclick="showDailyRewardsModal()">
-                <div class="banner-icon">📅</div>
-                <div class="banner-content">
-                    <div class="banner-title">Daily Rewards</div>
-                    <div class="banner-desc">Claim your streak bonus!</div>
-                </div>
-                <div class="banner-arrow">→</div>
-            </div>
-
-            <div class="balance-section">
-                <div class="balance-label">Your balance</div>
-                <div class="balance-display">
-                    <div class="balance-icon">
-                        <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP">
-                    </div>
-                    <div class="balance-amount" id="taskBalanceDisplay">0</div>
-                </div>
-            </div>
-
-            <div class="task-tabs">
-                <button class="task-tab active" id="tasksTab" onclick="switchTaskTab('tasks')">Tasks</button>
-                <button class="task-tab" id="mainTasksTab" onclick="switchTaskTab('main')">Main Tasks</button>
-            </div>
-
-            <div id="taskContent"></div>
+<!-- FIXED: Tasks Screen Header - Removed ✅ 0/8 counter -->
+<div class="screen" id="tasksScreen">
+    <div class="header">
+        <div class="logo">TASKS & MISSIONS</div>
+        <div class="resources">
+            <!-- REMOVED: Task counter div -->
         </div>
+    </div>
+
+    <div class="daily-rewards-banner" onclick="showDailyRewardsModal()">
+        <div class="banner-icon">📅</div>
+        <div class="banner-content">
+            <div class="banner-title">Daily Rewards</div>
+            <div class="banner-desc">Claim your streak bonus!</div>
+        </div>
+        <div class="banner-arrow">→</div>
+    </div>
+
+    <div class="balance-section">
+        <div class="balance-label">Your balance</div>
+        <div class="balance-display">
+            <div class="balance-icon">
+                <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP">
+            </div>
+            <div class="balance-amount" id="taskBalanceDisplay">0</div>
+        </div>
+    </div>
+
+    <div class="task-tabs">
+        <button class="task-tab active" id="tasksTab" onclick="switchTaskTab('tasks')">Tasks</button>
+        <button class="task-tab" id="mainTasksTab" onclick="switchTaskTab('main')">Main Tasks</button>
+    </div>
+
+    <div id="taskContent"></div>
+</div>
 
         <!-- Mini-Games Screen -->
         <div class="screen" id="minigamesScreen">
@@ -835,3 +835,4 @@
     <script src="js/main.js"></script>
 </body>
 </html>
+
