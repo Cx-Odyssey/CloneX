@@ -1,4 +1,4 @@
-// tasks.js - FIXED: Daily login rewards now working properly
+// tasks.js - COMPLETE FIXED VERSION with proper daily rewards and real logos
 
 // Achievement Definitions
 const ACHIEVEMENTS = {
@@ -177,13 +177,13 @@ class AchievementManager {
     }
 }
 
-// Main Tasks Configuration - Social tasks moved to top
+// Main Tasks Configuration - Social tasks with REAL LOGOS
 const MAIN_TASKS = [
     {
         id: 'telegram',
         title: 'Join Telegram Community',
         description: 'Subscribe to our official channel',
-        icon: '📱',
+        icon: 'telegram',
         reward: 500,
         requirement: { type: 'social_task', value: 1 },
         isSocialTask: true,
@@ -193,7 +193,7 @@ const MAIN_TASKS = [
         id: 'twitter',
         title: 'Follow on X (Twitter)',
         description: 'Follow us on X for updates',
-        icon: '🐦',
+        icon: 'twitter',
         reward: 500,
         requirement: { type: 'social_task', value: 1 },
         isSocialTask: true,
@@ -286,8 +286,6 @@ class TasksManager {
     }
 
     getTasksHTML() {
-        // REMOVED: Social tasks no longer appear in regular Tasks tab
-        // They only appear in Main Tasks tab now
         return `
             <div style="padding: 40px 20px; text-align: center;">
                 <div style="font-size: 48px; margin-bottom: 20px;">📋</div>
@@ -311,28 +309,31 @@ class TasksManager {
             const isUnlocked = isSocialTask ? true : this.checkRequirement(task.requirement, gameState);
             const progress = isSocialTask ? 0 : this.getProgress(task.requirement, gameState);
 
-            // Get logos for social tasks
-            const telegramLogo = `<svg width="32" height="32" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="tg-gradient-${task.id}" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#2AABEE;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#229ED9;stop-opacity:1" />
-                    </linearGradient>
-                </defs>
-                <circle cx="120" cy="120" r="120" fill="url(#tg-gradient-${task.id})"/>
-                <path fill="#fff" d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6z"/>
-                <path fill="#d2e5f1" d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763"/>
-                <path fill="#b5cfe4" d="M81.486 130.178l-17.8-5.467s-2.133-.905-1.395-2.947c.156-.425.371-.763.927-1.082 5.1-2.913 94.753-35.459 94.753-35.459s3.848-1.47 6.14-.968c.636.14 1.104.396 1.386 1.182.078.218.118.38.137.666.027.42-.006.948-.023 1.468-.135 4.138-3.755 74.635-3.755 74.635s-.214 3.5-3.232 3.66c-.99.052-2.373-.36-4.17-1.346-5.142-2.823-22.678-16.22-25.853-18.868-.85-.71-1.634-2.093.087-3.728 11.95-11.3 26.315-25.13 34.943-33.757 1.81-1.81 3.62-6.046-3.93-.93l-47.69 32.126s-2.593 1.615-7.446.18z"/>
-            </svg>`;
-            
-            const xLogo = `<svg width="32" height="32" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                <rect width="300" height="300" rx="60" fill="#000000"/>
-                <path fill="#ffffff" d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300.25h26.46l102.4-116.59 81.8 116.59h89.34M36.01 19.54H76.66l187.13 262.13h-40.66"/>
-            </svg>`;
+            // Get REAL logos for social tasks
+            const getLogo = (iconType) => {
+                if (iconType === 'telegram') {
+                    return `<svg width="32" height="32" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="tg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#2AABEE;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#229ED9;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <circle cx="120" cy="120" r="120" fill="url(#tg-grad)"/>
+                        <path fill="#fff" d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6z"/>
+                        <path fill="#d2e5f1" d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763"/>
+                        <path fill="#b5cfe4" d="M81.486 130.178l-17.8-5.467s-2.133-.905-1.395-2.947c.156-.425.371-.763.927-1.082 5.1-2.913 94.753-35.459 94.753-35.459s3.848-1.47 6.14-.968c.636.14 1.104.396 1.386 1.182.078.218.118.38.137.666.027.42-.006.948-.023 1.468-.135 4.138-3.755 74.635-3.755 74.635s-.214 3.5-3.232 3.66c-.99.052-2.373-.36-4.17-1.346-5.142-2.823-22.678-16.22-25.853-18.868-.85-.71-1.634-2.093.087-3.728 11.95-11.3 26.315-25.13 34.943-33.757 1.81-1.81 3.62-6.046-3.93-.93l-47.69 32.126s-2.593 1.615-7.446.18z"/>
+                    </svg>`;
+                } else if (iconType === 'twitter') {
+                    return `<svg width="32" height="32" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="300" height="300" rx="60" fill="#000000"/>
+                        <path fill="#ffffff" d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300.25h26.46l102.4-116.59 81.8 116.59h89.34M36.01 19.54H76.66l187.13 262.13h-40.66"/>
+                    </svg>`;
+                }
+                return `<span style="font-size: 32px;">${iconType}</span>`;
+            };
 
-            const taskIconDisplay = isSocialTask 
-                ? (task.id === 'telegram' ? telegramLogo : xLogo)
-                : `<span style="font-size: 32px;">${task.icon}</span>`;
+            const taskIconDisplay = isSocialTask ? getLogo(task.icon) : `<span style="font-size: 32px;">${task.icon}</span>`;
 
             return `
                 <div class="task-item" style="opacity: ${isCompleted ? 0.6 : 1};">
@@ -369,7 +370,6 @@ class TasksManager {
         
         switch (type) {
             case 'social_task':
-                // Social tasks don't have automatic completion requirements
                 return false;
             case 'level':
                 return Math.floor(gameState.gp / 100) + 1 >= value;
@@ -438,12 +438,14 @@ class TasksManager {
         const tasksTab = document.getElementById('tasksTab');
         const mainTasksTab = document.getElementById('mainTasksTab');
         
-        if (tab === 'tasks') {
-            tasksTab?.classList.add('active');
-            mainTasksTab?.classList.remove('active');
-        } else {
-            mainTasksTab?.classList.add('active');
-            tasksTab?.classList.remove('active');
+        [tasksTab, mainTasksTab].forEach(t => {
+            if (t) t.classList.remove('active');
+        });
+        
+        if (tab === 'tasks' && tasksTab) {
+            tasksTab.classList.add('active');
+        } else if (tab === 'main' && mainTasksTab) {
+            mainTasksTab.classList.add('active');
         }
         
         this.renderContent();
@@ -929,7 +931,7 @@ class MinigamesManager {
     }
 }
 
-// FIXED: Daily Rewards Modal that actually works
+// FIXED: Daily Rewards Modal
 function showDailyRewardsModal() {
     const gameState = window.gameState;
     if (!gameState) return;
@@ -951,7 +953,8 @@ function showDailyRewardsModal() {
     
     const currentStreak = Math.min(state.dailyStreak || 1, 7);
     const today = new Date().toISOString().split('T')[0];
-    const canClaim = state.lastDailyReset !== today;
+    const lastClaim = state.lastDailyClaim || '';
+    const canClaim = lastClaim !== today;
     
     modal.innerHTML = `
         <div class="modal-content">
@@ -1030,18 +1033,19 @@ function claimDailyReward() {
     
     const currentStreak = Math.min(state.dailyStreak || 1, 7);
     const reward = streakRewards[currentStreak - 1];
+    const today = new Date().toISOString().split('T')[0];
     
     gameState.update({
         gp: state.gp + reward.gp,
         gameTickets: Math.min(10, state.gameTickets + reward.tickets),
-        lastDailyReset: new Date().toISOString().split('T')[0],
+        lastDailyClaim: today,
         dailyStreak: currentStreak === 7 ? 1 : currentStreak + 1,
-        totalGPEarned: (state.totalGPEarned || state.gp) + reward.gp
+        totalGPEarned: (state.totalGPEarned || state.gp) + reward.gp,
+        dailyTasks: {
+            ...state.dailyTasks,
+            login: true
+        }
     });
-    
-    const dailyTasks = state.dailyTasks || {};
-    dailyTasks.login = true;
-    gameState.setValue('dailyTasks', dailyTasks);
     
     if (window.showNotification) {
         window.showNotification(`🎁 Claimed! +${reward.gp} GP${reward.tickets > 0 ? ` +${reward.tickets} 🎫` : ''}`);
@@ -1381,3 +1385,5 @@ if (typeof window !== 'undefined') {
     window.clearCombo = clearCombo;
     window.submitCombo = submitCombo;
 }
+
+console.log('✅ Tasks.js loaded successfully');
