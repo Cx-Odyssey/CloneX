@@ -1,4 +1,4 @@
-// wallet.js - TON Wallet Connection and Payment Manager (FIXED: Persistent UI)
+// wallet.js - TON Wallet with TESTNET Support
 
 class WalletManager {
     constructor() {
@@ -7,6 +7,9 @@ class WalletManager {
         this.walletAddress = null;
         this.pendingPurchases = new Map();
         this.isInitializing = false;
+        
+        // TESTNET MODE - Set to false for mainnet
+        this.isTestnet = true;
     }
 
     async initialize() {
@@ -17,11 +20,13 @@ class WalletManager {
 
         try {
             this.isInitializing = true;
-            console.log('🔗 Initializing TON Connect UI...');
+            console.log(`🔗 Initializing TON Connect UI (${this.isTestnet ? 'TESTNET' : 'MAINNET'})...`);
             
+            // TESTNET CONFIG
             this.tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
                 manifestUrl: 'https://cx-odyssey.github.io/CloneX/tonconnect-manifest.json',
-                buttonRootId: null
+                buttonRootId: null,
+                network: this.isTestnet ? 'testnet' : undefined // Enable testnet
             });
 
             this.tonConnectUI.onStatusChange(wallet => {
@@ -35,7 +40,7 @@ class WalletManager {
 
             await this.checkExistingConnection();
 
-            console.log('✅ TON Connect UI initialized');
+            console.log(`✅ TON Connect UI initialized (${this.isTestnet ? 'TESTNET' : 'MAINNET'})`);
             this.isInitializing = false;
             return true;
         } catch (error) {
@@ -55,11 +60,9 @@ class WalletManager {
             if (currentWallet && currentWallet.account) {
                 this.handleWalletConnected(currentWallet);
             } else {
-                // Check gameState for saved wallet
                 const gameState = window.gameState?.get();
                 if (gameState?.walletConnected && gameState?.walletAddress) {
                     console.log('⚠️ Wallet was connected but session expired');
-                    // Don't clear from gameState, just update UI
                     this.walletAddress = gameState.walletAddress;
                     this.isConnected = true;
                     this.updateWalletUI(this.toUserFriendlyAddress(gameState.walletAddress));
@@ -69,7 +72,6 @@ class WalletManager {
             }
         } catch (error) {
             console.error('Error checking wallet connection:', error);
-            // Try to restore from gameState
             const gameState = window.gameState?.get();
             if (gameState?.walletConnected && gameState?.walletAddress) {
                 this.walletAddress = gameState.walletAddress;
@@ -86,7 +88,7 @@ class WalletManager {
         this.walletAddress = wallet.account.address;
         
         const friendlyAddress = this.toUserFriendlyAddress(this.walletAddress);
-        console.log('✅ Wallet connected:', friendlyAddress);
+        console.log(`✅ Wallet connected (${this.isTestnet ? 'TESTNET' : 'MAINNET'}):`, friendlyAddress);
 
         this.updateWalletUI(friendlyAddress);
         this.saveWalletToBackend();
@@ -96,6 +98,11 @@ class WalletManager {
                 walletConnected: true,
                 walletAddress: this.walletAddress
             });
+        }
+        
+        // Show testnet warning
+        if (this.isTestnet && window.showNotification) {
+            window.showNotification('⚠️ TESTNET MODE - Using test TON');
         }
     }
 
@@ -134,6 +141,14 @@ class WalletManager {
             walletInfo.style.display = 'block';
             if (connectedAddress) {
                 connectedAddress.textContent = address;
+                
+                // Add testnet badge
+                if (this.isTestnet) {
+                    connectedAddress.innerHTML = `
+                        ${address}
+                        <div style="margin-top: 5px; font-size: 10px; background: var(--secondary-orange); color: #000; padding: 3px 8px; border-radius: 5px; display: inline-block;">TESTNET</div>
+                    `;
+                }
             }
         } else if (connectBtn && walletInfo) {
             connectBtn.style.display = 'block';
@@ -141,7 +156,6 @@ class WalletManager {
         }
     }
 
-    // FIXED: Call this on every profile tab switch
     refreshWalletUI() {
         const gameState = window.gameState?.get();
         if (gameState?.walletConnected && gameState?.walletAddress) {
@@ -177,7 +191,7 @@ class WalletManager {
         }
 
         try {
-            console.log('🔗 Opening wallet connection modal...');
+            console.log(`🔗 Opening wallet connection modal (${this.isTestnet ? 'TESTNET' : 'MAINNET'})...`);
             await this.tonConnectUI.openModal();
         } catch (error) {
             console.error('❌ Connection error:', error);
@@ -225,9 +239,14 @@ class WalletManager {
             return false;
         }
 
-        const recipientAddress = 'EQDte6-r3llgo8OsQ6_wGRzSmXM4cg2i1irWY5B35QATaOAI';
-        const tonAmount = item.price;
+        // TESTNET: Use smaller amounts for testing
+        const tonAmount = this.isTestnet ? Math.min(item.price, 0.1) : item.price;
         const nanotons = Math.floor(tonAmount * 1e9).toString();
+
+        // TESTNET RECIPIENT: Use your testnet wallet
+        const recipientAddress = this.isTestnet 
+            ? 'EQDte6-r3llgo8OsQ6_wGRzSmXM4cg2i1irWY5B35QATaOAI' // Change to YOUR testnet wallet
+            : 'EQDte6-r3llgo8OsQ6_wGRzSmXM4cg2i1irWY5B35QATaOAI';
 
         const transaction = {
             validUntil: Math.floor(Date.now() / 1000) + 600,
@@ -241,7 +260,8 @@ class WalletManager {
 
         try {
             if (window.showNotification) {
-                window.showNotification(`Sending ${tonAmount} TON for ${item.name}...`);
+                const mode = this.isTestnet ? ' (TESTNET)' : '';
+                window.showNotification(`Sending ${tonAmount} TON${mode} for ${item.name}...`);
             }
 
             const result = await this.tonConnectUI.sendTransaction(transaction);
@@ -254,7 +274,8 @@ class WalletManager {
                 amount: tonAmount,
                 timestamp: Date.now(),
                 userWallet: this.walletAddress,
-                boc: result.boc
+                boc: result.boc,
+                isTestnet: this.isTestnet
             });
 
             await this.verifyAndUnlockItem(purchaseId, itemId);
@@ -304,7 +325,8 @@ class WalletManager {
                         itemId: itemId,
                         userWalletAddress: purchase.userWallet,
                         expectedAmount: purchase.amount,
-                        timestamp: purchase.timestamp
+                        timestamp: purchase.timestamp,
+                        isTestnet: this.isTestnet // Send testnet flag
                     })
                 });
 
@@ -425,7 +447,8 @@ class WalletManager {
         purchases.push({
             itemId,
             timestamp: Date.now(),
-            txHash
+            txHash,
+            isTestnet: this.isTestnet
         });
         gameState.update({ premiumPurchases: purchases });
 
@@ -434,7 +457,8 @@ class WalletManager {
         }
 
         if (window.showNotification) {
-            window.showNotification(`${item.name} unlocked successfully!`);
+            const mode = this.isTestnet ? ' (TESTNET)' : '';
+            window.showNotification(`✅ ${item.name} unlocked${mode}!`);
         }
     }
 }
@@ -452,3 +476,5 @@ async function disconnectWallet() {
 async function buyPremiumItemTon(itemId) {
     await window.walletManager?.purchasePremiumItem(itemId);
 }
+
+console.log('✅ Wallet.js loaded (TESTNET MODE)');
