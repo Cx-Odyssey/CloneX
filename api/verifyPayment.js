@@ -1,3 +1,4 @@
+// verifyPayment.js - TESTNET Support
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -17,7 +18,7 @@ export default async function handler(req, res) {
 
   try {
     console.log('=== PAYMENT VERIFICATION START ===');
-    const { telegramId, itemId, userWalletAddress, expectedAmount, timestamp } = req.body;
+    const { telegramId, itemId, userWalletAddress, expectedAmount, timestamp, isTestnet } = req.body;
 
     if (!telegramId || !itemId || !userWalletAddress || !expectedAmount || !timestamp) {
       return res.status(400).json({ 
@@ -27,26 +28,41 @@ export default async function handler(req, res) {
     }
 
     const YOUR_WALLET = process.env.TON_WALLET_ADDRESS;
+    const TONAPI_KEY = process.env.TONAPI_KEY;
     
-    console.log('Checking payments to:', YOUR_WALLET);
+    if (!TONAPI_KEY) {
+      console.error('❌ TONAPI_KEY not configured!');
+      return res.status(500).json({ error: 'Server configuration error' });
+    }
+    
+    const network = isTestnet ? 'TESTNET' : 'MAINNET';
+    console.log(`Checking payments to: ${YOUR_WALLET} on ${network}`);
     console.log('Expected amount:', expectedAmount, 'TON');
     console.log('From wallet:', userWalletAddress);
 
-    // Query TON Console API for recent transactions
-    const response = await fetch(
-      `https://tonconsole.com/tonapi/v2/blockchain/accounts/${YOUR_WALLET}/transactions?limit=20`,
-      {
-        headers: {
-          'Authorization': `Bearer ${process.env.TONAPI_KEY}`
-        }
+    // TESTNET or MAINNET API endpoint
+    const apiUrl = isTestnet
+      ? `https://testnet.tonconsole.com/tonapi/v2/blockchain/accounts/${YOUR_WALLET}/transactions?limit=20`
+      : `https://tonconsole.com/tonapi/v2/blockchain/accounts/${YOUR_WALLET}/transactions?limit=20`;
+
+    console.log('API URL:', apiUrl);
+
+    // Query TON API
+    const response = await fetch(apiUrl, {
+      headers: {
+        'Authorization': `Bearer ${TONAPI_KEY}`
       }
-    );
+    });
 
     if (!response.ok) {
+      console.error(`TON API error: ${response.status}`);
+      const errorText = await response.text();
+      console.error('Error details:', errorText);
       throw new Error(`TON API error: ${response.status}`);
     }
 
     const data = await response.json();
+    console.log(`Found ${data.transactions?.length || 0} transactions`);
     
     let verified = false;
     let txHash = null;
@@ -78,16 +94,20 @@ export default async function handler(req, res) {
         normalizedTxFrom === normalizedUserWallet.replace('UQ', 'EQ') ||
         normalizedTxFrom.replace('UQ', 'EQ') === normalizedUserWallet;
       
-      // Check if amount matches (with 2% tolerance)
-      const amountMatch = txAmount >= expectedAmount * 0.98 && txAmount <= expectedAmount * 1.02;
+      // TESTNET: More lenient amount matching (allow smaller test amounts)
+      const tolerance = isTestnet ? 0.05 : 0.02; // 5% for testnet, 2% for mainnet
+      const amountMatch = txAmount >= expectedAmount * (1 - tolerance) && 
+                          txAmount <= expectedAmount * (1 + tolerance);
       
       // Check if time is within 10 minute window
       const timeMatch = Math.abs(txTime - timestamp) < 600000;
       
+      console.log('Match results:', { addressMatch, amountMatch, timeMatch });
+      
       if (addressMatch && amountMatch && timeMatch) {
         verified = true;
         txHash = tx.hash;
-        console.log('✅ Payment verified!');
+        console.log(`✅ Payment verified on ${network}!`);
         break;
       }
     }
@@ -123,7 +143,7 @@ export default async function handler(req, res) {
         console.log('Purchase already recorded (duplicate check)');
       }
     } else {
-      console.log('❌ Payment not found yet');
+      console.log(`❌ Payment not found yet on ${network}`);
     }
     
     console.log('=== PAYMENT VERIFICATION END ===');
@@ -132,6 +152,7 @@ export default async function handler(req, res) {
       success: true,
       verified,
       transactionHash: txHash || null,
+      network: network,
       message: verified ? 'Payment confirmed' : 'Payment not found yet'
     });
     
