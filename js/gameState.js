@@ -27,6 +27,7 @@ class GameState {
             totalReferrals: 0,
             referralEarnings: 0,
             lastDailyReset: '',
+            lastDailyClaim: '', // NEW: Track last claim date
             walletConnected: false,
             walletAddress: '',
             hasAutoMiner: false,
@@ -138,6 +139,7 @@ class GameState {
         }
     }
 
+    // FIXED: Removed duplicate daily login notification
     checkDailyReset() {
         const now = new Date();
         const todayUTC = now.toISOString().split('T')[0];
@@ -150,9 +152,10 @@ class GameState {
                                       this.data.dailyTasks.boss && 
                                       this.data.dailyTasks.combo;
             
+            // FIXED: No duplicate notification here - modal handles it
             this.update({
                 dailyTasks: { 
-                    login: true,
+                    login: false, // Reset to false, modal will claim it
                     mine: false, 
                     boss: false, 
                     combo: false 
@@ -163,18 +166,11 @@ class GameState {
                     comboAttempts: 0 
                 },
                 lastDailyReset: todayUTC,
-                gp: this.data.gp + 25,
-                totalGPEarned: (this.data.totalGPEarned || this.data.gp) + 25,
-                dailyStreak: (this.data.dailyStreak || 0) + 1,
                 dailyTasksCompleted: allTasksCompleted ? (this.data.dailyTasksCompleted || 0) + 1 : (this.data.dailyTasksCompleted || 0)
             });
             
             this.generateDailyCombo();
             this.checkAchievements();
-            
-            if (window.showNotification) {
-                window.showNotification(`Daily login reward: +25 GP! (Day ${this.data.dailyStreak})`);
-            }
             
             return true;
         }
@@ -542,7 +538,6 @@ class GameState {
         let totalReward = 0;
 
         Object.keys(achievementManager.achievements).forEach(achievementId => {
-            // FIXED: Check actual unlocked status from gameState, not just local check
             if (!unlockedAchievements.includes(achievementId)) {
                 if (achievementManager.isUnlocked(achievementId, this.data)) {
                     newAchievements.push(achievementId);
