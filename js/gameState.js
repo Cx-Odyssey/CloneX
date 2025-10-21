@@ -27,13 +27,12 @@ class GameState {
             totalReferrals: 0,
             referralEarnings: 0,
             lastDailyReset: '',
-            lastDailyClaim: '', // NEW: Track last claim date
+            lastDailyClaim: '',
             walletConnected: false,
             walletAddress: '',
             hasAutoMiner: false,
             autoMinerStartTime: 0,
             
-            // Achievement tracking
             planetsVisited: [],
             planetMineCount: {},
             totalMines: 0,
@@ -44,11 +43,9 @@ class GameState {
             dailyStreak: 1,
             dailyTasksCompleted: 0,
             
-            // Shop active boosts
             activeBoosts: { shardBooster: 0, gpBooster: 0, autoMiner: 0, luckyCharm: 0 },
             itemsPurchased: {},
             
-            // Premium items
             activePremiumItems: {
                 vipPass: 0,
                 legendaryShip: false,
@@ -139,7 +136,6 @@ class GameState {
         }
     }
 
-    // FIXED: Removed duplicate daily login notification
     checkDailyReset() {
         const now = new Date();
         const todayUTC = now.toISOString().split('T')[0];
@@ -152,10 +148,12 @@ class GameState {
                                       this.data.dailyTasks.boss && 
                                       this.data.dailyTasks.combo;
             
-            // FIXED: No duplicate notification here - modal handles it
+            const lastClaim = this.data.lastDailyClaim || '';
+            const shouldIncrementStreak = lastClaim !== todayUTC;
+            
             this.update({
                 dailyTasks: { 
-                    login: false, // Reset to false, modal will claim it
+                    login: false,
                     mine: false, 
                     boss: false, 
                     combo: false 
@@ -166,6 +164,7 @@ class GameState {
                     comboAttempts: 0 
                 },
                 lastDailyReset: todayUTC,
+                dailyStreak: shouldIncrementStreak ? (this.data.dailyStreak || 0) + 1 : this.data.dailyStreak,
                 dailyTasksCompleted: allTasksCompleted ? (this.data.dailyTasksCompleted || 0) + 1 : (this.data.dailyTasksCompleted || 0)
             });
             
