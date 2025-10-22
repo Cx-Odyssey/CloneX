@@ -1,4 +1,4 @@
-// gameState.js - With Harder Leveling & Ad Reward System
+// gameState.js - With Fixed Daily Login (No Duplicate Notifications)
 
 class GameState {
     constructor() {
@@ -27,12 +27,13 @@ class GameState {
             totalReferrals: 0,
             referralEarnings: 0,
             lastDailyReset: '',
-            lastDailyClaim: '',
+            lastDailyClaim: '', // Track last claim date separately
             walletConnected: false,
             walletAddress: '',
             hasAutoMiner: false,
             autoMinerStartTime: 0,
             
+            // Achievement tracking
             planetsVisited: [],
             planetMineCount: {},
             totalMines: 0,
@@ -43,9 +44,11 @@ class GameState {
             dailyStreak: 1,
             dailyTasksCompleted: 0,
             
+            // Shop active boosts
             activeBoosts: { shardBooster: 0, gpBooster: 0, autoMiner: 0, luckyCharm: 0 },
             itemsPurchased: {},
             
+            // Premium items
             activePremiumItems: {
                 vipPass: 0,
                 legendaryShip: false,
@@ -136,6 +139,7 @@ class GameState {
         }
     }
 
+    // FIXED: Daily reset without automatic GP reward
     checkDailyReset() {
         const now = new Date();
         const todayUTC = now.toISOString().split('T')[0];
@@ -148,12 +152,10 @@ class GameState {
                                       this.data.dailyTasks.boss && 
                                       this.data.dailyTasks.combo;
             
-            const lastClaim = this.data.lastDailyClaim || '';
-            const shouldIncrementStreak = lastClaim !== todayUTC;
-            
+            // Reset daily tasks but DON'T give automatic GP
             this.update({
                 dailyTasks: { 
-                    login: false,
+                    login: false, // Not auto-claimed
                     mine: false, 
                     boss: false, 
                     combo: false 
@@ -164,13 +166,14 @@ class GameState {
                     comboAttempts: 0 
                 },
                 lastDailyReset: todayUTC,
-                dailyStreak: shouldIncrementStreak ? (this.data.dailyStreak || 0) + 1 : this.data.dailyStreak,
                 dailyTasksCompleted: allTasksCompleted ? (this.data.dailyTasksCompleted || 0) + 1 : (this.data.dailyTasksCompleted || 0)
             });
             
+            // Generate new daily combo
             this.generateDailyCombo();
             this.checkAchievements();
             
+            // NO automatic notification or GP reward here
             return true;
         }
         
@@ -605,7 +608,7 @@ class GameState {
     initialize() {
         this.generateReferralCode();
         this.generateDailyCombo();
-        this.checkDailyReset();
+        this.checkDailyReset(); // Just resets tasks, no auto-reward
         this.updateEnergyFromTime();
         this.updateTicketsFromTime();
         
