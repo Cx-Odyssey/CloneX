@@ -1,4 +1,4 @@
-// main.js - Game Initialization with Image Preloading
+// main.js - Game Initialization with Image Preloading (FIXED: No Galaxy Notification)
 
 class GameInitializer {
     constructor() {
@@ -50,6 +50,9 @@ class GameInitializer {
                 }
                 
                 console.log('✅ GAME INITIALIZATION COMPLETE');
+                
+                // REMOVED: No automatic daily login notification
+                // User must click "Daily Rewards" banner to claim
             }, 500);
             
         } catch (error) {
