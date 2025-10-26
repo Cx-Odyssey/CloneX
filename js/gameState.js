@@ -1,4 +1,4 @@
-// gameState.js - With Fixed Daily Login (No Duplicate Notifications)
+// gameState.js - FIXED: Single daily login system with modal
 
 class GameState {
     constructor() {
@@ -27,7 +27,7 @@ class GameState {
             totalReferrals: 0,
             referralEarnings: 0,
             lastDailyReset: '',
-            lastDailyClaim: '', // Track last claim date separately
+            lastDailyClaim: '', // NEW: Track when user last claimed daily reward
             walletConnected: false,
             walletAddress: '',
             hasAutoMiner: false,
@@ -139,7 +139,7 @@ class GameState {
         }
     }
 
-    // FIXED: Daily reset without automatic GP reward
+    // FIXED: Simplified daily reset - no automatic GP reward, only task reset
     checkDailyReset() {
         const now = new Date();
         const todayUTC = now.toISOString().split('T')[0];
@@ -152,10 +152,10 @@ class GameState {
                                       this.data.dailyTasks.boss && 
                                       this.data.dailyTasks.combo;
             
-            // Reset daily tasks but DON'T give automatic GP
+            // Reset tasks but DON'T give GP automatically
             this.update({
                 dailyTasks: { 
-                    login: false, // Not auto-claimed
+                    login: false, // Changed to false - user must claim via modal
                     mine: false, 
                     boss: false, 
                     combo: false 
@@ -166,14 +166,15 @@ class GameState {
                     comboAttempts: 0 
                 },
                 lastDailyReset: todayUTC,
+                dailyStreak: (this.data.dailyStreak || 0) + 1,
                 dailyTasksCompleted: allTasksCompleted ? (this.data.dailyTasksCompleted || 0) + 1 : (this.data.dailyTasksCompleted || 0)
             });
             
-            // Generate new daily combo
             this.generateDailyCombo();
             this.checkAchievements();
             
-            // NO automatic notification or GP reward here
+            // NO NOTIFICATION HERE - User must click the Daily Rewards banner
+            
             return true;
         }
         
@@ -608,7 +609,7 @@ class GameState {
     initialize() {
         this.generateReferralCode();
         this.generateDailyCombo();
-        this.checkDailyReset(); // Just resets tasks, no auto-reward
+        this.checkDailyReset();
         this.updateEnergyFromTime();
         this.updateTicketsFromTime();
         
