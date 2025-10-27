@@ -245,7 +245,7 @@ class WalletManager {
 
         // TESTNET RECIPIENT: Use your testnet wallet
         const recipientAddress = this.isTestnet 
-            ? 'EQDte6-r3llgo8OsQ6_wGRzSmXM4cg2i1irWY5B35QATaOAI' // Change to YOUR testnet wallet
+            ? '0QDte6-r3llgo8OsQ6_wGRzSmXM4cg2i1irWY5B35QATaAZH' // Change to YOUR testnet wallet
             : 'EQDte6-r3llgo8OsQ6_wGRzSmXM4cg2i1irWY5B35QATaOAI';
 
         const transaction = {
