@@ -864,11 +864,29 @@
     <script src="js/backend.js"></script>
     <script src="js/premiumPrices.js"></script>
     <script src="js/wallet.js"></script>
-    <script src="js/tasks.js"></script>  
-    <script src="js/shop.js"></script>
-    <script src="js/ui.js"></script>     
+    <script src="js/ui.js"></script>
     <script src="js/mining.js"></script>
+    <script src="js/tasks.js"></script>
+    <script src="js/shop.js"></script>
     <script src="js/main.js"></script>
+
+    <!-- Ensure Daily Rewards Function is Available -->
+    <script>
+        // Global function for daily rewards modal
+        if (typeof showDailyRewardsModal === 'undefined') {
+            function showDailyRewardsModal() {
+                if (window.showDailyRewardsModal) {
+                    window.showDailyRewardsModal();
+                } else {
+                    console.warn('Daily rewards modal function not yet loaded');
+                    setTimeout(() => {
+                        if (window.showDailyRewardsModal) {
+                            window.showDailyRewardsModal();
+                        }
+                    }, 500);
+                }
+            }
+        }
+    </script>
 </body>
 </html>
-
