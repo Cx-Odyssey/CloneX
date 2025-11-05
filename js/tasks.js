@@ -1,6 +1,5 @@
-// tasks.js - COMPLETE FIXED VERSION with proper daily rewards and real logos
+// tasks.js - Complete File with Balanced Achievements
 
-// Achievement Definitions
 const ACHIEVEMENTS = {
     // Exploration
     explorer_beginner: { id: 'explorer_beginner', title: 'Space Cadet', description: 'Visit your first planet', icon: '🚀', category: 'exploration', requirement: { type: 'planets_visited', value: 1 }, reward: 50 },
@@ -49,7 +48,6 @@ const ACHIEVEMENTS = {
     master_ultimate: { id: 'master_ultimate', title: 'Cosmic Champion', description: 'Unlock all other achievements', icon: '🏆', category: 'special', requirement: { type: 'all_achievements', value: 1 }, reward: 10000 }
 };
 
-// Achievement Manager Class
 class AchievementManager {
     constructor() {
         this.achievements = ACHIEVEMENTS;
@@ -177,344 +175,204 @@ class AchievementManager {
     }
 }
 
-// Main Tasks Configuration - Social tasks with REAL LOGOS
-const MAIN_TASKS = [
-    {
-        id: 'telegram',
-        title: 'Join Telegram Community',
-        description: 'Subscribe to our official channel',
-        icon: 'telegram',
-        reward: 500,
-        requirement: { type: 'social_task', value: 1 },
-        isSocialTask: true,
-        link: 'https://t.me/Cx_Odyssey_Community'
-    },
-    {
-        id: 'twitter',
-        title: 'Follow on X (Twitter)',
-        description: 'Follow us on X for updates',
-        icon: 'twitter',
-        reward: 500,
-        requirement: { type: 'social_task', value: 1 },
-        isSocialTask: true,
-        link: 'https://x.com/Cx_Odyssey'
-    },
-    {
-        id: 'reach_level_10',
-        title: 'Reach Level 10',
-        description: 'Earn enough GP to reach level 10',
-        icon: '⭐',
-        reward: 500,
-        requirement: { type: 'level', value: 10 }
-    },
-    {
-        id: 'collect_10k_shards',
-        title: 'Collect 10,000 Shards',
-        description: 'Mine and collect a total of 10,000 shards',
-        icon: '💎',
-        reward: 750,
-        requirement: { type: 'total_shards', value: 10000 }
-    },
-    {
-        id: 'defeat_50_bosses',
-        title: 'Defeat 50 Bosses',
-        description: 'Win 50 boss battles',
-        icon: '⚔️',
-        reward: 1000,
-        requirement: { type: 'bosses_defeated', value: 50 }
-    },
-    {
-        id: 'mine_1000_times',
-        title: 'Mine 1,000 Times',
-        description: 'Complete 1,000 mining operations',
-        icon: '⛏️',
-        reward: 800,
-        requirement: { type: 'total_mines', value: 1000 }
-    },
-    {
-        id: 'visit_all_planets',
-        title: 'Visit All Planets',
-        description: 'Explore all 6 planets in the galaxy',
-        icon: '🌍',
-        reward: 600,
-        requirement: { type: 'planets_visited', value: 6 }
-    },
-    {
-        id: 'upgrade_10_times',
-        title: 'Purchase 10 Upgrades',
-        description: 'Buy a total of 10 upgrade levels',
-        icon: '🔧',
-        reward: 700,
-        requirement: { type: 'total_upgrades', value: 10 }
-    },
-    {
-        id: 'daily_streak_7',
-        title: '7 Day Login Streak',
-        description: 'Login for 7 consecutive days',
-        icon: '📅',
-        reward: 900,
-        requirement: { type: 'daily_streak', value: 7 }
-    },
-    {
-        id: 'earn_50k_gp',
-        title: 'Earn 50,000 GP',
-        description: 'Accumulate a total of 50,000 GP',
-        icon: '💰',
-        reward: 1500,
-        requirement: { type: 'total_gp', value: 50000 }
-    }
-];
-
-// Tasks Manager Class
+// Tasks System
 class TasksManager {
     constructor() {
-        this.currentTab = 'tasks';
-        this.mainTasks = MAIN_TASKS;
+        this.currentTab = 'daily';
     }
 
     renderContent() {
         const container = document.getElementById('taskContent');
         if (!container) return;
 
-        if (this.currentTab === 'tasks') {
-            container.innerHTML = this.getTasksHTML();
+        if (this.currentTab === 'daily') {
+            container.innerHTML = this.getDailyTasksHTML();
         } else {
-            container.innerHTML = this.getMainTasksHTML();
+            container.innerHTML = this.getOneTimeTasksHTML();
         }
 
         this.updateTaskStates();
     }
 
-    getTasksHTML() {
+    getDailyTasksHTML() {
         return `
-            <div style="padding: 40px 20px; text-align: center;">
-                <div style="font-size: 48px; margin-bottom: 20px;">📋</div>
-                <div style="font-size: 18px; font-weight: 600; color: var(--primary-gold); margin-bottom: 10px;">All Tasks Completed!</div>
-                <div style="font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6;">
-                    Check out <strong>Main Tasks</strong> for more challenges and rewards!
+            <div id="dailyTasksContent">
+                <div class="task-item">
+                    <div class="task-icon" style="background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));">📅</div>
+                    <div class="task-info">
+                        <div class="task-title">Daily reward</div>
+                        <div class="task-desc">Log in daily</div>
+                    </div>
+                    <div class="task-reward" id="dailyLoginStatus">Completed</div>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-icon" style="background: linear-gradient(135deg, #FF6B35, #D84315);">⛏️</div>
+                    <div class="task-info">
+                        <div class="task-title">Mine crystals</div>
+                        <div class="task-desc">Mine 10 times (<span id="dailyMineCount">0</span>/10)</div>
+                    </div>
+                    <button class="task-button" id="dailyMineBtn" onclick="claimDailyTask('mine')" disabled>+50 GP</button>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-icon" style="background: linear-gradient(135deg, #9C27B0, #6A1B9A);">⚔️</div>
+                    <div class="task-info">
+                        <div class="task-title">Battle cosmic overlord</div>
+                        <div class="task-desc">Attack boss 3 times (<span id="dailyBossCount">0</span>/3)</div>
+                    </div>
+                    <button class="task-button" id="dailyBossBtn" onclick="claimDailyTask('boss')" disabled>+75 GP</button>
+                </div>
+
+                <div class="task-item">
+                    <div class="task-icon" style="background: linear-gradient(135deg, #7209B7, #4A148C);">🔮</div>
+                    <div class="task-info">
+                        <div class="task-title">Code puzzle</div>
+                        <div class="task-desc">Try the daily combo</div>
+                    </div>
+                    <button class="task-button" id="dailyComboBtn" onclick="claimDailyTask('combo')" disabled>+30 GP</button>
                 </div>
             </div>
         `;
     }
 
-    getMainTasksHTML() {
-        const gameState = window.gameState?.get();
-        if (!gameState) return '<div style="padding: 20px; text-align: center; color: rgba(255,255,255,0.7);">Loading...</div>';
-
-        const completedTasks = gameState.oneTimeTasks || {};
-
-        return this.mainTasks.map(task => {
-            const isCompleted = completedTasks[task.id] || false;
-            const isSocialTask = task.isSocialTask || false;
-            const isUnlocked = isSocialTask ? true : this.checkRequirement(task.requirement, gameState);
-            const progress = isSocialTask ? 0 : this.getProgress(task.requirement, gameState);
-
-            // Get REAL logos for social tasks
-            const getLogo = (iconType) => {
-                if (iconType === 'telegram') {
-                    return `<svg width="32" height="32" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="tg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#2AABEE;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#229ED9;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <circle cx="120" cy="120" r="120" fill="url(#tg-grad)"/>
-                        <path fill="#fff" d="M81.229 128.772l14.237 39.406s1.78 3.687 3.686 3.687 30.255-29.492 30.255-29.492l31.525-60.89L81.737 118.6z"/>
-                        <path fill="#d2e5f1" d="M100.106 138.878l-2.733 29.046s-1.144 8.9 7.754 0 17.415-15.763 17.415-15.763"/>
-                        <path fill="#b5cfe4" d="M81.486 130.178l-17.8-5.467s-2.133-.905-1.395-2.947c.156-.425.371-.763.927-1.082 5.1-2.913 94.753-35.459 94.753-35.459s3.848-1.47 6.14-.968c.636.14 1.104.396 1.386 1.182.078.218.118.38.137.666.027.42-.006.948-.023 1.468-.135 4.138-3.755 74.635-3.755 74.635s-.214 3.5-3.232 3.66c-.99.052-2.373-.36-4.17-1.346-5.142-2.823-22.678-16.22-25.853-18.868-.85-.71-1.634-2.093.087-3.728 11.95-11.3 26.315-25.13 34.943-33.757 1.81-1.81 3.62-6.046-3.93-.93l-47.69 32.126s-2.593 1.615-7.446.18z"/>
-                    </svg>`;
-                } else if (iconType === 'twitter') {
-                    return `<svg width="32" height="32" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="300" height="300" rx="60" fill="#000000"/>
-                        <path fill="#ffffff" d="M178.57 127.15 290.27 0h-26.46l-97.03 110.38L89.34 0H0l117.13 166.93L0 300.25h26.46l102.4-116.59 81.8 116.59h89.34M36.01 19.54H76.66l187.13 262.13h-40.66"/>
-                    </svg>`;
-                }
-                return `<span style="font-size: 32px;">${iconType}</span>`;
-            };
-
-            const taskIconDisplay = isSocialTask ? getLogo(task.icon) : `<span style="font-size: 32px;">${task.icon}</span>`;
-
-            return `
-                <div class="task-item" style="opacity: ${isCompleted ? 0.6 : 1};">
-                    <div class="task-icon" style="background: linear-gradient(135deg, ${isCompleted ? 'rgba(0,255,136,0.2)' : 'rgba(255,215,0,0.2)'}, rgba(255,107,53,0.1)); display: flex; align-items: center; justify-content: center;">
-                        ${taskIconDisplay}
-                    </div>
+    getOneTimeTasksHTML() {
+        return `
+            <div id="oneTimeTasksContent">
+                <div class="task-item">
+                    <div class="task-icon" style="background: linear-gradient(135deg, #FF6B35, #D84315);">🚀</div>
                     <div class="task-info">
-                        <div class="task-title">${task.title}</div>
-                        <div class="task-desc">${task.description}</div>
-                        ${!isCompleted && !isSocialTask ? `
-                            <div style="margin-top: 8px;">
-                                <div style="width: 100%; height: 4px; background: rgba(0,0,0,0.3); border-radius: 2px; overflow: hidden;">
-                                    <div style="height: 100%; background: var(--primary-gold); width: ${progress}%;"></div>
-                                </div>
-                                <div style="font-size: 10px; color: rgba(255,255,255,0.6); margin-top: 3px;">${progress}% Complete</div>
-                            </div>
-                        ` : ''}
+                        <div class="task-title">First exploration</div>
+                        <div class="task-desc">Visit any planet for mining</div>
                     </div>
-                    ${isCompleted 
-                        ? `<div class="task-reward" style="background: var(--success-green); color: #000;">✅ Claimed</div>`
-                        : isSocialTask
-                            ? `<button class="task-button" onclick="openSocialTaskModal('${task.id}', '${task.link}', ${task.reward}, '${task.title}')">Start</button>`
-                            : isUnlocked
-                                ? `<button class="task-button" onclick="claimMainTask('${task.id}')">Claim ${task.reward} GP</button>`
-                                : `<div class="task-reward" style="background: rgba(255,215,0,0.2); color: var(--primary-gold);">Locked</div>`
-                    }
+                    <button class="task-button" id="firstPlanetBtn" onclick="claimOneTimeTask('planet')" disabled>+20 GP</button>
                 </div>
-            `;
-        }).join('');
-    }
 
-    checkRequirement(requirement, gameState) {
-        const { type, value } = requirement;
-        
-        switch (type) {
-            case 'social_task':
-                return false;
-            case 'level':
-                return Math.floor(gameState.gp / 100) + 1 >= value;
-            case 'total_shards':
-                return (gameState.totalShardsCollected || 0) >= value;
-            case 'bosses_defeated':
-                return (gameState.bossesDefeated || 0) >= value;
-            case 'total_mines':
-                return (gameState.totalMines || 0) >= value;
-            case 'planets_visited':
-                return (gameState.planetsVisited || []).length >= value;
-            case 'total_upgrades':
-                const totalUpgrades = Object.values(gameState.upgrades || {}).reduce((sum, val) => sum + val, 0);
-                return totalUpgrades >= value;
-            case 'daily_streak':
-                return (gameState.dailyStreak || 0) >= value;
-            case 'total_gp':
-                return (gameState.totalGPEarned || gameState.gp || 0) >= value;
-            default:
-                return false;
-        }
-    }
+                <div class="task-item">
+                    <div class="task-icon" style="background: linear-gradient(135deg, #4CAF50, #2E7D32);">💰</div>
+                    <div class="task-info">
+                        <div class="task-title">First upgrade</div>
+                        <div class="task-desc">Buy any upgrade from shop</div>
+                    </div>
+                    <button class="task-button" id="firstPurchaseBtn" onclick="claimOneTimeTask('purchase')" disabled>+40 GP</button>
+                </div>
 
-    getProgress(requirement, gameState) {
-        const { type, value } = requirement;
-        let current = 0;
+                <div class="task-item">
+                    <div class="task-icon" style="background: linear-gradient(135deg, #00F5FF, #0091EA);">💎</div>
+                    <div class="task-info">
+                        <div class="task-title">Crystal collector</div>
+                        <div class="task-desc">Collect 100 shards (<span id="oneTimeShardCount">0</span>/100)</div>
+                    </div>
+                    <button class="task-button" id="shards100Btn" onclick="claimOneTimeTask('shards100')" disabled>+80 GP</button>
+                </div>
 
-        switch (type) {
-            case 'level':
-                current = Math.floor(gameState.gp / 100) + 1;
-                break;
-            case 'total_shards':
-                current = gameState.totalShardsCollected || 0;
-                break;
-            case 'bosses_defeated':
-                current = gameState.bossesDefeated || 0;
-                break;
-            case 'total_mines':
-                current = gameState.totalMines || 0;
-                break;
-            case 'planets_visited':
-                current = (gameState.planetsVisited || []).length;
-                break;
-            case 'total_upgrades':
-                current = Object.values(gameState.upgrades || {}).reduce((sum, val) => sum + val, 0);
-                break;
-            case 'daily_streak':
-                current = gameState.dailyStreak || 0;
-                break;
-            case 'total_gp':
-                current = gameState.totalGPEarned || gameState.gp || 0;
-                break;
-        }
-
-        return Math.min(100, Math.floor((current / value) * 100));
+                <div class="task-item">
+                    <div class="task-icon" style="background: linear-gradient(135deg, #E91E63, #AD1457);">👥</div>
+                    <div class="task-info">
+                        <div class="task-title">Invite friends</div>
+                        <div class="task-desc">Refer 5 friends to game (<span id="referralCount">0</span>/5)</div>
+                    </div>
+                    <button class="task-button" id="invite5Btn" onclick="claimOneTimeTask('invite5')" disabled>+200 GP</button>
+                </div>
+            </div>
+        `;
     }
 
     updateTaskStates() {
         const gameState = window.gameState?.get();
         if (!gameState) return;
+
+        this.updateElement('dailyMineCount', gameState.dailyTaskProgress.mines);
+        this.updateElement('dailyBossCount', gameState.dailyTaskProgress.bossBattles);
+        this.updateElement('oneTimeShardCount', gameState.shards);
+        this.updateElement('referralCount', gameState.totalReferrals);
+        
+        this.updateTaskButton('dailyMineBtn', 
+            gameState.dailyTaskProgress.mines >= 10 && !gameState.dailyTasks.mine,
+            gameState.dailyTasks.mine
+        );
+        this.updateTaskButton('dailyBossBtn', 
+            gameState.dailyTaskProgress.bossBattles >= 3 && !gameState.dailyTasks.boss,
+            gameState.dailyTasks.boss
+        );
+        this.updateTaskButton('dailyComboBtn', 
+            gameState.dailyTaskProgress.comboAttempts > 0 && !gameState.dailyTasks.combo,
+            gameState.dailyTasks.combo
+        );
+        
+        this.updateTaskButton('firstPlanetBtn', false, gameState.oneTimeTasks.planet);
+        this.updateTaskButton('firstPurchaseBtn', false, gameState.oneTimeTasks.purchase);
+        this.updateTaskButton('shards100Btn', 
+            gameState.shards >= 100 && !gameState.oneTimeTasks.shards100,
+            gameState.oneTimeTasks.shards100
+        );
+        this.updateTaskButton('invite5Btn', 
+            gameState.totalReferrals >= 5 && !gameState.oneTimeTasks.invite5,
+            gameState.oneTimeTasks.invite5
+        );
+        
+        const loginStatus = document.getElementById('dailyLoginStatus');
+        if (loginStatus) {
+            loginStatus.textContent = gameState.dailyTasks.login ? 'Completed' : '+25 GP';
+            if (gameState.dailyTasks.login) {
+                loginStatus.className = 'task-reward';
+                loginStatus.style.background = 'var(--success-green)';
+                loginStatus.style.color = '#000';
+            }
+        }
+    }
+
+    updateElement(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+    }
+
+    updateTaskButton(btnId, canClaim, isCompleted = false) {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+            if (isCompleted) {
+                btn.disabled = true;
+                btn.textContent = 'Completed';
+                btn.style.background = 'var(--success-green)';
+                btn.style.color = '#000';
+                btn.style.cursor = 'default';
+            } else {
+                btn.disabled = !canClaim;
+                if (!canClaim) {
+                    btn.style.background = '';
+                    btn.style.color = '';
+                }
+            }
+        }
     }
 
     switchTab(tab) {
         this.currentTab = tab;
         
-        const tasksTab = document.getElementById('tasksTab');
-        const mainTasksTab = document.getElementById('mainTasksTab');
+        const dailyTab = document.getElementById('dailyTasksTab');
+        const oneTimeTab = document.getElementById('oneTimeTasksTab');
         
-        [tasksTab, mainTasksTab].forEach(t => {
-            if (t) t.classList.remove('active');
-        });
-        
-        if (tab === 'tasks' && tasksTab) {
-            tasksTab.classList.add('active');
-        } else if (tab === 'main' && mainTasksTab) {
-            mainTasksTab.classList.add('active');
+        if (tab === 'daily') {
+            dailyTab.classList.add('active');
+            oneTimeTab.classList.remove('active');
+        } else {
+            oneTimeTab.classList.add('active');
+            dailyTab.classList.remove('active');
         }
         
         this.renderContent();
     }
 }
 
-// Profile/Command Center Manager - FIXED
+// Profile/Command Center System
 class ProfileManager {
     constructor() {
         this.currentTab = 'referral';
     }
 
-    switchTab(tab) {
-        console.log('👤 Switching Profile tab to:', tab);
-        this.currentTab = tab;
-        
-        const referralTab = document.getElementById('referralTab');
-        const achievementsTab = document.getElementById('achievementsTab');
-        const leaderboardTab = document.getElementById('leaderboardTab');
-        const walletTab = document.getElementById('walletTab');
-        
-        [referralTab, achievementsTab, leaderboardTab, walletTab].forEach(t => {
-            if (t) {
-                t.classList.remove('active');
-                t.style.background = 'transparent';
-                t.style.color = 'rgba(255, 255, 255, 0.6)';
-            }
-        });
-        
-        if (tab === 'referral' && referralTab) {
-            referralTab.classList.add('active');
-            referralTab.style.background = 'linear-gradient(135deg, var(--success-green), #00CC70)';
-            referralTab.style.color = '#000';
-        } else if (tab === 'achievements' && achievementsTab) {
-            achievementsTab.classList.add('active');
-            achievementsTab.style.background = 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))';
-            achievementsTab.style.color = '#000';
-        } else if (tab === 'leaderboard' && leaderboardTab) {
-            leaderboardTab.classList.add('active');
-            leaderboardTab.style.background = 'linear-gradient(135deg, var(--accent-purple), #5A0F8C)';
-            leaderboardTab.style.color = 'white';
-        } else if (tab === 'wallet' && walletTab) {
-            walletTab.classList.add('active');
-            walletTab.style.background = 'linear-gradient(135deg, var(--neon-blue), #0091EA)';
-            walletTab.style.color = '#000';
-        }
-        
-        // CRITICAL FIX: Actually render the content after tab switch
-        setTimeout(() => {
-            this.renderContent();
-            console.log('✅ Profile content rendered for tab:', tab);
-            
-            // Load leaderboard data if needed
-            if (tab === 'leaderboard') {
-                setTimeout(() => {
-                    this.loadLeaderboardData();
-                }, 100);
-            }
-        }, 50);
-    }
-
     renderContent() {
         const container = document.getElementById('profileContent');
-        if (!container) {
-            console.error('❌ profileContent container not found!');
-            return;
-        }
-
-        console.log('🎨 Rendering profile content for tab:', this.currentTab);
+        if (!container) return;
 
         switch (this.currentTab) {
             case 'referral':
@@ -525,18 +383,13 @@ class ProfileManager {
                 break;
             case 'leaderboard':
                 container.innerHTML = this.getLeaderboardHTML();
+                this.loadLeaderboardData();
                 break;
             case 'wallet':
                 container.innerHTML = this.getWalletHTML();
-                setTimeout(() => {
-                    if (window.walletManager) {
-                        window.walletManager.refreshWalletUI();
-                    }
-                }, 100);
                 break;
         }
 
-        // Update profile data after render
         setTimeout(() => {
             this.updateProfileData();
         }, 100);
@@ -707,8 +560,7 @@ class ProfileManager {
             `;
 
             achievements.forEach(achievement => {
-                const unlockedList = gameState.unlockedAchievements || [];
-                const isUnlocked = unlockedList.includes(achievement.id);
+                const isUnlocked = achievementManager.isUnlocked(achievement.id, gameState);
                 const progress = achievementManager.getProgress(achievement.id, gameState);
                 
                 html += `
@@ -793,7 +645,7 @@ class ProfileManager {
                         <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
                             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(0, 245, 255, 0.1); border-radius: 8px;">
                                 <span style="font-size: 16px;">🤖</span>
-                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Auto Miner (1 TON)</span>
+                                <span style="font-size: 12px; color: rgba(255, 255, 255, 0.9);">Auto Miner (0.5 TON)</span>
                             </div>
                             <div style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 8px; background: rgba(0, 245, 255, 0.1); border-radius: 8px;">
                                 <span style="font-size: 16px;">👑</span>
@@ -824,15 +676,51 @@ class ProfileManager {
         if (referralEarningsEl) referralEarningsEl.textContent = gameState.referralEarnings;
     }
 
+    switchTab(tab) {
+        this.currentTab = tab;
+        
+        const referralTab = document.getElementById('referralTab');
+        const achievementsTab = document.getElementById('achievementsTab');
+        const leaderboardTab = document.getElementById('leaderboardTab');
+        const walletTab = document.getElementById('walletTab');
+        
+        [referralTab, achievementsTab, leaderboardTab, walletTab].forEach(t => {
+            if (t) {
+                t.classList.remove('active');
+                t.style.background = 'transparent';
+                t.style.color = 'rgba(255, 255, 255, 0.6)';
+            }
+        });
+        
+        if (tab === 'referral' && referralTab) {
+            referralTab.classList.add('active');
+            referralTab.style.background = 'linear-gradient(135deg, var(--success-green), #00CC70)';
+            referralTab.style.color = '#000';
+        } else if (tab === 'achievements' && achievementsTab) {
+            achievementsTab.classList.add('active');
+            achievementsTab.style.background = 'linear-gradient(135deg, var(--primary-gold), var(--secondary-orange))';
+            achievementsTab.style.color = '#000';
+        } else if (tab === 'leaderboard' && leaderboardTab) {
+            leaderboardTab.classList.add('active');
+            leaderboardTab.style.background = 'linear-gradient(135deg, var(--accent-purple), #5A0F8C)';
+            leaderboardTab.style.color = 'white';
+        } else if (tab === 'wallet' && walletTab) {
+            walletTab.classList.add('active');
+            walletTab.style.background = 'linear-gradient(135deg, var(--neon-blue), #0091EA)';
+            walletTab.style.color = '#000';
+        }
+        
+        this.renderContent();
+    }
+
     loadLeaderboardData() {
-        console.log('📊 Loading leaderboard data...');
         if (window.uiController) {
             window.uiController.loadLeaderboard();
         }
     }
 }
 
-// Minigames Manager - FIXED
+// Minigames Manager
 class MinigamesManager {
     constructor() {
         this.currentComboIndex = 0;
@@ -840,10 +728,7 @@ class MinigamesManager {
 
     inputComboDigit(digit) {
         const gameState = window.gameState?.get();
-        if (!gameState || gameState.dailyCombo.completed || gameState.dailyCombo.attempts <= 0) {
-            console.log('Cannot input digit - game over or completed');
-            return;
-        }
+        if (!gameState || gameState.dailyCombo.completed || gameState.dailyCombo.attempts <= 0) return;
         
         const inputs = ['combo1', 'combo2', 'combo3', 'combo4'];
         const currentInput = document.getElementById(inputs[this.currentComboIndex]);
@@ -851,7 +736,6 @@ class MinigamesManager {
         if (currentInput) {
             currentInput.value = digit;
             this.currentComboIndex = (this.currentComboIndex + 1) % 4;
-            console.log('✅ Digit entered:', digit, 'Current index:', this.currentComboIndex);
         }
     }
 
@@ -861,25 +745,14 @@ class MinigamesManager {
             if (el) el.value = '';
         });
         this.currentComboIndex = 0;
-        console.log('🧹 Combo cleared');
     }
 
     submitCombo() {
         const gameState = window.gameState;
-        if (!gameState) {
-            console.error('❌ Game state not available');
-            return;
-        }
+        if (!gameState) return;
 
         const state = gameState.get();
-        if (state.dailyCombo.completed) {
-            if (window.uiController) {
-                window.uiController.showNotification('Already completed today!');
-            }
-            return;
-        }
-        
-        if (state.dailyCombo.attempts <= 0) {
+        if (state.dailyCombo.completed || state.dailyCombo.attempts <= 0) {
             if (window.uiController) {
                 window.uiController.showNotification('No attempts remaining!');
             }
@@ -890,8 +763,6 @@ class MinigamesManager {
             .map(id => document.getElementById(id)?.value || '')
             .join('');
         
-        console.log('🎯 Combo submitted:', guess, 'Expected:', state.dailyCombo.code);
-        
         if (guess.length !== 4) {
             if (window.uiController) {
                 window.uiController.showNotification('Please enter a complete 4-digit code!');
@@ -899,7 +770,6 @@ class MinigamesManager {
             return;
         }
         
-        // Decrease attempts
         gameState.update({
             dailyCombo: {
                 ...state.dailyCombo,
@@ -911,403 +781,59 @@ class MinigamesManager {
             }
         });
         
-        // Check if this completes the daily task (first attempt)
         if (!state.dailyTasks.combo) {
             gameState.update({
                 dailyTasks: {
                     ...state.dailyTasks,
                     combo: true
                 },
-                gp: newState.gp + 100,
-                totalGPEarned: (newState.totalGPEarned || newState.gp) + 100
+                gp: state.gp + 30
             });
             
             if (window.uiController) {
-                window.uiController.showNotification('🎉 Correct! You earned 100 GP!');
+                window.uiController.showNotification('Daily combo task completed! +30 GP!');
             }
-            console.log('✅ Combo correct!');
+        }
+        
+        const newState = gameState.get();
+        
+        if (guess === newState.dailyCombo.code) {
+            gameState.update({
+                dailyCombo: {
+                    ...newState.dailyCombo,
+                    completed: true
+                },
+                gp: newState.gp + 100
+            });
+            
+            if (window.uiController) {
+                window.uiController.showNotification('Correct! You earned 100 GP!');
+            }
             this.clearCombo();
         } else {
-            // Wrong guess
             if (newState.dailyCombo.attempts > 0) {
                 if (window.uiController) {
-                    window.uiController.showNotification(`❌ Wrong code! ${newState.dailyCombo.attempts} attempts remaining.`);
+                    window.uiController.showNotification(`Wrong code! ${newState.dailyCombo.attempts} attempts remaining.`);
                 }
-                console.log('❌ Combo wrong. Attempts left:', newState.dailyCombo.attempts);
             } else {
                 if (window.uiController) {
                     window.uiController.showNotification(`Game over! The code was ${newState.dailyCombo.code}.`);
                 }
-                console.log('💀 Game over. Code was:', newState.dailyCombo.code);
             }
             this.clearCombo();
         }
         
-        // Update UI after submission
         this.updateComboUI();
-        
-        // Save progress
-        if (window.backendManager) {
-            window.backendManager.saveProgress(gameState.get());
-        }
     }
 
     updateComboUI() {
         const gameState = window.gameState?.get();
-        if (!gameState) {
-            console.warn('⚠️ Cannot update combo UI - no game state');
-            return;
-        }
-
-        console.log('🔄 Updating combo UI. Attempts:', gameState.dailyCombo.attempts, 'Completed:', gameState.dailyCombo.completed);
+        if (!gameState) return;
 
         const attemptsEl = document.getElementById('comboAttempts');
         if (attemptsEl) {
             attemptsEl.textContent = gameState.dailyCombo.attempts;
         }
-        
-        // Disable inputs if no attempts left or completed
-        const inputs = ['combo1', 'combo2', 'combo3', 'combo4'];
-        const disabled = gameState.dailyCombo.attempts <= 0 || gameState.dailyCombo.completed;
-        
-        inputs.forEach(id => {
-            const input = document.getElementById(id);
-            if (input) {
-                if (disabled) {
-                    input.style.opacity = '0.5';
-                    input.style.pointerEvents = 'none';
-                } else {
-                    input.style.opacity = '1';
-                    input.style.pointerEvents = 'auto';
-                }
-            }
-        });
-        
-        // Disable keypad buttons if game over
-        const keypadButtons = document.querySelectorAll('.combo-key');
-        keypadButtons.forEach(btn => {
-            if (disabled) {
-                btn.style.opacity = '0.5';
-                btn.style.pointerEvents = 'none';
-            } else {
-                btn.style.opacity = '1';
-                btn.style.pointerEvents = 'auto';
-            }
-        });
-        
-        // Show completion message if completed
-        if (gameState.dailyCombo.completed) {
-            const comboContainer = document.querySelector('.minigame-container');
-            if (comboContainer && !document.getElementById('comboCompleteMsg')) {
-                const msgDiv = document.createElement('div');
-                msgDiv.id = 'comboCompleteMsg';
-                msgDiv.style.cssText = 'background: rgba(0,255,136,0.2); border: 2px solid var(--success-green); border-radius: 15px; padding: 20px; margin-top: 20px; text-align: center;';
-                msgDiv.innerHTML = `
-                    <div style="font-size: 48px; margin-bottom: 10px;">🎉</div>
-                    <div style="font-size: 18px; font-weight: bold; color: var(--success-green); margin-bottom: 5px;">Completed!</div>
-                    <div style="font-size: 14px; color: rgba(255,255,255,0.8);">Come back tomorrow for a new code!</div>
-                `;
-                comboContainer.appendChild(msgDiv);
-            }
-        }
-        
-        console.log('✅ Combo UI updated successfully');
-    }
-}
-
-// Daily Rewards Modal Functions
-function showDailyRewardsModal() {
-    const gameState = window.gameState;
-    if (!gameState) return;
-    
-    const state = gameState.get();
-    const modal = document.createElement('div');
-    modal.className = 'modal active';
-    modal.id = 'dailyRewardsModal';
-    
-    const streakRewards = [
-        { day: 1, gp: 100, tickets: 0 },
-        { day: 2, gp: 200, tickets: 0 },
-        { day: 3, gp: 300, tickets: 1 },
-        { day: 4, gp: 500, tickets: 0 },
-        { day: 5, gp: 700, tickets: 1 },
-        { day: 6, gp: 1000, tickets: 2 },
-        { day: 7, gp: 1500, tickets: 3 }
-    ];
-    
-    const currentStreak = Math.min(state.dailyStreak || 1, 7);
-    const today = new Date().toISOString().split('T')[0];
-    const lastClaim = state.lastDailyClaim || '';
-    const canClaim = lastClaim !== today;
-    
-    modal.innerHTML = `
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeDailyRewardsModal()">&times;</button>
-            <h2 class="modal-title">📅 Daily Rewards</h2>
-            <div style="font-size: 14px; margin-bottom: 20px; color: rgba(255,255,255,0.9);">
-                Current Streak: <strong style="color: var(--primary-gold);">${currentStreak} ${currentStreak === 1 ? 'Day' : 'Days'}</strong>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0;">
-                ${streakRewards.map(r => `
-                    <div style="
-                        padding: 15px;
-                        background: ${r.day === currentStreak && canClaim 
-                            ? 'linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,107,53,0.2))' 
-                            : r.day < currentStreak 
-                                ? 'rgba(0,255,136,0.1)' 
-                                : 'rgba(255,255,255,0.05)'};
-                        border: 2px solid ${r.day === currentStreak && canClaim 
-                            ? 'var(--primary-gold)' 
-                            : r.day < currentStreak 
-                                ? 'var(--success-green)' 
-                                : 'rgba(255,255,255,0.1)'};
-                        border-radius: 12px;
-                        text-align: center;
-                    ">
-                        <div style="font-size: 11px; opacity: 0.8; margin-bottom: 5px;">Day ${r.day}</div>
-                        <div style="font-size: 14px; font-weight: bold; color: var(--primary-gold);">
-                            ${r.gp} GP
-                        </div>
-                        ${r.tickets > 0 ? `<div style="font-size: 11px; color: var(--success-green);">+${r.tickets} 🎫</div>` : ''}
-                        ${r.day < currentStreak ? '<div style="margin-top: 5px;">✅</div>' : ''}
-                        ${r.day === currentStreak && canClaim ? '<div style="margin-top: 5px;">⭐</div>' : ''}
-                    </div>
-                `).join('')}
-            </div>
-            
-            ${canClaim ? `
-                <button class="action-btn" onclick="claimDailyReward()" style="width: 100%; background: linear-gradient(135deg, var(--primary-gold), var(--secondary-orange));">
-                    🎁 Claim Day ${currentStreak} Reward
-                </button>
-            ` : `
-                <div style="padding: 15px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 1px solid rgba(255,215,0,0.3); text-align: center;">
-                    <div style="font-size: 13px; color: rgba(255,255,255,0.8);">✅ Already claimed today!</div>
-                    <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Come back tomorrow for Day ${Math.min(currentStreak + 1, 7)}</div>
-                </div>
-            `}
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-}
-
-function closeDailyRewardsModal() {
-    const modal = document.getElementById('dailyRewardsModal');
-    if (modal) {
-        modal.classList.remove('active');
-        setTimeout(() => modal.remove(), 300);
-    }
-}
-
-function claimDailyReward() {
-    const gameState = window.gameState;
-    if (!gameState) return;
-    
-    const state = gameState.get();
-    const streakRewards = [
-        { day: 1, gp: 100, tickets: 0 },
-        { day: 2, gp: 200, tickets: 0 },
-        { day: 3, gp: 300, tickets: 1 },
-        { day: 4, gp: 500, tickets: 0 },
-        { day: 5, gp: 700, tickets: 1 },
-        { day: 6, gp: 1000, tickets: 2 },
-        { day: 7, gp: 1500, tickets: 3 }
-    ];
-    
-    const currentStreak = Math.min(state.dailyStreak || 1, 7);
-    const reward = streakRewards[currentStreak - 1];
-    const today = new Date().toISOString().split('T')[0];
-    
-    gameState.update({
-        gp: state.gp + reward.gp,
-        gameTickets: Math.min(10, state.gameTickets + reward.tickets),
-        lastDailyClaim: today,
-        dailyStreak: currentStreak === 7 ? 1 : currentStreak + 1,
-        totalGPEarned: (state.totalGPEarned || state.gp) + reward.gp,
-        dailyTasks: {
-            ...state.dailyTasks,
-            login: true
-        }
-    });
-    
-    if (window.showNotification) {
-        window.showNotification(`🎁 Claimed! +${reward.gp} GP${reward.tickets > 0 ? ` +${reward.tickets} 🎫` : ''}`);
-    }
-    
-    if (window.backendManager) {
-        window.backendManager.saveProgress(gameState.get());
-    }
-    
-    if (window.uiController) {
-        window.uiController.updateUIElements(gameState.get());
-    }
-    
-    closeDailyRewardsModal();
-}
-
-// Social Task Modal with Verification
-let socialTaskTimers = {};
-
-function openSocialTaskModal(taskId, link, reward, title) {
-    const modal = document.createElement('div');
-    modal.className = 'modal active';
-    modal.id = 'socialTaskModal';
-    
-    const isTelegram = taskId === 'telegram';
-    
-    modal.innerHTML = `
-        <div class="modal-content" style="max-width: 400px;">
-            <button class="close-btn" onclick="closeSocialTaskModal()">&times;</button>
-            <h2 class="modal-title" style="font-size: 20px; margin-bottom: 15px;">${title}</h2>
-            <div style="font-size: 80px; margin: 20px 0;">${isTelegram ? '📱' : '✖️'}</div>
-            <p style="font-size: 14px; margin-bottom: 20px;">Complete this task to earn <strong style="color: var(--primary-gold);">${reward} GP</strong></p>
-            
-            <div style="margin: 20px 0; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 12px; border: 1px solid rgba(255,215,0,0.3);">
-                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 10px;">📋 Steps:</div>
-                <div style="font-size: 13px; line-height: 1.8; text-align: left;">
-                    1️⃣ Click "Open" below<br>
-                    2️⃣ ${isTelegram ? 'Join the channel' : 'Follow the account'}<br>
-                    3️⃣ Return and click "Check"
-                </div>
-            </div>
-            
-            <button class="action-btn" id="socialOpenBtn" onclick="handleSocialTaskStep1('${taskId}', '${link}')" style="width: 100%; margin-bottom: 10px; background: linear-gradient(135deg, ${isTelegram ? '#2AABEE, #229ED9' : '#000, #333'});">
-                🔗 Open ${isTelegram ? 'Telegram' : 'X'}
-            </button>
-            
-            <button class="action-btn" id="socialCheckBtn" onclick="handleSocialTaskStep2('${taskId}', ${reward}, ${isTelegram})" style="width: 100%; background: var(--success-green); color: #000; display: none;">
-                ✅ Check
-            </button>
-            
-            <div id="socialTimer" style="display: none; text-align: center; padding: 15px; background: rgba(255,107,53,0.1); border-radius: 12px; margin-top: 10px; border: 1px solid var(--secondary-orange);">
-                <div style="font-size: 12px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">Please wait...</div>
-                <div style="font-size: 18px; font-weight: bold; color: var(--secondary-orange);" id="socialTimerText">5</div>
-                <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 5px;">Verifying task completion</div>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-}
-
-function handleSocialTaskStep1(taskId, link) {
-    window.open(link, '_blank');
-    
-    const openBtn = document.getElementById('socialOpenBtn');
-    const checkBtn = document.getElementById('socialCheckBtn');
-    
-    if (openBtn) openBtn.style.display = 'none';
-    if (checkBtn) checkBtn.style.display = 'block';
-}
-
-function handleSocialTaskStep2(taskId, reward, needsVerification) {
-    const checkBtn = document.getElementById('socialCheckBtn');
-    const timerDiv = document.getElementById('socialTimer');
-    const timerText = document.getElementById('socialTimerText');
-    
-    if (checkBtn) checkBtn.style.display = 'none';
-    if (timerDiv) timerDiv.style.display = 'block';
-    
-    let timeLeft = needsVerification ? 5 : 3;
-    if (timerText) timerText.textContent = timeLeft;
-    
-    const timer = setInterval(() => {
-        timeLeft--;
-        if (timerText) timerText.textContent = timeLeft;
-        
-        if (timeLeft <= 0) {
-            clearInterval(timer);
-            completeSocialTask(taskId, reward);
-        }
-    }, 1000);
-    
-    socialTaskTimers[taskId] = timer;
-}
-
-function completeSocialTask(taskId, reward) {
-    const gameState = window.gameState;
-    if (!gameState) return;
-    
-    const currentTasks = gameState.getValue('oneTimeTasks') || {};
-    currentTasks[taskId] = true;
-    
-    gameState.update({
-        oneTimeTasks: currentTasks,
-        gp: gameState.getValue('gp') + reward,
-        totalGPEarned: (gameState.getValue('totalGPEarned') || gameState.getValue('gp')) + reward
-    });
-    
-    if (window.showNotification) {
-        window.showNotification(`✅ Task completed! +${reward} GP`);
-    }
-    
-    if (window.backendManager) {
-        window.backendManager.saveProgress(gameState.get());
-    }
-    
-    closeSocialTaskModal();
-    if (window.TasksManager) {
-        window.TasksManager.renderContent();
-    }
-}
-
-function closeSocialTaskModal() {
-    const modal = document.getElementById('socialTaskModal');
-    if (modal) {
-        Object.values(socialTaskTimers).forEach(timer => clearInterval(timer));
-        socialTaskTimers = {};
-        modal.classList.remove('active');
-        setTimeout(() => modal.remove(), 300);
-    }
-}
-
-// Main Task Claim Function
-function claimMainTask(taskId) {
-    const gameState = window.gameState;
-    if (!gameState) return;
-    
-    const state = gameState.get();
-    const task = MAIN_TASKS.find(t => t.id === taskId);
-    
-    if (!task) return;
-    
-    const completedTasks = state.oneTimeTasks || {};
-    if (completedTasks[taskId]) {
-        if (window.showNotification) {
-            window.showNotification('Task already completed!');
-        }
-        return;
-    }
-    
-    const taskManager = new TasksManager();
-    const isUnlocked = taskManager.checkRequirement(task.requirement, state);
-    
-    if (!isUnlocked) {
-        if (window.showNotification) {
-            window.showNotification('Task requirements not met!');
-        }
-        return;
-    }
-    
-    completedTasks[taskId] = true;
-    
-    gameState.update({
-        oneTimeTasks: completedTasks,
-        gp: state.gp + task.reward,
-        totalGPEarned: (state.totalGPEarned || state.gp) + task.reward
-    });
-    
-    if (window.showNotification) {
-        window.showNotification(`${task.icon} ${task.title} completed! +${task.reward} GP`);
-    }
-    
-    if (window.backendManager) {
-        window.backendManager.saveProgress(gameState.get());
-    }
-    
-    if (window.TasksManager) {
-        window.TasksManager.renderContent();
     }
 }
 
@@ -1404,7 +930,7 @@ window.ProfileManager = new ProfileManager();
 window.MinigamesManager = new MinigamesManager();
 window.AchievementManager = AchievementManager;
 
-// Global task functions
+// Global functions
 function switchTaskTab(tab) {
     window.TasksManager?.switchTab(tab);
 }
@@ -1438,54 +964,3 @@ function clearCombo() {
 function submitCombo() {
     window.MinigamesManager?.submitCombo();
 }
-
-// Initialize tasks on load
-function initializeTasks() {
-    console.log('📋 Initializing tasks...');
-    if (window.TasksManager) {
-        window.TasksManager.renderContent();
-    }
-}
-
-// Export functions
-if (typeof window !== 'undefined') {
-    window.initializeTasks = initializeTasks;
-    window.switchTaskTab = switchTaskTab;
-    window.switchProfileTab = switchProfileTab;
-    window.showDailyRewardsModal = showDailyRewardsModal;
-    window.closeDailyRewardsModal = closeDailyRewardsModal;
-    window.claimDailyReward = claimDailyReward;
-    window.openSocialTaskModal = openSocialTaskModal;
-    window.closeSocialTaskModal = closeSocialTaskModal;
-    window.handleSocialTaskStep1 = handleSocialTaskStep1;
-    window.handleSocialTaskStep2 = handleSocialTaskStep2;
-    window.completeSocialTask = completeSocialTask;
-    window.shareReferral = shareReferral;
-    window.copyReferralCode = copyReferralCode;
-    window.claimDailyTask = claimDailyTask;
-    window.claimOneTimeTask = claimOneTimeTask;
-    window.claimMainTask = claimMainTask;
-    window.inputComboDigit = inputComboDigit;
-    window.clearCombo = clearCombo;
-    window.submitCombo = submitCombo;
-}
-
-console.log('✅ Tasks.js loaded successfully with Profile & Minigames fixes'); state.gp + 30,
-                totalGPEarned: (state.totalGPEarned || state.gp) + 30
-            });
-            
-            if (window.uiController) {
-                window.uiController.showNotification('Daily combo task completed! +30 GP!');
-            }
-        }
-        
-        const newState = gameState.get();
-        
-        if (guess === newState.dailyCombo.code) {
-            // Correct guess!
-            gameState.update({
-                dailyCombo: {
-                    ...newState.dailyCombo,
-                    completed: true
-                },
-                gp:
